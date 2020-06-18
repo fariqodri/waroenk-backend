@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+  main:
+    container_name: main
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/code
+      - /code/node_modules
+    ports:
+      - 3000:3000
+    command: npm run start:dev
+    depends_on:
+      - db
+
+  db:
+    container_name: db
+    image: mysql:8.0
+    command: --init-file /data/application/init.sql
+    volumes: 
+      - ./scripts/init.sql:/data/application/init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: waroenk
+    ports:
+      - 3306:3306
+
+  keto-migrate:
+    image: oryd/keto:v0.5.6
+    environment:
+      LOG_LEVEL: debug
+    command:
+      migrate sql mysql://root:12345@tcp(db:3306)/waroenk_permission
+    restart: on-failure
+    depends_on: 
+      - db
+  
+  keto:
+    image: oryd/keto:v0.5.6
+    environment:
+      LOG_LEVEL: debug
+      DSN: mysql://root:12345@tcp(db:3306)/waroenk_permission
+    ports: 
+      - 4466:4466
+    depends_on: 
+      - keto-migrate
