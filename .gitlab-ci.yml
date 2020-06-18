@@ -40,14 +40,12 @@ backend-docker-build:
     - docker push waroenkumkm/backend:$CI_COMMIT_SHORT_SHA
 
 deploy:
-  image: ubuntu:18.04
+  image: amazon/aws-cli:latest
   stage: deploy
   only:
     refs:
       - master
   before_script:
-    - apt-get update
-    - apt-get -y install awscli
     - apt-get -y install curl
     - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/kubectl
     - chmod +x ./kubectl
