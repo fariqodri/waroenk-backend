@@ -30,7 +30,7 @@ WORKDIR ${APPDIR}
 
 # Copy source code
 COPY --from=development /code/dist /code
-COPY --from=development /code/package*.json /code
+COPY --from=development /code/package*.json /code/
 
 RUN npm install --production
 
