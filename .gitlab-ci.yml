@@ -48,10 +48,10 @@ deploy:
   before_script:
     - apt-get update
     - apt-get -y install awscli
-    - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/kubectl
+    - wget https://amazon-eks.s3.us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/kubectl
     - chmod +x ./kubectl
     - mv ./kubectl /usr/local/bin/kubectl
-    - curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
+    - wget https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
     - chmod +x ./aws-iam-authenticator
     - mv ./aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
     - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
