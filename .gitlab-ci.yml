@@ -1,0 +1,64 @@
+image: docker:18-git
+
+stages:
+  - test
+  - docker-build
+  - deploy
+
+backend-unit-test:
+  image: node:10
+  stage: test
+  only:
+    refs:
+      - merge_requests
+  before_script:
+    - npm install
+  script:
+    - npm run test:cov
+
+backend-end-to-end-test:
+  image: node:10
+  stage: test
+  only:
+    refs:
+      - master
+  before_script:
+    - npm install
+  script:
+    - npm run test:e2e
+
+backend-docker-build:
+  stage: docker-build
+  services:
+    - docker:18-dind
+  only:
+    refs:
+      - master
+  script:
+    - docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+    - docker build . -t waroenkumkm/backend:$CI_COMMIT_SHORT_SHA
+    - docker push waroenkumkm/backend:$CI_COMMIT_SHORT_SHA
+
+deploy:
+  image: amazon/aws-cli:2.0.22
+  stage: deploy
+  only:
+    refs:
+      - master
+  before_script:
+    - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/kubectl
+    - chmod +x ./kubectl
+    - mv ./kubectl /usr/local/bin/kubectl
+    - curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
+    - chmod +x ./aws-iam-authenticator
+    - mv ./aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
+    - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
+  script:
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set default.region ap-southeast-1
+    - aws eks --region ap-southeast-1 update-kubeconfig --name data-prod-eksCluster-46e4e9d
+    - git clone https://gitlab.com/fariqodri/waroenk-infra.git kubernetes
+    - cd kubernetes/backend
+    - sh ./env-staging.sh
+    - kubectl apply -f backend-manifest.yaml
