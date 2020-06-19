@@ -1,5 +1,5 @@
 # Dockerfile
-FROM node:10 as build-img
+FROM node:10-alpine as development
 
 # Set environment variables
 ENV APPDIR /code
@@ -8,15 +8,20 @@ ENV APPDIR /code
 RUN mkdir -p ${APPDIR}
 WORKDIR ${APPDIR}
 
-ADD . ${APPDIR}
+COPY package*.json ./
 
-RUN npm install && npm run prebuild && npm run build
+RUN npm install
 
-ARG NODE_ENV
-ENV NODE_ENV ${NODE_ENV:-production}
+COPY . .
+
+RUN npm run prebuild && npm run build
+
 
 # Multistage build
-FROM node:10-alpine
+FROM node:10-alpine as production
+
+ARG NODE_ENV=production
+ENV NODE_ENV ${NODE_ENV}
 
 ENV APPDIR /code
 
@@ -24,8 +29,8 @@ RUN mkdir -p ${APPDIR}
 WORKDIR ${APPDIR}
 
 # Copy source code
-COPY --from=build-img /code/dist /code
-COPY --from=build-img /code/package.json /code
+COPY --from=development /code/dist /code
+COPY --from=development /code/package*.json /code/
 
 RUN npm install --production
 
