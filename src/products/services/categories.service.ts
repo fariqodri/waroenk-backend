@@ -1,25 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { ResponseBody } from '../../utils/response';
-import { Category } from '../entities/categories.entity';
+import { CategoryEntity } from '../entities/categories.entity';
+import { CategoryRepository } from '../repositories/category.repository';
 
 @Injectable()
 export class CategoriesService {
-  findAll(search?: string): ResponseBody<Category> {
-    let categories: Category[] = [
-      {
-        id: 'category_1',
-        name: 'Sayuran',
-        image: 's3_url_1',
-      },
-      {
-        id: 'category_2',
-        name: 'Buah-buahan',
-        image: 's3_url_1',
-      },
-    ]
+  constructor(private categoryRepository: CategoryRepository) {}
+
+  async findAll(search?: string): Promise<ResponseBody<CategoryEntity>> {
+    let categories: CategoryEntity[];
     if (search) {
-      categories = categories.filter(c => c.name.toLowerCase() == search.toLowerCase());
+      categories = await this.categoryRepository
+        .createQueryBuilder()
+        .where('LOWER(name) LIKE :name', { name: `%${search.toLowerCase()}%` })
+        .getMany();
+      return new ResponseBody(categories);
     }
-    return new ResponseBody<Category>(categories);
+    categories = await this.categoryRepository.find();
+    return new ResponseBody(categories);
   }
 }

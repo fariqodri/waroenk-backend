@@ -1,19 +1,48 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from '../src/products/products.module';
+import { CategoryEntity } from '../src/products/entities/categories.entity';
+import { getConnection } from 'typeorm';
+import { nanoid } from 'nanoid'
 
-describe('CategoriesController (e2e)', () => {
+describe('GET CategoriesController (e2e)', () => {
   let app: INestApplication;
+  const id_1 = nanoid(11),
+        id_2 = nanoid(11)
 
   beforeEach(async () => {
     const moduleFixture = await Test.createTestingModule({
-      imports: [ProductsModule],
+      imports: [
+        ProductsModule,
+        TypeOrmModule.forRoot({
+          type: "sqlite",
+          database: ":memory:",
+          dropSchema: true,
+          synchronize: true,
+          entities: [CategoryEntity]
+        })
+      ],
     }).compile();
     app = moduleFixture.createNestApplication()
     await app.init()
+
+    await getConnection()
+      .createQueryBuilder()
+      .insert()
+      .into(CategoryEntity)
+      .values([
+        { id: id_1, name: "Sayuran", image: "s3_url_1" },
+        { id: id_2, name: "Buah-buahan", image: "s3_url_1" },
+      ])
+      .execute()
   });
 
+  afterEach(() => {
+    return getConnection().close()
+  })
+  
   it(`/GET categories`, () => {
     return request(app.getHttpServer())
       .get("/categories")
@@ -22,12 +51,12 @@ describe('CategoriesController (e2e)', () => {
         "message": "ok",
         "result": [
           {
-            id: 'category_1',
+            id: id_1,
             name: 'Sayuran',
             image: 's3_url_1',
           },
           {
-            id: 'category_2',
+            id: id_2,
             name: 'Buah-buahan',
             image: 's3_url_1',
           },
@@ -43,7 +72,7 @@ describe('CategoriesController (e2e)', () => {
         "message": "ok",
         "result": [
           {
-            id: 'category_1',
+            id: id_1,
             name: 'Sayuran',
             image: 's3_url_1',
           },

@@ -1,24 +1,10 @@
 version: '3.7'
 
 services:
-  main:
-    container_name: main
-    build:
-      context: .
-      target: development
-    volumes:
-      - .:/code
-      - /code/node_modules
-    ports:
-      - 3000:3000
-    command: npm run start:dev
-    depends_on:
-      - db
-
   db:
     container_name: db
     image: mysql:8.0
-    command: --init-file /data/application/init.sql
+    command: --init-file /data/application/init.sql --default-authentication-plugin=mysql_native_password
     volumes: 
       - ./scripts/init.sql:/data/application/init.sql
     environment:

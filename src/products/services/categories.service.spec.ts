@@ -1,28 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesService } from './categories.service';
 import { ResponseBody } from '../../utils/response';
-import { Category } from '../entities/categories.entity';
+import { CategoryEntity } from '../entities/categories.entity';
+import { CategoryRepository } from '../repositories/category.repository';
+
+jest.mock('../repositories/category.repository')
 
 describe('CategoriesService', () => {
   let service: CategoriesService;
+  let categoryRepo: CategoryRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CategoriesService],
+      providers: [CategoriesService, CategoryRepository],
     }).compile();
 
     service = module.get<CategoriesService>(CategoriesService);
+    categoryRepo = module.get(CategoryRepository);
   });
 
-  it('should return valid response body', () => {
-    let resp = service.findAll(null)
-    expect(resp).toBeInstanceOf(ResponseBody)
-
-    resp = service.findAll("sayuran")
-    expect(resp.result).toEqual<Category[]>([{
-      id: "category_1",
-      name: "Sayuran",
-      image: "s3_url_1"
-    }])
+  it('should call query builder', async () => {
+    const spy = jest.spyOn(categoryRepo, "find")
+    await service.findAll(null)
+    expect(spy).toBeCalled()
   });
 });
