@@ -32,7 +32,7 @@ WORKDIR ${APPDIR}
 COPY --from=development /code/dist /code
 COPY --from=development /code/package*.json /code/
 
-RUN npm install --production
+RUN npm install --production && npm install -g ts-node --unsafe-perm
 
 # Delete unused files
 RUN rm -rf package-lock.json
