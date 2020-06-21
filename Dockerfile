@@ -14,7 +14,7 @@ RUN npm install
 
 COPY . .
 
-RUN npm run prebuild && npm run build
+RUN npm run build
 
 
 # Multistage build
@@ -32,7 +32,7 @@ WORKDIR ${APPDIR}
 COPY --from=development /code/dist /code
 COPY --from=development /code/package*.json /code/
 
-RUN npm install --production && npm install -g ts-node --unsafe-perm
+RUN npm install --production
 
 # Delete unused files
 RUN rm -rf package-lock.json
