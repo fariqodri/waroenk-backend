@@ -1,32 +1,65 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { nanoid } from 'nanoid';
+import * as bcrypt from 'bcrypt'
 
-export type User = any;
+import { RegisterDto } from './users.dto';
+import { UserEntity } from './users.entity';
+import { ResponseBody } from '../utils/response';
+import { SALT_ROUNDS } from '../constants';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UsersService {
-  private readonly users: User[];
+  public readonly users: UserEntity[];
 
   constructor() {
     this.users = [
       {
-        userId: 1,
-        username: 'john',
+        id: nanoid(11),
+        full_name: "Full Name",
+        email: "full@example.com",
+        phone: "081223212321",
         password: 'changeme',
       },
       {
-        userId: 2,
-        username: 'chris',
-        password: 'secret',
+        id: nanoid(11),
+        full_name: "Full Name",
+        email: "full@example.com",
+        phone: "081223212321",
+        password: 'changeme',
       },
       {
-        userId: 3,
-        username: 'maria',
-        password: 'guess',
+        id: nanoid(11),
+        full_name: "Full Name",
+        email: "full@example.com",
+        phone: "081223212321",
+        password: 'changeme',
       },
     ];
   }
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find(user => user.username === username);
+  async findOne(email: string): Promise<UserEntity | undefined> {
+    return this.users.find(user => user.email === email);
+  }
+
+  async register(body: RegisterDto): Promise<UserEntity> {
+    if (body.password != body.confirm_password) {
+      throw new BadRequestException(new ResponseBody(null, "confirm password unequal with password"))
+    }
+    try {
+      const encrypted = await bcrypt.hash(body.password, SALT_ROUNDS)
+      const user: UserEntity = {
+        id: nanoid(11),
+        full_name: body.full_name,
+        email: body.email,
+        phone: body.phone,
+        password: encrypted
+      }
+      // TODO insert user to DB
+      this.users.push(user)
+      return plainToClass(UserEntity, user)
+    } catch (err) {
+      throw err
+    }
   }
 }

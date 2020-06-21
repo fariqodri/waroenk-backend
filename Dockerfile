@@ -32,7 +32,10 @@ WORKDIR ${APPDIR}
 COPY --from=development /code/dist /code
 COPY --from=development /code/package*.json /code/
 
-RUN npm install --production
+RUN apk add --no-cache make gcc g++ python && \
+  npm install --production && \
+  npm rebuild bcrypt --build-from-source && \
+  apk del make gcc g++ python
 
 # Delete unused files
 RUN rm -rf package-lock.json
