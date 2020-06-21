@@ -7,16 +7,10 @@ const config: ConnectionOptions = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  synchronize: process.env.NODE_ENV === "production" ? false : true,
+  synchronize: true,
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
-  migrationsTableName: "migrations",
-  migrationsRun: false,
   logging: ["query"],
   logger: "file",
-  migrations: ["migration/*.js"],
-  cli: {
-    "migrationsDir": "migration"
-  }
 }
 
 module.exports = config
