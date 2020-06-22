@@ -3,14 +3,25 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 
 import { UsersModule } from '../src/users/users.module'
+import { PermissionService } from '../src/permission/permission.service';
+import { PermissionModule } from '../src/permission/permission.module';
 
 describe('Users E2E', () => {
   let app: INestApplication;
+  let permissionService = {
+    addMemberToRole: () => jest.fn()
+  }
 
   beforeEach(async () => {
     const moduleFixture = await Test.createTestingModule({
-      imports: [UsersModule]
-    }).compile()
+      imports: [
+        UsersModule,
+        PermissionModule
+      ]
+    })
+      .overrideProvider(PermissionService)
+      .useValue(permissionService)
+      .compile()
 
     app = moduleFixture.createNestApplication()
     await app.init()
