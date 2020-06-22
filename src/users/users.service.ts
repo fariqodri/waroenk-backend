@@ -5,14 +5,17 @@ import * as bcrypt from 'bcrypt'
 import { RegisterDto } from './users.dto';
 import { UserEntity } from './users.entity';
 import { ResponseBody } from '../utils/response';
-import { SALT_ROUNDS } from '../constants';
+import { SALT_ROUNDS, BUYER_ROLE_ID } from '../constants';
 import { plainToClass } from 'class-transformer';
+import { PermissionService } from '../permission/permission.service';
 
 @Injectable()
 export class UsersService {
   public readonly users: UserEntity[];
 
-  constructor() {
+  constructor(
+    private permissionService: PermissionService
+  ) {
     this.users = [
       {
         id: nanoid(11),
@@ -57,6 +60,7 @@ export class UsersService {
       }
       // TODO insert user to DB
       this.users.push(user)
+      await this.permissionService.addMemberToRole(user.id, BUYER_ROLE_ID)
       return plainToClass(UserEntity, user)
     } catch (err) {
       throw err
