@@ -3,6 +3,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { RegisterDto } from './users.dto';
 import { BadRequestException } from '@nestjs/common';
+import { PermissionModule } from '../permission/permission.module';
 
 describe('Users Controller', () => {
   let controller: UsersController;
@@ -11,7 +12,8 @@ describe('Users Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [UsersService]
+      providers: [UsersService],
+      imports: [PermissionModule]
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
@@ -30,7 +32,7 @@ describe('Users Controller', () => {
       password: "test123test123",
       confirm_password: "test123test123"
     }
-    const spy = jest.spyOn(service, 'register')
+    const spy = jest.spyOn(service, 'register').mockImplementation()
     await controller.register(registerBody)
     expect(spy).toBeCalledTimes(1)
   })

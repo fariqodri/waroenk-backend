@@ -37,6 +37,12 @@ $ npm install
 ## Running the app
 
 ```bash
+# running dependencies
+$ docker-compose up -d
+
+# loading environment variables
+$ cp .env.example .env.local && source .env.local
+
 # development
 $ npm run start
 
