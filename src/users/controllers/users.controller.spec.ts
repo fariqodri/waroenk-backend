@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { RegisterDto } from './users.dto';
+import { UsersService } from '../services/users.service';
+import { RegisterDto } from '../dto/users.dto';
 import { BadRequestException } from '@nestjs/common';
-import { PermissionModule } from '../permission/permission.module';
+import { PermissionModule } from '../../permission/permission.module';
 
 describe('Users Controller', () => {
   let controller: UsersController;

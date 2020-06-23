@@ -2,12 +2,12 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { nanoid } from 'nanoid';
 import * as bcrypt from 'bcrypt'
 
-import { RegisterDto } from './users.dto';
-import { UserEntity } from './users.entity';
-import { ResponseBody } from '../utils/response';
-import { SALT_ROUNDS, BUYER_ROLE_ID } from '../constants';
+import { RegisterDto } from '../dto/users.dto';
+import { UserEntity } from '../entities/users.entity';
+import { ResponseBody } from '../../utils/response';
+import { SALT_ROUNDS, BUYER_ROLE_ID } from '../../constants';
 import { plainToClass } from 'class-transformer';
-import { PermissionService } from '../permission/permission.service';
+import { PermissionService } from '../../permission/permission.service';
 
 @Injectable()
 export class UsersService {

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
-import { RegisterDto } from './users.dto';
+import { RegisterDto } from '../dto/users.dto';
 import { BadRequestException } from '@nestjs/common';
-import { PermissionService } from '../permission/permission.service';
-import { BUYER_ROLE_ID } from '../constants';
-import { PermissionModule } from '../permission/permission.module';
+import { PermissionService } from '../../permission/permission.service';
+import { BUYER_ROLE_ID } from '../../constants';
+import { PermissionModule } from '../../permission/permission.module';
 
 describe('UsersService', () => {
   let service: UsersService;

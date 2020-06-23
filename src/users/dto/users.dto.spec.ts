@@ -7,6 +7,7 @@ describe('DTO Validation Test', () => {
       full_name: "Full Name",
       email: "full@example.com",
       phone: "08123211231",
+      role: "buyer",
       password: "test123test123",
       confirm_password: "test123test123"
     }
@@ -19,6 +20,7 @@ describe('DTO Validation Test', () => {
       full_name: "Full Name",
       email: "full",
       phone: "123123",
+      role: "buyer",
       password: "test12",
       confirm_password: "test12"
     }

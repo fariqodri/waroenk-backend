@@ -4,6 +4,9 @@ export class RegisterDto {
   @jf.string().required()
   full_name: string
 
+  @jf.string().required()
+  role: string
+
   @jf.string().email().required()
   email: string
 
