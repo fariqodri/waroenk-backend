@@ -30,7 +30,8 @@ describe('Users Controller', () => {
       email: "full@example.com",
       phone: "08123211231",
       password: "test123test123",
-      confirm_password: "test123test123"
+      confirm_password: "test123test123",
+      role: "buyer"
     }
     const spy = jest.spyOn(service, 'register').mockImplementation()
     await controller.register(registerBody)
@@ -43,7 +44,8 @@ describe('Users Controller', () => {
       email: "full@example.com",
       phone: "08123211231",
       password: "test123test123",
-      confirm_password: "test123tes098"
+      confirm_password: "test123tes098",
+      role: "buyer"
     }
     jest.spyOn(service, 'register').mockImplementation(async () => {
       throw new BadRequestException()

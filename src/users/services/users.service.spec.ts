@@ -30,7 +30,8 @@ describe('UsersService', () => {
       email: "full@example.com",
       phone: "08123211231",
       password: "test123test123",
-      confirm_password: "test123test123"
+      confirm_password: "test123test123",
+      role: "buyer"
     }
     const spy = jest.spyOn(permissionService, "addMemberToRole").mockImplementation()
     const user = await service.register(registerBody)
@@ -39,6 +40,7 @@ describe('UsersService', () => {
     expect(user.full_name).toEqual(registerBody.full_name)
     expect(user.email).toEqual(registerBody.email)
     expect(user.phone).toEqual(registerBody.phone)
+    expect(user.role).toEqual(registerBody.role)
     expect(spy).toBeCalledWith(user.id, BUYER_ROLE_ID)
   })
 
@@ -48,7 +50,8 @@ describe('UsersService', () => {
       email: "full@example.com",
       phone: "08123211231",
       password: "test123test123",
-      confirm_password: "test123tes098"
+      confirm_password: "test123tes098",
+      role: "buyer"
     }
     const spy = jest.spyOn(permissionService, "addMemberToRole").mockImplementation()
     const rejection = expect(service.register(registerBody)).rejects

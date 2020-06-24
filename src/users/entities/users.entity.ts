@@ -1,5 +1,5 @@
-import {Entity, PrimaryColumn, Column} from "typeorm";
-import { Exclude } from 'class-transformer'
+import { Entity, PrimaryColumn, Column, OneToMany } from "typeorm";
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: "users" })
 export class UserEntity {
@@ -21,4 +21,5 @@ export class UserEntity {
 
   @Exclude()
   password: string
+
 }

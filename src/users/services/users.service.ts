@@ -23,6 +23,7 @@ export class UsersService {
         email: "full@example.com",
         phone: "081223212321",
         password: 'changeme',
+        role: 'buyer',
       },
       {
         id: nanoid(11),
@@ -30,6 +31,7 @@ export class UsersService {
         email: "full@example.com",
         phone: "081223212321",
         password: 'changeme',
+        role: 'buyer',
       },
       {
         id: nanoid(11),
@@ -37,6 +39,7 @@ export class UsersService {
         email: "full@example.com",
         phone: "081223212321",
         password: 'changeme',
+        role: 'buyer',
       },
     ];
   }
@@ -56,7 +59,8 @@ export class UsersService {
         full_name: body.full_name,
         email: body.email,
         phone: body.phone,
-        password: encrypted
+        password: encrypted,
+        role: body.role
       }
       // TODO insert user to DB
       this.users.push(user)
