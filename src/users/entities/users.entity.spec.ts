@@ -8,6 +8,7 @@ describe("User Entity", () => {
       full_name: "Full Name",
       email: "full@example.com",
       phone: "08123211231",
+      role: "buyer",
       password: "test123test123",
     }
     const user = plainToClass(UserEntity, responseUser)

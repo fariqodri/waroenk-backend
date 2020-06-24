@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { RegisterDto } from './users.dto';
+import { UsersService } from '../services/users.service';
+import { RegisterDto } from '../dto/users.dto';
 import { BadRequestException } from '@nestjs/common';
-import { PermissionModule } from '../permission/permission.module';
+import { PermissionModule } from '../../permission/permission.module';
 
 describe('Users Controller', () => {
   let controller: UsersController;
@@ -30,7 +30,8 @@ describe('Users Controller', () => {
       email: "full@example.com",
       phone: "08123211231",
       password: "test123test123",
-      confirm_password: "test123test123"
+      confirm_password: "test123test123",
+      role: "buyer"
     }
     const spy = jest.spyOn(service, 'register').mockImplementation()
     await controller.register(registerBody)
@@ -43,7 +44,8 @@ describe('Users Controller', () => {
       email: "full@example.com",
       phone: "08123211231",
       password: "test123test123",
-      confirm_password: "test123tes098"
+      confirm_password: "test123tes098",
+      role: "buyer"
     }
     jest.spyOn(service, 'register').mockImplementation(async () => {
       throw new BadRequestException()
