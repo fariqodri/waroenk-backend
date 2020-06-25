@@ -5,7 +5,6 @@ import { RedisClient, ClientOpts } from "redis";
 export class RedisClientProvider extends RedisClient {
   constructor(@Inject('REDIS_OPTIONS') options: ClientOpts) {
     super(options)
-    super.on('error', console.error)
     super.on('connect', console.log)
   }
 }
