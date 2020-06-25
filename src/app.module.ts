@@ -4,7 +4,9 @@ import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PermissionModule } from './permission/permission.module';
+import { RedisModule } from './redis/redis.module';
 import * as config from "./ormconfig";
+import { REDIS_URL } from './constants';
 
 @Module({
   imports: [
@@ -12,7 +14,10 @@ import * as config from "./ormconfig";
     AuthModule,
     UsersModule,
     ProductsModule,
-    PermissionModule
+    PermissionModule,
+    RedisModule.register({
+      url: REDIS_URL
+    })
   ],
 })
 export class AppModule {}
