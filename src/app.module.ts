@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PermissionModule } from './permission/permission.module';
 import { RedisModule } from './redis/redis.module';
 import * as config from "./ormconfig";
-import { REDIS_URL } from './constants';
+import { REDIS_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from './constants';
 
 @Module({
   imports: [
@@ -16,7 +16,9 @@ import { REDIS_URL } from './constants';
     ProductsModule,
     PermissionModule,
     RedisModule.register({
-      url: REDIS_URL
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+      password: REDIS_PASSWORD,
     })
   ],
 })
