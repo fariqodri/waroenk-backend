@@ -33,7 +33,8 @@ describe('Users E2E', () => {
       email: "full@example.com",
       phone: "081238192312",
       password: "password",
-      confirm_password: "password"
+      confirm_password: "password",
+      role: "buyer",
     }
     return request(app.getHttpServer())
       .post('/users')
