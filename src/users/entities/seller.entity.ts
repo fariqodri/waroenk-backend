@@ -4,6 +4,9 @@ import { UserEntity } from './users.entity';
 @Entity({ name: "seller" })
 export class SellerAttribute {
 
+  @Column(type => UserEntity)
+  user: UserEntity
+
   @PrimaryColumn()
   id: string
 
@@ -18,7 +21,4 @@ export class SellerAttribute {
 
   @Column()
   kelamin: string
-
-  @Column(type => UserEntity)
-  user: UserEntity;
 }

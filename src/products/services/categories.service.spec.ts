@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesService } from './categories.service';
 import { ResponseBody } from '../../utils/response';
-import { CategoryEntity } from '../entities/categories.entity';
+import { CategoryEntity } from '../entities/category.entity';
 import { CategoryRepository } from '../repositories/category.repository';
 
 jest.mock('../repositories/category.repository')

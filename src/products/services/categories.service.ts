@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ResponseBody } from '../../utils/response';
-import { CategoryEntity } from '../entities/categories.entity';
+import { CategoryEntity } from '../entities/category.entity';
 import { CategoryRepository } from '../repositories/category.repository';
 
 @Injectable()
