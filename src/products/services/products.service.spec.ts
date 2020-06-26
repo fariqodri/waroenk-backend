@@ -21,7 +21,8 @@ describe('ProductsService', () => {
   });
 
   it('should call query builder', async () => {
-    const spy = jest.spyOn(productRepo, "createQueryBuilder");
+    const spy = jest.spyOn(productRepo, "find").mockImplementation();
+    // const spy = jest.spyOn(productRepo, "createQueryBuilder");
     let param = new ProductParam;
     param.page = 1
     param.limit = 10

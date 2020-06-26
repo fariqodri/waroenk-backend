@@ -11,11 +11,12 @@ export class ProductsService {
   async findAll(param: ProductParam): Promise<ResponseBody<ProductEntity>> {
     let products: ProductEntity[];
     const skippedItems = (param.page - 1) * param.limit;
-    products = await this.productRepository
-      .createQueryBuilder("product")
-      .skip(skippedItems)
-      .take(param.limit)
-      .getMany();
+    products = await this.productRepository.find({ take: param.limit, skip: skippedItems })
+    // products = await this.productRepository
+    //   .createQueryBuilder("product")
+    //   .skip(skippedItems)
+    //   .take(param.limit)
+    //   .getMany();
     return new ResponseBody(products);
   }
 }
