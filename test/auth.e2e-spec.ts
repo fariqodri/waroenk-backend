@@ -1,17 +1,17 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { getConnection } from 'typeorm';
 
 import { AuthModule } from '../src/auth/auth.module'
 import { UsersModule } from '../src/users/users.module';
-import { JwtStrategy } from '../src/auth/jwt.strategy';
-import { JwtAuthGuard } from '../src/auth/jwt-auth.guard';
+import { JwtStrategy } from '../src/auth/providers/jwt.strategy';
+import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
 import { RedisModule } from '../src/redis/redis.module';
-import { RedisService } from '../src/redis/redis.service';
 import { RedisClientProvider } from '../src/redis/redis.client.provider';
 import { JwtService } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from '../src/users/entities/users.entity';
+import { getConnection } from 'typeorm';
 
 describe('Login and Logout E2E Test', () => {
   let app: INestApplication;
@@ -36,6 +36,13 @@ describe('Login and Logout E2E Test', () => {
         RedisModule.register({}),
         AuthModule,
         UsersModule,
+        TypeOrmModule.forRoot({
+          type: "sqlite",
+          database: ":memory:",
+          dropSchema: true,
+          synchronize: true,
+          entities: [UserEntity]
+        })
       ],
     })
       .overrideProvider(JwtStrategy)
@@ -49,6 +56,10 @@ describe('Login and Logout E2E Test', () => {
       .compile();
     app = moduleFixture.createNestApplication()
     await app.init()
+  })
+
+  afterEach(async () => {
+    await getConnection().close()
   })
 
   it('should add revoked token to DB', () => {
