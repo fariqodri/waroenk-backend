@@ -23,7 +23,7 @@ describe('GET CategoriesController (e2e)', () => {
           database: ":memory:",
           dropSchema: true,
           synchronize: true,
-          entities: [CategoryEntity, ProductEntity]
+          entities: [CategoryEntity]
         })
       ],
     }).compile();
