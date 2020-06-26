@@ -1,5 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
+import { ProductParam } from '../dto/productparam.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -8,7 +9,9 @@ export class ProductsController {
   ) {}
 
   @Get()
-  findAll(@Query("search") search?: string) {
-    return this.productsService.findAll(search)
+  findAll(@Query() param: ProductParam) {
+  	param.page = Number(param.page)
+    param.limit = Number(param.limit)
+    return this.productsService.findAll(param)
   }
 }

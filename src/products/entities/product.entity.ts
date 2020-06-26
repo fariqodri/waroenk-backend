@@ -2,7 +2,7 @@ import { Entity, PrimaryColumn, Column } from "typeorm";
 import { CategoryEntity } from './category.entity';
 import { UserEntity } from '../../users/entities/users.entity';
 
-@Entity({ name: "products" })
+@Entity({ name: "product" })
 export class ProductEntity {
 
   @PrimaryColumn()

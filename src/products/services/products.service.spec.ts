@@ -3,6 +3,7 @@ import { ProductsService } from './products.service';
 import { ResponseBody } from '../../utils/response';
 import { ProductEntity } from '../entities/product.entity';
 import { ProductRepository } from '../repositories/product.repository';
+import { ProductParam } from '../dto/productparam.dto';
 
 jest.mock('../repositories/product.repository')
 
@@ -20,8 +21,11 @@ describe('ProductsService', () => {
   });
 
   it('should call query builder', async () => {
-    const spy = jest.spyOn(productRepo, "find")
-    await service.findAll(null)
-    expect(spy).toBeCalled()
+    const spy = jest.spyOn(productRepo, "createQueryBuilder");
+    let param = new ProductParam;
+    param.page = 1
+    param.limit = 10
+    await service.findAll(param);
+    expect(spy).toBeCalled();
   });
 });
