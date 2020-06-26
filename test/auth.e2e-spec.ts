@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+import * as bcrypt from 'bcrypt';
 
 import { AuthModule } from '../src/auth/auth.module'
 import { UsersModule } from '../src/users/users.module';
@@ -12,6 +13,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { getConnection } from 'typeorm';
+import { UsersService } from '../src/users/services/users.service';
 
 describe('Login and Logout E2E Test', () => {
   let app: INestApplication;
@@ -28,7 +30,8 @@ describe('Login and Logout E2E Test', () => {
       get: jest.fn().mockImplementation((key, cb) => cb(null, `{}`)),
     }
     const fakeJwtService = {
-      decode: jest.fn().mockReturnValue({ iat: 1, exp: 2 })
+      decode: jest.fn().mockReturnValue({ iat: 1, exp: 2 }),
+      sign: jest.fn().mockReturnValue('fake_token')
     }
     
     const moduleFixture = await Test.createTestingModule({
@@ -56,13 +59,24 @@ describe('Login and Logout E2E Test', () => {
       .compile();
     app = moduleFixture.createNestApplication()
     await app.init()
+
+    getConnection()
+      .getRepository(UserEntity)
+      .insert({
+        id: 'user-1',
+        email: 'user@example.com',
+        full_name: 'user 1',
+        password: 'password1234',
+        role: 'buyer',
+        phone: '0821321321'
+      })
   })
 
   afterEach(async () => {
     await getConnection().close()
   })
 
-  it('should add revoked token to DB', () => {
+  it('logout should return OK', () => {
     return request(app.getHttpServer())
       .post('/auth/logout')
       .set("Authorization", "Bearer fake_token")
@@ -70,6 +84,47 @@ describe('Login and Logout E2E Test', () => {
       .expect({
         "message": "ok",
         "result": null
+      })
+  })
+
+  it('login should return OK on valid body', () => {
+    jest.spyOn(bcrypt, 'compare').mockResolvedValue(true)
+    return request(app.getHttpServer())
+      .post('/auth/login')
+      .expect(200)
+      .send({
+        email: 'user@example.com',
+        password: 'password1234'
+      })
+      .expect({
+        message: 'ok',
+        result: {
+          access_token: 'fake_token'
+        }
+      })
+  })
+
+  it('login should return error on invalid body', () => {
+    return request(app.getHttpServer())
+      .post('/auth/login')
+      .expect(400)
+      .send({
+        email: 'user',
+        password: 'password1234'
+      })
+  })
+
+  it('login should return error on invalid email', () => {
+    return request(app.getHttpServer())
+      .post('/auth/login')
+      .expect(400)
+      .send({
+        email: 'wrongEmail@gmail.com',
+        password: 'password1234'
+      })
+      .expect({
+        message: 'invalid email',
+        result: null
       })
   })
 })

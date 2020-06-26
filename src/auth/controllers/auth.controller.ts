@@ -1,14 +1,18 @@
-import { Controller, Get, Post, UseGuards, Req, HttpCode, Body } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards, Req, HttpCode, Body, UsePipes } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { Request } from 'express';
+import { ValidationPipe } from '../../utils/validation.pipe';
+import { LoginDto } from '../dto/auth.dto';
 
 @Controller("auth")
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @UsePipes(ValidationPipe)
   @Post('login')
-  async login(@Body() body: { email: string, password: string }) {
+  @HttpCode(200)
+  async login(@Body() body: LoginDto) {
     return this.authService.login(body.email, body.password);
   }
 
