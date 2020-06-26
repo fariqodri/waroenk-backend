@@ -31,10 +31,9 @@ export class AuthService {
     throw new BadRequestException(new ResponseBody(null, 'invalid password'))
   }
 
-  async logout(token: string): Promise<ResponseBody<null>> {
-    const payload = this.jwtService.decode(token) as { exp: number, iat: number }
+  async logout(token: string, expiredAt: number, issuedAt: number): Promise<ResponseBody<null>> {
     try {
-      await this.redisService.set(token, 1, payload.exp - payload.iat)
+      await this.redisService.set(token, 1, expiredAt - issuedAt)
       return new ResponseBody(null)
     } catch (err) {
       throw err

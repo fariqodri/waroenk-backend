@@ -1,11 +1,10 @@
 import { Test } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ExecutionContext } from '@nestjs/common';
 import * as request from 'supertest';
 import * as bcrypt from 'bcrypt';
 
 import { AuthModule } from '../src/auth/auth.module'
 import { UsersModule } from '../src/users/users.module';
-import { JwtStrategy } from '../src/auth/providers/jwt.strategy';
 import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
 import { RedisModule } from '../src/redis/redis.module';
 import { RedisClientProvider } from '../src/redis/redis.client.provider';
@@ -22,18 +21,18 @@ describe('Login and Logout E2E Test', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
-    const fakeJwtStrategyProvider = {
-      handleRequest: jest.fn().mockReturnValue(true)
-    }
     const fakeJwtAuthGuard = {
-      canActivate: jest.fn().mockReturnValue(true)
+      canActivate: jest.fn().mockImplementation((context: ExecutionContext) => {
+        const req = context.switchToHttp().getRequest();
+        req.user = { userId: 'user-1', issuedAt: 1, expiredAt: 2 }
+        return true
+      })
     }
     const fakeRedisClientProvider = {
       set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
       get: jest.fn().mockImplementation((key, cb) => cb(null, `{}`)),
     }
     const fakeJwtService = {
-      decode: jest.fn().mockReturnValue({ iat: 1, exp: 2 }),
       sign: jest.fn().mockReturnValue('fake_token')
     }
     
@@ -51,8 +50,6 @@ describe('Login and Logout E2E Test', () => {
         })
       ],
     })
-      .overrideProvider(JwtStrategy)
-      .useValue(fakeJwtStrategyProvider)
       .overrideGuard(JwtAuthGuard)
       .useValue(fakeJwtAuthGuard)
       .overrideProvider(RedisClientProvider)

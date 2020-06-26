@@ -1,10 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from '../services/auth.service';
-import { UsersModule } from '../../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { RedisService } from '../../redis/redis.service';
-import { JwtStrategy } from '../providers/jwt.strategy';
 import { UsersService } from '../../users/services/users.service';
 import { PermissionService } from '../../permission/permission.service';
 import { UserRepository } from '../../users/repositories/users.repository';
@@ -44,6 +42,11 @@ describe('Auth Controller', () => {
     const request: any = {
       headers: {
         authorization: "Bearer fake_token"
+      },
+      user: {
+        userId: 'user-1',
+        expiredAt: 2,
+        issuedAt: 1
       }
     }
     controller.logout(request)

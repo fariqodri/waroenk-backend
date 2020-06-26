@@ -24,7 +24,6 @@ describe('AuthService', () => {
         {
           provide: JwtService,
           useValue: {
-            decode: jest.fn().mockReturnValue({ iat: 1, exp: 2 }),
             sign: jest.fn().mockReturnValue('fake_token')
           }
         },
@@ -45,9 +44,8 @@ describe('AuthService', () => {
   });
 
   it('should call redis service', async () => {
-    await service.logout("fake_token")
+    await service.logout("fake_token", 2, 1)
     expect(redisService.set).toBeCalled()
-    expect(jwtService.decode).toBeCalledWith("fake_token")
   });
 
   it('should return token on login', async () => {
