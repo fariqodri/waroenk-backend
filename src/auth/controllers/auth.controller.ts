@@ -27,6 +27,7 @@ export class AuthController {
   @HttpCode(200)
   logout(@Req() req: Request) {
     const [_, token] = req.headers.authorization.split(" ")
-    return this.authService.logout(token)
+    const session: { userId: string, expiredAt: number, issuedAt: number } = req.user as { userId: string, expiredAt: number, issuedAt: number }
+    return this.authService.logout(token, session.expiredAt, session.issuedAt)
   }
 }

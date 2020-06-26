@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ExecutionContext } from '@nestjs/common';
 import * as request from 'supertest';
 
 import { UsersModule } from '../src/users/users.module'
@@ -8,6 +8,11 @@ import { PermissionModule } from '../src/permission/permission.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { getConnection } from 'typeorm';
+import { AuthModule } from '../src/auth/auth.module';
+import { RedisModule } from '../src/redis/redis.module'
+import { RedisClientProvider } from '../src/redis/redis.client.provider';
+import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
+import { JwtModule } from '@nestjs/jwt';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { ProductEntity } from '../src/products/entities/product.entity';
 import { CategoryEntity } from '../src/products/entities/category.entity';
@@ -16,6 +21,17 @@ describe('Users E2E', () => {
   let app: INestApplication;
   let permissionService = {
     addMemberToRole: () => jest.fn()
+  }
+  const fakeRedisClientProvider = {
+    set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
+    get: jest.fn().mockImplementation((key, cb) => cb(null, `{}`)),
+  }
+  const fakeJwtAuthGuard = {
+    canActivate: jest.fn().mockImplementation((context: ExecutionContext) => {
+      const req = context.switchToHttp().getRequest();
+      req.user = { userId: 'user-1', issuedAt: 1, expiredAt: 2 }
+      return true
+    })
   }
 
   beforeEach(async () => {
@@ -29,11 +45,19 @@ describe('Users E2E', () => {
           dropSchema: true,
           synchronize: true,
           entities: [CategoryEntity, UserEntity, SellerAttribute, ProductEntity]
-        })
+        }),
+        AuthModule,
+        RedisModule.register({}),
+        JwtModule.register({})
+        
       ]
     })
       .overrideProvider(PermissionService)
       .useValue(permissionService)
+      .overrideProvider(RedisClientProvider)
+      .useValue(fakeRedisClientProvider)
+      .overrideGuard(JwtAuthGuard)
+      .useValue(fakeJwtAuthGuard)
       .compile()
 
     app = moduleFixture.createNestApplication()
@@ -42,6 +66,33 @@ describe('Users E2E', () => {
 
   afterEach(async () => {
     await getConnection().close()
+  })
+
+  it('Get User Info', () => {
+    getConnection()
+      .getRepository(UserEntity)
+      .insert({
+        id: 'user-1',
+        full_name: "full_name",
+        email: "full@example.com",
+        phone: "081238192312",
+        password: "password",
+        role: 'buyer'
+      })
+    return request(app.getHttpServer())
+      .get('/users')
+      .set('Authorization', 'fake_token')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: {
+          id: 'user-1',
+          full_name: "full_name",
+          email: "full@example.com",
+          phone: "081238192312",
+          role: 'buyer'
+        }
+      })
   })
 
   it('Register valid', () => {
