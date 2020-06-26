@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { nanoid } from 'nanoid';
 import * as bcrypt from 'bcrypt'
 
@@ -8,44 +8,24 @@ import { ResponseBody } from '../../utils/response';
 import { SALT_ROUNDS, BUYER_ROLE_ID } from '../../constants';
 import { plainToClass } from 'class-transformer';
 import { PermissionService } from '../../permission/permission.service';
+import { UserRepository } from '../repositories/users.repository';
 
 @Injectable()
 export class UsersService {
   public readonly users: UserEntity[];
 
   constructor(
-    private permissionService: PermissionService
-  ) {
-    this.users = [
-      {
-        id: nanoid(11),
-        full_name: "Full Name",
-        email: "full@example.com",
-        phone: "081223212321",
-        password: 'changeme',
-        role: 'buyer',
-      },
-      {
-        id: nanoid(11),
-        full_name: "Full Name",
-        email: "full@example.com",
-        phone: "081223212321",
-        password: 'changeme',
-        role: 'buyer',
-      },
-      {
-        id: nanoid(11),
-        full_name: "Full Name",
-        email: "full@example.com",
-        phone: "081223212321",
-        password: 'changeme',
-        role: 'buyer',
-      },
-    ];
-  }
+    private permissionService: PermissionService,
+    private userRepo: UserRepository,
+  ) {}
 
-  async findOne(email: string): Promise<UserEntity | undefined> {
-    return this.users.find(user => user.email === email);
+  async findOne(params: { id?: string, email?: string }): Promise<UserEntity> {
+    try{
+      const user = this.userRepo.findOneOrFail({ where: params })
+      return user
+    } catch(err) {
+      throw new NotFoundException(new ResponseBody(null, 'user not found'))
+    }
   }
 
   async register(body: RegisterDto): Promise<UserEntity> {
@@ -63,10 +43,12 @@ export class UsersService {
         role: body.role
       }
       // TODO insert user to DB
-      this.users.push(user)
+      await this.userRepo.insert(user)
       await this.permissionService.addMemberToRole(user.id, BUYER_ROLE_ID)
       return plainToClass(UserEntity, user)
     } catch (err) {
+      const errMessage: string = err.message
+      if (errMessage.toLowerCase().includes('duplicate entry')) throw new BadRequestException(new ResponseBody(null, 'email has been taken'))
       throw err
     }
   }

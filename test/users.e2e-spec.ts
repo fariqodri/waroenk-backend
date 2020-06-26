@@ -5,6 +5,9 @@ import * as request from 'supertest';
 import { UsersModule } from '../src/users/users.module'
 import { PermissionService } from '../src/permission/permission.service';
 import { PermissionModule } from '../src/permission/permission.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from '../src/users/entities/users.entity';
+import { getConnection } from 'typeorm';
 
 describe('Users E2E', () => {
   let app: INestApplication;
@@ -16,7 +19,14 @@ describe('Users E2E', () => {
     const moduleFixture = await Test.createTestingModule({
       imports: [
         UsersModule,
-        PermissionModule
+        PermissionModule,
+        TypeOrmModule.forRoot({
+          type: "sqlite",
+          database: ":memory:",
+          dropSchema: true,
+          synchronize: true,
+          entities: [UserEntity]
+        })
       ]
     })
       .overrideProvider(PermissionService)
@@ -25,6 +35,10 @@ describe('Users E2E', () => {
 
     app = moduleFixture.createNestApplication()
     await app.init()
+  })
+
+  afterEach(async () => {
+    await getConnection().close()
   })
 
   it('Register valid', () => {
@@ -49,6 +63,10 @@ describe('Users E2E', () => {
         expect(full_name).toEqual(reqBody.full_name)
         expect(email).toEqual(reqBody.email)
         expect(phone).toEqual(reqBody.phone)
+        const count = getConnection()
+          .getRepository(UserEntity)
+          .count({ where: { email: 'full@example.com' } })
+        expect(count).resolves.toEqual(1)
       })
   })
 
