@@ -8,6 +8,9 @@ import { PermissionModule } from '../src/permission/permission.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { getConnection } from 'typeorm';
+import { SellerAttribute } from '../src/users/entities/seller.entity';
+import { ProductEntity } from '../src/products/entities/product.entity';
+import { CategoryEntity } from '../src/products/entities/category.entity';
 
 describe('Users E2E', () => {
   let app: INestApplication;
@@ -25,7 +28,7 @@ describe('Users E2E', () => {
           database: ":memory:",
           dropSchema: true,
           synchronize: true,
-          entities: [UserEntity]
+          entities: [CategoryEntity, UserEntity, SellerAttribute, ProductEntity]
         })
       ]
     })
