@@ -25,7 +25,7 @@ describe('Products Controller', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should call CategoriesService', () => {
+  it('should call ProductsService', () => {
     const spy = jest.spyOn(service, "findAll")
     let param = new ProductParam;
     param.page = 1

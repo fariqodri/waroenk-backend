@@ -6,13 +6,13 @@ import { ProductParam } from '../dto/productparam.dto';
 
 @Injectable()
 export class ProductsService {
-  constructor(private productRepository: ProductRepository) {}
+  constructor(private productRepository:ProductRepository) {}
 
   async findAll(param: ProductParam): Promise<ResponseBody<ProductEntity>> {
     let products: ProductEntity[];
     const skippedItems = (param.page - 1) * param.limit;
     products = await this.productRepository
-      .createQueryBuilder('product')
+      .createQueryBuilder("product")
       .skip(skippedItems)
       .take(param.limit)
       .getMany();
