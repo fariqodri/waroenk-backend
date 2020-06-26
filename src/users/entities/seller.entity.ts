@@ -4,7 +4,7 @@ import { UserEntity } from './users.entity';
 @Entity({ name: "seller" })
 export class SellerAttribute {
 
-  @Column(type => UserEntity)
+  @ManyToOne(type => UserEntity, user => user.seller_attributes)
   user: UserEntity
 
   @PrimaryColumn()

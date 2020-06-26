@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Entity, PrimaryColumn, ManyToOne, Column } from "typeorm";
 import { CategoryEntity } from './category.entity';
 import { UserEntity } from '../../users/entities/users.entity';
 
@@ -8,10 +8,10 @@ export class ProductEntity {
   @PrimaryColumn()
   id: string
 
-  @Column(type => CategoryEntity)
+  @ManyToOne(type => CategoryEntity, category => category.products)
   category: CategoryEntity
 
-  @Column(type => UserEntity)
+  @ManyToOne(type => UserEntity, user => user.products)
   user: UserEntity
 
   @Column()
@@ -21,14 +21,11 @@ export class ProductEntity {
   price_per_quantity: number
 
   @Column()
-  seller_name: string
-
-  @Column()
   discount: number
 
   @Column()
   description: string
 
-  @Column()
-  images: string[]  
+  @Column('simple-array')
+  images: string[]
 }
