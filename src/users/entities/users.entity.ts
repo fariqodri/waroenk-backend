@@ -18,7 +18,7 @@ export class UserEntity {
   @Column()
   full_name: string
 
-  @Column()
+  @Column({ unique: true })
   email: string
 
   @Column()
@@ -28,6 +28,7 @@ export class UserEntity {
   role: string
 
   @Exclude()
+  @Column()
   password: string
 
 }

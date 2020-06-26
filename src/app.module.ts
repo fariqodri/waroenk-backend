@@ -4,7 +4,9 @@ import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PermissionModule } from './permission/permission.module';
+import { RedisModule } from './redis/redis.module';
 import * as config from "./ormconfig";
+import { REDIS_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from './constants';
 
 @Module({
   imports: [
@@ -12,7 +14,12 @@ import * as config from "./ormconfig";
     AuthModule,
     UsersModule,
     ProductsModule,
-    PermissionModule
+    PermissionModule,
+    RedisModule.register({
+      host: REDIS_HOST,
+      port: REDIS_PORT,
+      password: REDIS_PASSWORD,
+    })
   ],
 })
 export class AppModule {}

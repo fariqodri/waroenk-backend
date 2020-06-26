@@ -41,8 +41,8 @@ describe('GET CategoriesController (e2e)', () => {
       .execute()
   });
 
-  afterEach(() => {
-    return getConnection().close()
+  afterEach(async () => {
+    await getConnection().close()
   })
   
   it(`/GET categories`, () => {
