@@ -1,6 +1,6 @@
 import { Entity, PrimaryColumn, ManyToOne, Column } from "typeorm";
 import { CategoryEntity } from './category.entity';
-import { UserEntity } from '../../users/entities/users.entity';
+import { SellerAttribute } from "../../users/entities/seller.entity";
 
 @Entity({ name: "product" })
 export class ProductEntity {
@@ -11,8 +11,8 @@ export class ProductEntity {
   @ManyToOne(type => CategoryEntity, category => category.products)
   category: CategoryEntity
 
-  @ManyToOne(type => UserEntity, user => user.products)
-  user: UserEntity
+  @ManyToOne(type => SellerAttribute, seller => seller.products)
+  seller: SellerAttribute
 
   @Column()
   name: string

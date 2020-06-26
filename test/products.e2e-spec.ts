@@ -8,6 +8,7 @@ import { ProductEntity } from '../src/products/entities/product.entity';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { getConnection } from 'typeorm';
 import { nanoid } from 'nanoid'
+import { SellerAttribute } from '../src/users/entities/seller.entity';
 
 describe('GET CategoriesController (e2e)', () => {
   let app: INestApplication;
@@ -23,7 +24,7 @@ describe('GET CategoriesController (e2e)', () => {
           database: ":memory:",
           dropSchema: true,
           synchronize: true,
-          entities: [CategoryEntity]
+          entities: [CategoryEntity, UserEntity, SellerAttribute, ProductEntity]
         })
       ],
     }).compile();

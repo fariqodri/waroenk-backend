@@ -1,24 +1,32 @@
-import { Entity, PrimaryColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryColumn, Column, ManyToOne, OneToOne, JoinColumn, OneToMany } from "typeorm";
 import { UserEntity } from './users.entity';
+import { ProductEntity } from "../../products/entities/product.entity";
 
 @Entity({ name: "seller" })
 export class SellerAttribute {
 
-  @ManyToOne(type => UserEntity, user => user.seller_attributes)
+  @OneToOne(type => UserEntity)
+  @JoinColumn()
   user: UserEntity
+
+  @OneToMany(type => ProductEntity, product => product.seller)
+  products: ProductEntity[]
 
   @PrimaryColumn()
   id: string
 
   @Column()
-  nama_toko: string
+  shop_name: string
 
   @Column()
-  alamat_toko: string
+  shop_address: string
+
+  @Column({ type: 'date' })
+  birth_date: string
 
   @Column()
-  ttl: string
+  birth_place: string
 
   @Column()
-  kelamin: string
+  gender: string
 }

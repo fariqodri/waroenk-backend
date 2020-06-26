@@ -9,12 +9,6 @@ export class UserEntity {
   @PrimaryColumn()
   id: string
 
-  @OneToMany(type => SellerAttribute, seller => seller.user)
-  seller_attributes: SellerAttribute[]
-
-  @OneToMany(type => ProductEntity, product => product.category)
-  products: ProductEntity[]
-
   @Column()
   full_name: string
 
