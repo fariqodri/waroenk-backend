@@ -9,8 +9,8 @@ const config: ConnectionOptions = {
   database: process.env.DB_DATABASE,
   synchronize: true,
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
-  logging: ["query"],
-  logger: "file",
+  logging: 'all',
+  logger: "simple-console",
 }
 
 module.exports = config

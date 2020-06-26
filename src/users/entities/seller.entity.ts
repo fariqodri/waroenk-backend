@@ -4,14 +4,6 @@ import { ProductEntity } from "../../products/entities/product.entity";
 
 @Entity({ name: "seller" })
 export class SellerAttribute {
-
-  @OneToOne(type => UserEntity)
-  @JoinColumn()
-  user: UserEntity
-
-  @OneToMany(type => ProductEntity, product => product.seller)
-  products: ProductEntity[]
-
   @PrimaryColumn()
   id: string
 
@@ -29,4 +21,11 @@ export class SellerAttribute {
 
   @Column()
   gender: string
+
+  @OneToOne(type => UserEntity)
+  @JoinColumn()
+  user: UserEntity
+
+  @OneToMany(type => ProductEntity, product => product.seller)
+  products: ProductEntity[]
 }
