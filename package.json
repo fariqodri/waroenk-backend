@@ -18,7 +18,13 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/ormconfig.ts",
+    "migration:generate": "npm run typeorm migration:generate -- -n",
+    "migration:run:dev": "nest build && node ./node_modules/typeorm/cli.js migration:run --config dist/ormconfig.js",
+    "migration:revert:dev": "nest build && node ./node_modules/typeorm/cli.js migration:revert --config dist/ormconfig.js",
+    "migration:run:prod": "node ./node_modules/typeorm/cli.js migration:run --config dist/ormconfig.js",
+    "migration:revert:prod": "node ./node_modules/typeorm/cli.js migration:revert --config dist/ormconfig.js"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
