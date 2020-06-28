@@ -16,7 +16,6 @@ COPY . .
 
 RUN npm run build
 
-
 # Multistage build
 FROM node:10-alpine as production
 
@@ -29,7 +28,7 @@ RUN mkdir -p ${APPDIR}
 WORKDIR ${APPDIR}
 
 # Copy source code
-COPY --from=development /code/dist /code
+COPY --from=development /code/dist /code/dist
 COPY --from=development /code/package*.json /code/
 
 RUN apk add --no-cache make gcc g++ python && \
@@ -43,4 +42,4 @@ RUN rm -rf tsconfig.build.tsbuildinfo
 RUN find . -name "*.d.ts" -type f -delete
 RUN find . -name "*.js.map" -type f -delete
 
-CMD ["node", "main.js"]
+CMD ["node", "dist/main.js"]

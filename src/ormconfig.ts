@@ -7,10 +7,15 @@ const config: ConnectionOptions = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  synchronize: true,
+  synchronize: false,
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   logging: 'all',
   logger: "simple-console",
+  migrationsRun: false,
+  migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+  cli: {
+    migrationsDir: 'src/migrations',
+  },
 }
 
 module.exports = config
