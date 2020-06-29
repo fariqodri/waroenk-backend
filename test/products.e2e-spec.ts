@@ -77,13 +77,23 @@ describe('GET Product and Categories (e2e)', () => {
       {
         id: 'product_2',
         name: 'Bayam',
-        price_per_quantity: 10000,
+        price_per_quantity: 5000,
         discount: 0,
         description: 'bayam',
         images: ['1'],
         category: vegetableCategory,
         seller: seller
-      }
+      },
+      {
+        id: 'product_3',
+        name: 'Jeruk',
+        price_per_quantity: 20000,
+        discount: 0,
+        description: 'jeruk',
+        images: ['1'],
+        category: fruitsCategory,
+        seller: seller
+      },
     ])
   });
 
@@ -169,14 +179,118 @@ describe('GET Product and Categories (e2e)', () => {
           {
             id: 'product_2',
             name: 'Bayam',
+            price_per_quantity: 5000,
+            seller_name: seller.shop_name,
+            discount: 0,
+            description: 'bayam',
+            images: ['1'],
+            category: vegetableCategory.name
+          },
+          {
+            id: 'product_3',
+            name: 'Jeruk',
+            price_per_quantity: 20000,
+            discount: 0,
+            description: 'jeruk',
+            images: ['1'],
+            category: fruitsCategory.name,
+            seller_name: seller.shop_name
+          }
+        ],
+      });
+  })
+
+  it('Query product with bottom price range', () => {
+    return request(app.getHttpServer())
+      .get('/products?price_from=5001')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          {
+            id: 'product_1',
+            name: 'KangKunG',
             price_per_quantity: 10000,
+            seller_name: seller.shop_name,
+            discount: 0,
+            description: 'kangkung',
+            images: ['1'],
+            category: vegetableCategory.name
+          },
+          {
+            id: 'product_3',
+            name: 'Jeruk',
+            price_per_quantity: 20000,
+            discount: 0,
+            description: 'jeruk',
+            images: ['1'],
+            category: fruitsCategory.name,
+            seller_name: seller.shop_name
+          }
+        ]
+      })
+  })
+
+  it('Query product with upper price range', () => {
+    return request(app.getHttpServer())
+      .get('/products?price_to=5000')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          {
+            id: 'product_2',
+            name: 'Bayam',
+            price_per_quantity: 5000,
             seller_name: seller.shop_name,
             discount: 0,
             description: 'bayam',
             images: ['1'],
             category: vegetableCategory.name
           }
-        ],
-      });
+        ]
+      })
+  })
+
+  it('Query product with category ID', () => {
+    return request(app.getHttpServer())
+      .get(`/products?category=${fruitsCategory.id}`)
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          {
+            id: 'product_3',
+            name: 'Jeruk',
+            price_per_quantity: 20000,
+            discount: 0,
+            description: 'jeruk',
+            images: ['1'],
+            category: fruitsCategory.name,
+            seller_name: seller.shop_name
+          }
+        ]
+      })
+  })
+
+  it('Query product with sort by price', () => {
+    return request(app.getHttpServer())
+      .get('/products?sort_by=price&sort_type=desc&page=2&limit=1')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          {
+            id: 'product_1',
+            name: 'KangKunG',
+            price_per_quantity: 10000,
+            discount: 0,
+            description: 'kangkung',
+            images: ['1'],
+            category: vegetableCategory.name,
+            seller_name: seller.shop_name
+          },
+        ]
+      })
   })
 });
