@@ -27,5 +27,5 @@ export class SellerAttribute {
   user: UserEntity
 
   @OneToMany(type => ProductEntity, product => product.seller)
-  products: ProductEntity[]
+  products?: ProductEntity[]
 }
