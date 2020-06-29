@@ -27,10 +27,10 @@ describe('Products Controller', () => {
 
   it('should call ProductsService', () => {
     const spy = jest.spyOn(service, "findAll").mockImplementation()
-    let param = new ProductQuery;
-    param.page = 1
-    param.limit = 10
-    controller.findAll(null, param.limit, param.page)
+    controller.findAll({
+      page: 10,
+      limit: 1
+    })
     expect(spy).toBeCalled()
   })
 });
