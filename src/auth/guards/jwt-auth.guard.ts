@@ -1,6 +1,5 @@
 import { Injectable, ExecutionContext, Inject, BadRequestException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Observable } from 'rxjs';
 import { RedisService } from '../../redis/redis.service';
 import { ResponseBody } from '../../utils/response';
 

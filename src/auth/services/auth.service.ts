@@ -23,7 +23,7 @@ export class AuthService {
     }
     const isPasswordValid = await bcrypt.compare(password, user.password)
     if (isPasswordValid) {
-      const payload = { sub: user.id };
+      const payload = { sub: user.id, role: user.role };
       return new ResponseBody({
         access_token: this.jwtService.sign(payload),
       });

@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, ManyToOne, Column } from "typeorm";
+import { Entity, PrimaryColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { CategoryEntity } from './category.entity';
 import { SellerAttribute } from "../../users/entities/seller.entity";
 
@@ -28,4 +28,10 @@ export class ProductEntity {
 
   @Column('simple-array')
   images: string[]
+
+  @CreateDateColumn({ name: 'created_at' })
+  created_at: string
+
+  @UpdateDateColumn({ name: 'updated_at', nullable: true })
+  updated_at: string
 }

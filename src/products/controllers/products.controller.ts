@@ -10,32 +10,24 @@ export class ProductsController {
   findAll(
     @Query() {
       search,
-      price_from: priceFrom,
-      price_to: priceTo,
-      category: categoryId,
-      sort_by: sortBy,
+      price_from,
+      price_to,
+      category,
+      sort_by,
       limit = 10,
       page = 1,
-      sort_type: sortType
-    }: ProductQuery,
-    // @Query('search') search?: string,
-    // @Query('price_from') priceFrom?: number,
-    // @Query('price_to') priceTo?: number,
-    // @Query('category') categoryId?: string,
-    // @Query('sort_by') sortBy?: string,
-    // @Query('limit') limit = 10,
-    // @Query('page') page = 1,
-    // @Query('sort_type') sortType = 'desc'
+      sort_type
+    }: ProductQuery
   ) {
     return this.productsService.findAll({
       search,
       limit,
       page,
-      sort_by: sortBy,
-      price_from: priceFrom,
-      price_to: priceTo,
-      category: categoryId,
-      sort_type: sortType
+      sort_by,
+      price_from,
+      price_to,
+      category,
+      sort_type
     });
   }
 }

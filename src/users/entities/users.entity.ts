@@ -19,7 +19,7 @@ export class UserEntity {
   phone: string
 
   @Column()
-  role: string
+  role: 'buyer' | 'seller'
 
   @Exclude()
   @Column()
