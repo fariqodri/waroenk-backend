@@ -143,6 +143,45 @@ describe('Shop E2E', () => {
     await getConnection().close()
   })
 
+  it('should delete product', () => {
+    return request(app.getHttpServer())
+      .delete('/shop/products')
+      .send({
+        id: "product_1"
+      })
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: "product with id [product_1] deleted"
+      })
+  })
+
+  it('should return 400 when user is wrong when delete product', () => {
+    return request(app.getHttpServer())
+      .delete('/shop/products')
+      .send({
+        id: "product_3"
+      })
+      .expect(400)
+      .expect({
+        message: "user is not authorized to delete product or product doesn't exist with id [product_3]",
+        result: null
+      })
+  })
+
+  it('should return 400 when product does not exist when delete product', () => {
+    return request(app.getHttpServer())
+      .delete('/shop/products')
+      .send({
+        id: "product_xyz"
+      })
+      .expect(400)
+      .expect({
+        message: "user is not authorized to delete product or product doesn't exist with id [product_xyz]",
+        result: null
+      })
+  })
+
   it('should search by name', () => {
     return request(app.getHttpServer())
       .get('/shop/products?search=NgKung')
