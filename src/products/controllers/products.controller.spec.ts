@@ -1,9 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsController } from './products.controller';
 import { ProductsService } from '../services/products.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductRepository } from '../repositories/product.repository';
-import { ProductQuery } from '../dto/product.dto';
 
 jest.mock('../repositories/product.repository')
 

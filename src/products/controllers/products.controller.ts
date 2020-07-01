@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Delete, HttpCode, Body, UseGuards, Req } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
 import { ProductQuery } from '../dto/product.dto';
 
@@ -30,4 +30,5 @@ export class ProductsController {
       sort_type
     });
   }
+
 }

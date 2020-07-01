@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { ResponseBody } from '../../utils/response';
-import { ProductEntity } from '../entities/product.entity';
 import { ProductRepository } from '../repositories/product.repository';
 import { ProductQuery, ProductResponse } from '../dto/product.dto';
 
@@ -42,6 +41,7 @@ export class ProductsService {
         );
       }
     }
+    queryBuilder = queryBuilder.andWhere('products.deleted_at IS NOT NULL');
     queryBuilder = queryBuilder
       .offset(skippedItems)
       .limit(param.limit)
