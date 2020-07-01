@@ -13,25 +13,25 @@ export class ProductsService {
     const skippedItems = (param.page - 1) * param.limit;
     let queryBuilder = this.productRepository.createQueryBuilder('products');
     if (param.search) {
-      queryBuilder = queryBuilder.where('LOWER(products.name) LIKE :name', {
+      queryBuilder = queryBuilder.andWhere('LOWER(products.name) LIKE :name', {
         name: `%${param.search.toLowerCase()}%`,
       });
     }
     if (param.category) {
-      queryBuilder = queryBuilder.where('products.categoryId = :categoryId', {
+      queryBuilder = queryBuilder.andWhere('products.categoryId = :categoryId', {
         categoryId: param.category,
       });
     }
     if (param.price_from) {
-      queryBuilder = queryBuilder.where(
-        'products.price_per_quantity >= :price',
-        { price: param.price_from },
+      queryBuilder = queryBuilder.andWhere(
+        'products.price_per_quantity >= :priceFrom',
+        { priceFrom: param.price_from },
       );
     }
     if (param.price_to) {
-      queryBuilder = queryBuilder.where(
-        'products.price_per_quantity <= :price',
-        { price: param.price_to },
+      queryBuilder = queryBuilder.andWhere(
+        'products.price_per_quantity <= :priceTo',
+        { priceTo: param.price_to },
       );
     }
     if (param.sort_by) {
@@ -48,7 +48,12 @@ export class ProductsService {
       .innerJoin('products.category', 'categories')
       .innerJoin('products.seller', 'seller')
       .select(
-        'products.id AS id, products.name AS name, products.price_per_quantity AS price_per_quantity, products.discount AS discount, products.description AS description, products.images AS images',
+        `products.id AS id,
+        products.name AS name,
+        products.price_per_quantity AS price_per_quantity,
+        products.discount AS discount,
+        products.description AS description,
+        products.images AS images`,
       )
       .addSelect([
         'categories.name AS category',

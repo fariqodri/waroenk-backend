@@ -8,8 +8,8 @@ import { SellerAttributeRepository } from './repositories/seller.repository';
 
 @Module({
   providers: [UsersService],
-  exports: [UsersService],
+  exports: [UsersService, TypeOrmModule.forFeature([SellerAttributeRepository])],
   controllers: [UsersController],
-  imports: [PermissionModule, TypeOrmModule.forFeature([UserRepository, SellerAttributeRepository])]
+  imports: [PermissionModule, TypeOrmModule.forFeature([UserRepository, SellerAttributeRepository])],
 })
 export class UsersModule {}

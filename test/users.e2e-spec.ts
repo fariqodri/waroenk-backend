@@ -29,7 +29,7 @@ describe('Users E2E', () => {
   const fakeJwtAuthGuard = {
     canActivate: jest.fn().mockImplementation((context: ExecutionContext) => {
       const req = context.switchToHttp().getRequest();
-      req.user = { userId: 'user-1', issuedAt: 1, expiredAt: 2 }
+      req.user = { userId: 'user-1', issuedAt: 1, expiredAt: 2, role: 'buyer'}
       return true
     })
   }
@@ -49,7 +49,6 @@ describe('Users E2E', () => {
         AuthModule,
         RedisModule.register({}),
         JwtModule.register({})
-        
       ]
     })
       .overrideProvider(PermissionService)

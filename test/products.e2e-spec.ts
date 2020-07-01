@@ -12,10 +12,8 @@ import { SellerAttribute } from '../src/users/entities/seller.entity';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
-  const id_1 = nanoid(11),
-    id_2 = nanoid(11);
-  const vegetableCategory = { id: id_1, name: 'Sayuran', image: 's3_url_1' };
-  const fruitsCategory = { id: id_2, name: 'Buah-buahan', image: 's3_url_1' };
+  const vegetableCategory = { id: 'category-1', name: 'Sayuran', image: 's3_url_1' };
+  const fruitsCategory = { id: 'category-2', name: 'Buah-buahan', image: 's3_url_1' };
   const user: UserEntity = {
     id: 'user-1',
     full_name: 'user 1',
@@ -76,7 +74,7 @@ describe('GET Product and Categories (e2e)', () => {
       },
       {
         id: 'product_2',
-        name: 'Bayam',
+        name: 'kangkung amerika',
         price_per_quantity: 5000,
         discount: 0,
         description: 'bayam',
@@ -109,12 +107,12 @@ describe('GET Product and Categories (e2e)', () => {
         message: 'ok',
         result: [
           {
-            id: id_1,
+            id: 'category-1',
             name: 'Sayuran',
             image: 's3_url_1',
           },
           {
-            id: id_2,
+            id: 'category-2',
             name: 'Buah-buahan',
             image: 's3_url_1',
           },
@@ -130,17 +128,18 @@ describe('GET Product and Categories (e2e)', () => {
         message: 'ok',
         result: [
           {
-            id: id_1,
+            id: 'category-1',
             name: 'Sayuran',
             image: 's3_url_1',
           },
         ],
       });
   });
+  
 
-  it('Query products by name', () => {
+  it('Query products with results', () => {
     return request(app.getHttpServer())
-      .get('/products?search=AngkUng')
+      .get('/products?search=AngkUng&price_from=5001&price_to=20000&category=category-1')
       .expect(200)
       .expect({
         message: 'ok',
@@ -158,6 +157,16 @@ describe('GET Product and Categories (e2e)', () => {
         ],
       });
   });
+
+  it('Query products without results', () => {
+    return request(app.getHttpServer())
+      .get('/products?search=AngkUng&price_from=20000&price_to=30000&category=category-1')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [],
+      });
+  })
 
   it('Query product without search', () => {
     return request(app.getHttpServer())
@@ -178,7 +187,7 @@ describe('GET Product and Categories (e2e)', () => {
           },
           {
             id: 'product_2',
-            name: 'Bayam',
+            name: 'kangkung amerika',
             price_per_quantity: 5000,
             seller_name: seller.shop_name,
             discount: 0,
@@ -198,79 +207,6 @@ describe('GET Product and Categories (e2e)', () => {
           }
         ],
       });
-  })
-
-  it('Query product with bottom price range', () => {
-    return request(app.getHttpServer())
-      .get('/products?price_from=5001')
-      .expect(200)
-      .expect({
-        message: 'ok',
-        result: [
-          {
-            id: 'product_1',
-            name: 'KangKunG',
-            price_per_quantity: 10000,
-            seller_name: seller.shop_name,
-            discount: 0,
-            description: 'kangkung',
-            images: ['1'],
-            category: vegetableCategory.name
-          },
-          {
-            id: 'product_3',
-            name: 'Jeruk',
-            price_per_quantity: 20000,
-            discount: 0,
-            description: 'jeruk',
-            images: ['1'],
-            category: fruitsCategory.name,
-            seller_name: seller.shop_name
-          }
-        ]
-      })
-  })
-
-  it('Query product with upper price range', () => {
-    return request(app.getHttpServer())
-      .get('/products?price_to=5000')
-      .expect(200)
-      .expect({
-        message: 'ok',
-        result: [
-          {
-            id: 'product_2',
-            name: 'Bayam',
-            price_per_quantity: 5000,
-            seller_name: seller.shop_name,
-            discount: 0,
-            description: 'bayam',
-            images: ['1'],
-            category: vegetableCategory.name
-          }
-        ]
-      })
-  })
-
-  it('Query product with category ID', () => {
-    return request(app.getHttpServer())
-      .get(`/products?category=${fruitsCategory.id}`)
-      .expect(200)
-      .expect({
-        message: 'ok',
-        result: [
-          {
-            id: 'product_3',
-            name: 'Jeruk',
-            price_per_quantity: 20000,
-            discount: 0,
-            description: 'jeruk',
-            images: ['1'],
-            category: fruitsCategory.name,
-            seller_name: seller.shop_name
-          }
-        ]
-      })
   })
 
   it('Query product with sort by price', () => {

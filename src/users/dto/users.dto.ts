@@ -5,7 +5,7 @@ export class RegisterDto {
   full_name: string
 
   @jf.string().valid('buyer', 'seller').required()
-  role: string
+  role: 'buyer' | 'seller'
 
   @jf.string().email().required()
   email: string

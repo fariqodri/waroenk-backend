@@ -40,7 +40,7 @@ export class UsersService {
         email: body.email,
         phone: body.phone,
         password: encrypted,
-        role: body.role
+        role: 'buyer'
       }
       // TODO insert user to DB
       await this.userRepo.insert(user)

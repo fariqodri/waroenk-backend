@@ -7,6 +7,7 @@ import { PermissionModule } from './permission/permission.module';
 import { RedisModule } from './redis/redis.module';
 import * as config from "./ormconfig";
 import { REDIS_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from './constants';
+import { ShopModule } from './shop/shop.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { REDIS_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from './constants';
       host: REDIS_HOST,
       port: REDIS_PORT,
       password: REDIS_PASSWORD,
-    })
+    }),
+    ShopModule
   ],
 })
 export class AppModule {}

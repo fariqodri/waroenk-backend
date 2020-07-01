@@ -24,7 +24,7 @@ describe('Login and Logout E2E Test', () => {
     const fakeJwtAuthGuard = {
       canActivate: jest.fn().mockImplementation((context: ExecutionContext) => {
         const req = context.switchToHttp().getRequest();
-        req.user = { userId: 'user-1', issuedAt: 1, expiredAt: 2 }
+        req.user = { userId: 'user-1', issuedAt: 1, expiredAt: 2, role: 'buyer' }
         return true
       })
     }
