@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsController } from './products.controller';
 import { ProductsService } from '../services/products.service';
 import { ProductRepository } from '../repositories/product.repository';
-import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
 
 jest.mock('../repositories/product.repository')
 
@@ -13,7 +12,7 @@ describe('Products Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProductsController],
-      providers: [ProductsService, ProductRepository, SellerAttributeRepository]
+      providers: [ProductsService, ProductRepository]
     }).compile();
 
     controller = module.get<ProductsController>(ProductsController);

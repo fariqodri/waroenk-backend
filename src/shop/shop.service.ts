@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { ShopProductQuery } from './shop.dto';
 import { ResponseBody } from '../utils/response';
@@ -10,6 +10,21 @@ export class ShopService {
     private productRepo: ProductRepository,
     private sellerRepo: SellerAttributeRepository
   ) {}
+
+  async delete(userId: string, id: string): Promise<ResponseBody<string>> {
+    const seller = await this.sellerRepo
+        .createQueryBuilder()
+        .where('userId = :userId', { userId }).getOne();
+    const product = await this.productRepo
+        .createQueryBuilder()
+        .where('id = :id', { id }).getOne();
+    if (seller.user.id != product.seller.user.id) {
+      throw new BadRequestException(new ResponseBody(null, "user is not authorized to delete product"))
+    }
+    product.deleted_at = new Date()
+    this.productRepo.save(product)
+    return new ResponseBody('ok')
+  }
 
   async getProducts(userId: string, query: ShopProductQuery): Promise<ResponseBody<any[]>> {
     const seller = await this.sellerRepo.createQueryBuilder().where('userId = :userId', { userId }).getOne()
