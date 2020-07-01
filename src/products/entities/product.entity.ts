@@ -30,10 +30,10 @@ export class ProductEntity {
   images: string[]
 
   @CreateDateColumn({ name: 'created_at' })
-  created_at: string
+  created_at: Date
 
   @UpdateDateColumn({ name: 'updated_at', nullable: true })
-  updated_at: string
+  updated_at: Date
 
   @Column({ nullable: true })
   deleted_at: Date

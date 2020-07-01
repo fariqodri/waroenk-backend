@@ -1,8 +1,8 @@
-import { Controller, UseGuards, Get, Query, Req, Delete, HttpCode, Body } from '@nestjs/common';
+import { Controller, UseGuards, Get, Query, Req, Delete, HttpCode, Body, Post } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolePermissionGuard } from '../auth/guards/role.permission.guard';
 import { Roles } from '../utils/decorators';
-import { ShopProductQuery, ProductParam } from './shop.dto';
+import { ShopProductQuery, ProductDeleteParam, ProductPostParam } from './shop.dto';
 import { ShopService } from './shop.service';
 import { Request } from 'express';
 
@@ -30,8 +30,17 @@ export class ShopController {
   @Roles('seller')
   @Delete('products')
   @HttpCode(200)
-  async login(@Body() param: ProductParam, @Req() request: Request) {
+  async delete(@Body() param: ProductDeleteParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.delete(user.userId, param.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('seller')
+  @Post('products')
+  @HttpCode(201)
+  async create(@Body() param: ProductPostParam, @Req() request: Request) {
+    const user: { userId } = request.user as { userId }
+    return this.service.create(user.userId, param);
   }
 }

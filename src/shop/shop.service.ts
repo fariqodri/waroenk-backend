@@ -1,19 +1,46 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ProductRepository } from '../products/repositories/product.repository';
-import { ShopProductQuery } from './shop.dto';
+import { CategoryRepository } from '../products/repositories/category.repository';
+import { ShopProductQuery, ProductPostParam } from './shop.dto';
 import { ResponseBody } from '../utils/response';
 import { SellerAttributeRepository } from '../users/repositories/seller.repository';
 import { ProductEntity } from '../products/entities/product.entity';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class ShopService {
   constructor(
     private productRepo: ProductRepository,
-    private sellerRepo: SellerAttributeRepository
+    private sellerRepo: SellerAttributeRepository,
+    private categoryRepo: CategoryRepository
   ) {}
 
+  async create(userId: string, param: ProductPostParam): Promise<ResponseBody<ProductEntity>> {
+    const seller = await this.sellerRepo
+      .createQueryBuilder()
+      .where('userId = :userId', { userId: userId }).getOne();
+    const category = await this.categoryRepo.findOne(param.categoryId);
+    const product: ProductEntity = {
+      id: nanoid(11),
+      seller: seller,
+      category: category,
+      name: param.name,
+      price_per_quantity: param.price_per_quantiy,
+      discount: param.discount,
+      description: param.description,
+      images: param.images.split(","),
+      created_at: new Date(),
+      updated_at: null,
+      deleted_at: null
+    }
+    await this.productRepo.insert(product)
+    return new ResponseBody(product);
+  }
+
   async delete(userId: string, id: string): Promise<ResponseBody<string>> {
-    const seller = await this.sellerRepo.createQueryBuilder().where('userId = :userId', { userId }).getOne()
+    const seller = await this.sellerRepo
+      .createQueryBuilder()
+      .where('userId = :userId', { userId: userId }).getOne()
     const product = await this.productRepo
       .createQueryBuilder()
       .where('sellerId = :sellerId', { sellerId: seller.id })
@@ -23,7 +50,7 @@ export class ShopService {
          "user is not authorized to delete product or product doesn't exist with id [" + id + "]"))
     }
     product.deleted_at = new Date()
-    this.productRepo.save(product)
+    await this.productRepo.save(product)
     return new ResponseBody("product with id [" + id + "] deleted");
   }
 
