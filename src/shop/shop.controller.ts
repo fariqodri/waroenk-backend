@@ -28,7 +28,7 @@ export class ShopController {
 
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('seller')
-  @Delete()
+  @Delete('products')
   @HttpCode(200)
   async login(@Body() id: string, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
