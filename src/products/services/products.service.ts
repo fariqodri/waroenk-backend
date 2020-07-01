@@ -41,7 +41,7 @@ export class ProductsService {
         );
       }
     }
-    queryBuilder = queryBuilder.andWhere('products.deleted_at IS NOT NULL');
+    queryBuilder = queryBuilder.andWhere('products.deleted_at IS NULL');
     queryBuilder = queryBuilder
       .offset(skippedItems)
       .limit(param.limit)
