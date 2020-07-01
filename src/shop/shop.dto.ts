@@ -4,3 +4,7 @@ export class ShopProductQuery {
   
   search?: string
 }
+
+export class ProductParam {
+  id: string
+}

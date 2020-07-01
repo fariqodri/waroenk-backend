@@ -2,7 +2,7 @@ import { Controller, UseGuards, Get, Query, Req, Delete, HttpCode, Body } from '
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolePermissionGuard } from '../auth/guards/role.permission.guard';
 import { Roles } from '../utils/decorators';
-import { ShopProductQuery } from './shop.dto';
+import { ShopProductQuery, ProductParam } from './shop.dto';
 import { ShopService } from './shop.service';
 import { Request } from 'express';
 
@@ -30,8 +30,8 @@ export class ShopController {
   @Roles('seller')
   @Delete('products')
   @HttpCode(200)
-  async login(@Body() id: string, @Req() request: Request) {
+  async login(@Body() param: ProductParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
-    return this.service.delete(user.userId, id);
+    return this.service.delete(user.userId, param.id);
   }
 }

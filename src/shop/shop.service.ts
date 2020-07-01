@@ -3,6 +3,7 @@ import { ProductRepository } from '../products/repositories/product.repository';
 import { ShopProductQuery } from './shop.dto';
 import { ResponseBody } from '../utils/response';
 import { SellerAttributeRepository } from '../users/repositories/seller.repository';
+import { ProductEntity } from '../products/entities/product.entity';
 
 @Injectable()
 export class ShopService {
@@ -12,18 +13,18 @@ export class ShopService {
   ) {}
 
   async delete(userId: string, id: string): Promise<ResponseBody<string>> {
-    const seller = await this.sellerRepo
-        .createQueryBuilder()
-        .where('userId = :userId', { userId }).getOne();
+    const seller = await this.sellerRepo.createQueryBuilder().where('userId = :userId', { userId }).getOne()
     const product = await this.productRepo
-        .createQueryBuilder()
-        .where('id = :id', { id }).getOne();
-    if (seller.user.id != product.seller.user.id) {
-      throw new BadRequestException(new ResponseBody(null, "user is not authorized to delete product"))
+      .createQueryBuilder()
+      .where('sellerId = :sellerId', { sellerId: seller.id })
+      .andWhere('id = :id', { id: id }).getOne();
+    if (product === undefined) {
+      throw new BadRequestException(new ResponseBody(null,
+         "user is not authorized to delete product or product doesn't exist with id [" + id + "]"))
     }
     product.deleted_at = new Date()
     this.productRepo.save(product)
-    return new ResponseBody('ok')
+    return new ResponseBody("product with id [" + id + "] deleted");
   }
 
   async getProducts(userId: string, query: ShopProductQuery): Promise<ResponseBody<any[]>> {
