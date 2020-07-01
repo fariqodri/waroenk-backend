@@ -35,6 +35,6 @@ export class ProductEntity {
   @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updated_at: string
 
-  @Column({ type: "timestamp", nullable: true })
+  @Column({ nullable: true })
   deleted_at: Date
 }
