@@ -60,6 +60,7 @@ export class ShopService {
     let queryBuilder = this.productRepo
       .createQueryBuilder('products')
       .where('products.sellerId = :sellerId', { sellerId: seller.id });
+    queryBuilder = queryBuilder.andWhere('products.deleted_at IS NULL');
     if (query.search) {
       queryBuilder = queryBuilder.andWhere('LOWER(products.name) LIKE :name', {
         name: `%${query.search.toLowerCase()}%`,
