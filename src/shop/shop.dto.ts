@@ -12,7 +12,6 @@ export class ProductDeleteParam {
 }
 
 export class ProductPostParam {
-
   @jf.string().required()
   categoryId: string
 
@@ -28,7 +27,7 @@ export class ProductPostParam {
   @jf.string().required()
   description: string
 
-  @jf.string().optional()
-  images: string
+  @jf.array().required()
+  images: string[]
 }
 

@@ -28,7 +28,7 @@ export class ShopService {
       price_per_quantity: param.price_per_quantiy,
       discount: param.discount,
       description: param.description,
-      images: param.images.split(","),
+      images: param.images,
       created_at: new Date(),
       updated_at: null,
       deleted_at: null
