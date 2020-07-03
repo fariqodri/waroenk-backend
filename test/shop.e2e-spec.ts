@@ -147,7 +147,7 @@ describe('Shop E2E', () => {
       price_per_quantiy: 10000,
       discount: 0.5,
       description: "Buah atau sayur gatau tp segar",
-      images: "img1.com,img2.com"
+      images: ["img1.com","img2.com"]
     }
     return request(app.getHttpServer())
       .post('/shop/products')
@@ -164,7 +164,7 @@ describe('Shop E2E', () => {
         expect(price_per_quantity).toEqual(reqBody.price_per_quantiy)
         expect(discount).toEqual(reqBody.discount)
         expect(description).toEqual(reqBody.description)
-        expect(images).toEqual(reqBody.images.split(","))
+        expect(images).toEqual(reqBody.images)
         expect(created_at).toBeDefined()
         expect(updated_at).toBeNull()
         expect(deleted_at).toBeNull()
