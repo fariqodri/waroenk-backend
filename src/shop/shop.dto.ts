@@ -29,6 +29,9 @@ export class ProductPostParam {
 
   @jf.array().required()
   images: string[]
+
+  @jf.boolean().required()
+  available: boolean
 }
 
 export class ShopPostParam {

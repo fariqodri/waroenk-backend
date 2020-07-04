@@ -29,6 +29,9 @@ export class ProductEntity {
   @Column('simple-array')
   images: string[]
 
+  @Column({ default: true })
+  available: boolean
+
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date
 

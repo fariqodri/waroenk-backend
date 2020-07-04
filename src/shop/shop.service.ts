@@ -77,7 +77,8 @@ export class ShopService {
       images: param.images,
       created_at: new Date(),
       updated_at: null,
-      deleted_at: null
+      deleted_at: null,
+      available: param.available
     }
     await this.productRepo.insert(product)
     return new ResponseBody(product);

@@ -12,6 +12,7 @@ export class ProductsService {
     const skippedItems = (param.page - 1) * param.limit;
     let queryBuilder = this.productRepository.createQueryBuilder('products');
     queryBuilder = queryBuilder.andWhere('products.deleted_at IS NULL');
+    queryBuilder = queryBuilder.andWhere('products.available IS TRUE');
     if (param.search) {
       queryBuilder = queryBuilder.andWhere('LOWER(products.name) LIKE :name', {
         name: `%${param.search.toLowerCase()}%`,
