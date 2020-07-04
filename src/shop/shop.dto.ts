@@ -21,7 +21,7 @@ export class ProductPostParam {
   @jf.number().required()
   price_per_quantiy: number
 
-  @jf.number().required()
+  @jf.number().optional()
   discount: number
 
   @jf.string().required()
@@ -29,6 +29,9 @@ export class ProductPostParam {
 
   @jf.array().required()
   images: string[]
+
+  @jf.boolean().required()
+  available: boolean
 }
 
 export class ShopPostParam {

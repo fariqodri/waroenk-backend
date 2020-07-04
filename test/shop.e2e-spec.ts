@@ -159,7 +159,8 @@ describe('Shop E2E', () => {
       price_per_quantiy: 10000,
       discount: 0.5,
       description: "Buah atau sayur gatau tp segar",
-      images: ["img1.com","img2.com"]
+      images: ["img1.com","img2.com"],
+      available: true
     }
     return request(app.getHttpServer())
       .post('/shop/products')
@@ -169,7 +170,7 @@ describe('Shop E2E', () => {
         const body = res.body
         const { message, result } = body
         const { id, name, price_per_quantity, discount, description, images, 
-          created_at, updated_at, deleted_at, seller, category } = result
+          created_at, updated_at, deleted_at, seller, category, available } = result
         expect(message).toEqual('ok')
         expect(id).toBeDefined()
         expect(name).toEqual(reqBody.name)
@@ -182,6 +183,7 @@ describe('Shop E2E', () => {
         expect(deleted_at).toBeNull()
         expect(seller.id).toEqual("seller-1")
         expect(category.id).toEqual("category-1")
+        expect(available).toEqual(reqBody.available)
       })
   })
 
