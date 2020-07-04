@@ -75,7 +75,10 @@ describe('UsersService', () => {
       full_name: 'User 1',
       phone: '08132312321',
       password: 'password',
-      role: 'buyer'
+      role: 'buyer',
+      created_at: new Date(),
+      updated_at: null,
+      is_active: true
     }
     const findSpy = jest.spyOn(userRepo, 'findOneOrFail').mockImplementation(async () => user)
     const result = await service.findOne({ id: 'id_1' })

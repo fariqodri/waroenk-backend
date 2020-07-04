@@ -12,7 +12,6 @@ import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { getConnection } from 'typeorm';
-import { UsersService } from '../src/users/services/users.service';
 import { ProductEntity } from '../src/products/entities/product.entity';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { CategoryEntity } from '../src/products/entities/category.entity';

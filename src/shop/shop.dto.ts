@@ -31,3 +31,22 @@ export class ProductPostParam {
   images: string[]
 }
 
+export class ShopPostParam {
+  @jf.string().required()
+  shop_name: string
+
+  @jf.string().required()
+  shop_address: string
+
+  @jf.string().required()
+  birth_date: string
+
+  @jf.string().required()
+  birth_place: string
+
+  @jf.string().required()
+  gender: string
+
+  @jf.string().optional()
+  image: string
+}

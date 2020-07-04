@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToOne, JoinColumn, OneToMany } from "typeorm";
+import { Entity, PrimaryColumn, Column, ManyToOne, OneToOne, JoinColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { UserEntity } from './users.entity';
 import { ProductEntity } from "../../products/entities/product.entity";
 
@@ -6,6 +6,13 @@ import { ProductEntity } from "../../products/entities/product.entity";
 export class SellerAttribute {
   @PrimaryColumn()
   id: string
+
+  @OneToOne(type => UserEntity)
+  @JoinColumn()
+  user: UserEntity
+
+  @OneToMany(type => ProductEntity, product => product.seller)
+  products?: ProductEntity[]
 
   @Column()
   shop_name: string
@@ -22,10 +29,15 @@ export class SellerAttribute {
   @Column()
   gender: string
 
-  @OneToOne(type => UserEntity)
-  @JoinColumn()
-  user: UserEntity
+  @Column()
+  image: string
 
-  @OneToMany(type => ProductEntity, product => product.seller)
-  products?: ProductEntity[]
+  @CreateDateColumn({ name: 'created_at' })
+  created_at: Date
+
+  @UpdateDateColumn({ name: 'updated_at', nullable: true })
+  updated_at: Date
+
+  @Column({ default: true })
+  is_active: boolean
 }
