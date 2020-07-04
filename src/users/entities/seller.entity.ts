@@ -38,6 +38,6 @@ export class SellerAttribute {
   @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updated_at: Date
 
-  @Column({ default: true })
+  @Column({ default: false })
   is_active: boolean
 }

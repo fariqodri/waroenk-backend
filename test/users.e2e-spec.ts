@@ -93,7 +93,7 @@ describe('Users E2E', () => {
         expect(phone).toEqual("081238192312")
         expect(role).toEqual("buyer")
         expect(created_at).toBeDefined()
-        expect(is_active).toBeFalsy()
+        expect(is_active).toBeTruthy()
       })
   })
 

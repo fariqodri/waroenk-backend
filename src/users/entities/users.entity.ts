@@ -29,6 +29,6 @@ export class UserEntity {
   @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updated_at: Date
 
-  @Column({ default: false })
+  @Column({ default: true })
   is_active: boolean
 }
