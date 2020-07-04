@@ -82,15 +82,18 @@ describe('Users E2E', () => {
       .get('/users')
       .set('Authorization', 'fake_token')
       .expect(200)
-      .expect({
-        message: 'ok',
-        result: {
-          id: 'user-1',
-          full_name: "full_name",
-          email: "full@example.com",
-          phone: "081238192312",
-          role: 'buyer'
-        }
+      .then(res => {
+        const body = res.body
+        const { message, result } = body
+        const { id, full_name, email, phone, role, created_at, is_active } = result
+        expect(message).toEqual('ok')
+        expect(id).toBeDefined()
+        expect(full_name).toEqual("full_name")
+        expect(email).toEqual("full@example.com")
+        expect(phone).toEqual("081238192312")
+        expect(role).toEqual("buyer")
+        expect(created_at).toBeDefined()
+        expect(is_active).toBeTruthy()
       })
   })
 

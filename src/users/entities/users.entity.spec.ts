@@ -10,6 +10,9 @@ describe("User Entity", () => {
       phone: "08123211231",
       role: "buyer",
       password: "test123test123",
+      created_at: new Date(),
+      updated_at: null,
+      is_active: true
     }
     const user = plainToClass(UserEntity, responseUser)
     expect(user.password).toBeUndefined()

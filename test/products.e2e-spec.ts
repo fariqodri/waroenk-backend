@@ -21,6 +21,9 @@ describe('GET Product and Categories (e2e)', () => {
     phone: '0812232112',
     role: 'buyer',
     password: 'hehe1234',
+    created_at: new Date(),
+    updated_at: null,
+    is_active: true
   };
   const seller: SellerAttribute = {
     id: 'seller-1',
@@ -29,7 +32,11 @@ describe('GET Product and Categories (e2e)', () => {
     birth_date: '1999-09-21',
     birth_place: 'Jakarta',
     gender: 'Male',
+    image: "img-1.com",
     user: user,
+    created_at: new Date(),
+    updated_at: null,
+    is_active: true
   }
 
   beforeEach(async () => {

@@ -1,10 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
-import { ShopProductQuery, ProductPostParam } from './shop.dto';
+import { ShopProductQuery, ProductPostParam, ShopPostParam } from './shop.dto';
 import { ResponseBody } from '../utils/response';
 import { SellerAttributeRepository } from '../users/repositories/seller.repository';
+import { UserRepository } from '../users/repositories/users.repository';
 import { ProductEntity } from '../products/entities/product.entity';
+import { SellerAttribute } from '../users/entities/seller.entity';
 import { nanoid } from 'nanoid';
 
 @Injectable()
@@ -12,13 +14,53 @@ export class ShopService {
   constructor(
     private productRepo: ProductRepository,
     private sellerRepo: SellerAttributeRepository,
-    private categoryRepo: CategoryRepository
+    private categoryRepo: CategoryRepository,
+    private userRepo: UserRepository
   ) {}
 
-  async create(userId: string, param: ProductPostParam): Promise<ResponseBody<ProductEntity>> {
+  async createShop(userId: string, param: ShopPostParam): Promise<ResponseBody<SellerAttribute>> {
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId }).getOne();
+    if (seller != undefined) {
+      throw new BadRequestException(new ResponseBody(null,
+        "there is existing shop with userId: [" + userId + "]"))
+    }
+    const user = await this.userRepo
+      .createQueryBuilder()
+      .where('id = :userId', { userId: userId })
+      .andWhere('is_active IS TRUE')
+      .andWhere("role = 'buyer'").getOne();
+    if (user === undefined) {
+      throw new BadRequestException(new ResponseBody(null,
+        "user with userId: [" + userId + "] is not a seller so it can't create shop"))
+    }
+    const newSeller: SellerAttribute = {
+      id: nanoid(11),
+      user: user,
+      shop_name: param.shop_name,
+      shop_address: param.shop_address,
+      birth_date: param.birth_date,
+      birth_place: param.birth_place,
+      gender: param.gender,
+      image: param.image,
+      created_at: new Date(),
+      updated_at: null,
+      is_active: false
+    }
+    await this.sellerRepo.insert(newSeller)
+    return new ResponseBody(newSeller);
+  }
+
+  async createProduct(userId: string, param: ProductPostParam): Promise<ResponseBody<ProductEntity>> {
+    const seller = await this.sellerRepo
+      .createQueryBuilder()
+      .where('userId = :userId', { userId: userId })
+      .andWhere('is_active IS TRUE').getOne();
+    if (seller === undefined) {
+      throw new BadRequestException(new ResponseBody(null,
+        "seller with userId: [" + userId + "] is inactive so it can't create product"))
+    }
     const category = await this.categoryRepo.findOne(param.categoryId);
     const product: ProductEntity = {
       id: nanoid(11),
@@ -37,14 +79,16 @@ export class ShopService {
     return new ResponseBody(product);
   }
 
-  async delete(userId: string, id: string): Promise<ResponseBody<string>> {
+  async deleteProduct(userId: string, id: string): Promise<ResponseBody<string>> {
     const seller = await this.sellerRepo
       .createQueryBuilder()
-      .where('userId = :userId', { userId: userId }).getOne()
+      .where('userId = :userId', { userId: userId })
+      .andWhere('is_active IS TRUE').getOne();
     const product = await this.productRepo
       .createQueryBuilder()
       .where('sellerId = :sellerId', { sellerId: seller.id })
-      .andWhere('id = :id', { id: id }).getOne();
+      .andWhere('id = :id', { id: id })
+      .andWhere('deleted_at IS NULL').getOne();
     if (product === undefined) {
       throw new BadRequestException(new ResponseBody(null,
          "user is not authorized to delete product or product doesn't exist with id [" + id + "]"))
@@ -55,7 +99,10 @@ export class ShopService {
   }
 
   async getProducts(userId: string, query: ShopProductQuery): Promise<ResponseBody<any[]>> {
-    const seller = await this.sellerRepo.createQueryBuilder().where('userId = :userId', { userId }).getOne()
+    const seller = await this.sellerRepo
+      .createQueryBuilder()
+      .where('userId = :userId', { userId })
+      .andWhere('is_active IS TRUE').getOne();
     const skippedItems = (query.page - 1) * query.limit;
     let queryBuilder = this.productRepo
       .createQueryBuilder('products')

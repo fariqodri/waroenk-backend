@@ -15,7 +15,6 @@ import { JwtAuthGuard } from "../src/auth/guards/jwt-auth.guard";
 import { getRepository, getConnection } from "typeorm";
 import { ShopModule } from "../src/shop/shop.module";
 import { RedisClientProvider } from "../src/redis/redis.client.provider";
-import { create } from "domain";
 
 
 const fakeRedisClientProvider = {
@@ -41,8 +40,11 @@ describe('Shop E2E', () => {
     full_name: 'user 1',
     email: 'user@example.com',
     phone: '0812232112',
-    role: 'buyer',
+    role: 'seller',
     password: 'hehe1234',
+    created_at: new Date(),
+    updated_at: null,
+    is_active: true
   };
   const seller: SellerAttribute = {
     id: 'seller-1',
@@ -51,15 +53,22 @@ describe('Shop E2E', () => {
     birth_date: '1999-09-21',
     birth_place: 'Jakarta',
     gender: 'Male',
+    image: "img-1.com",
     user: user,
+    created_at: new Date(),
+    updated_at: null,
+    is_active: true
   }
   const user2: UserEntity = {
     id: 'user-2',
     full_name: 'user 2',
     email: 'user2@example.com',
     phone: '0812232112',
-    role: 'buyer',
+    role: 'seller',
     password: 'hehe1234',
+    created_at: new Date(),
+    updated_at: null,
+    is_active: true
   };
   const seller2: SellerAttribute = {
     id: 'seller-2',
@@ -68,7 +77,11 @@ describe('Shop E2E', () => {
     birth_date: '1999-09-21',
     birth_place: 'Jakarta',
     gender: 'Male',
+    image: "img-1.com",
     user: user2,
+    created_at: new Date(),
+    updated_at: null,
+    is_active: true
   }
   
   beforeEach(async () => {
@@ -139,7 +152,6 @@ describe('Shop E2E', () => {
       },
     ])
   })
-
   it('should return newly created product when create product', () => {
     const reqBody = {
       name: "Paprika",
@@ -301,6 +313,92 @@ describe('Negative test E2E shop', () => {
       return request(app.getHttpServer())
         .get('/shop/products')
         .expect(403)
+    })
+  })
+})
+
+describe('Create Shop', () => {
+  let app: INestApplication;
+
+  const fakeJwtAuthGuard = {
+    canActivate: jest.fn().mockImplementation((context: ExecutionContext) => {
+      const req = context.switchToHttp().getRequest();
+      req.user = { userId: 'user-1', issuedAt: 1, expiredAt: 2, role: 'seller' }
+      return true
+    })
+  }
+
+  const user: UserEntity = {
+    id: 'user-1',
+    full_name: 'user 1',
+    email: 'user@example.com',
+    phone: '0812232112',
+    role: 'seller',
+    password: 'hehe1234',
+    created_at: new Date(),
+    updated_at: null,
+    is_active: true
+  };
+  
+  beforeEach(async () => {
+    const moduleFixture = await Test.createTestingModule({
+      imports: [
+        ProductsModule,
+        TypeOrmModule.forRoot({
+          type: "sqlite",
+          database: ":memory:",
+          dropSchema: true,
+          synchronize: true,
+          entities: [UserEntity, SellerAttribute, ProductEntity],
+        }),
+        AuthModule,
+        RedisModule.register({}),
+        JwtModule.register({}),
+        ShopModule
+      ]
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue(fakeJwtAuthGuard)
+      .overrideProvider(RedisClientProvider)
+      .useValue(fakeRedisClientProvider)
+      .compile()
+    
+    app = moduleFixture.createNestApplication()
+    await app.init()
+
+    await getRepository(UserEntity).insert([user])
+
+  it('should return newly created shop when create shop', () => {
+    const reqBody = {
+      shop_name: "shoppi",
+      shop_address: "jalan anggur",
+      birth_date: "25/2/1998",
+      birth_place: "Bogor",
+      gender: "Trans",
+      image: ["img-1.com"],
+    }
+    return request(app.getHttpServer())
+      .post('/shop')
+      .send(reqBody)
+      .expect(201)
+      .then(res => {
+        const body = res.body
+        const { message, result } = body
+        const { id, shop_name, shop_address, birth_date, birth_place, gender, 
+          created_at, updated_at, is_active, image, seller } = result
+        expect(message).toEqual('ok')
+        expect(id).toBeDefined()
+        expect(shop_name).toEqual(reqBody.shop_name)
+        expect(shop_address).toEqual(reqBody.shop_address)
+        expect(birth_date).toEqual(reqBody.birth_date)
+        expect(birth_place).toEqual(reqBody.birth_place)
+        expect(gender).toEqual(reqBody.gender)
+        expect(created_at).toBeDefined()
+        expect(updated_at).toBeNull()
+        expect(is_active).toBeFalsy()
+        expect(seller.id).toEqual("seller-1")
+        expect(image).toEqual(reqBody.image)
+      })
     })
   })
 })
