@@ -21,7 +21,7 @@ export class ProductPostParam {
   @jf.number().required()
   price_per_quantiy: number
 
-  @jf.number().required()
+  @jf.number().optional()
   discount: number
 
   @jf.string().required()

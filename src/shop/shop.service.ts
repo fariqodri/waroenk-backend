@@ -62,13 +62,17 @@ export class ShopService {
         "seller with userId: [" + userId + "] is inactive so it can't create product"))
     }
     const category = await this.categoryRepo.findOne(param.categoryId);
+    let discount = 0
+    if (param.discount) {
+      discount = param.discount
+    }
     const product: ProductEntity = {
       id: nanoid(11),
       seller: seller,
       category: category,
       name: param.name,
       price_per_quantity: param.price_per_quantiy,
-      discount: param.discount,
+      discount: discount,
       description: param.description,
       images: param.images,
       created_at: new Date(),
