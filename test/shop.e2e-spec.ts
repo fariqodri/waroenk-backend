@@ -54,7 +54,6 @@ describe('Shop E2E', () => {
     birth_place: 'Jakarta',
     gender: 'Male',
     image: "img-1.com",
-    location: "pasar minggu",
     user: user,
     created_at: new Date(),
     updated_at: null,
@@ -79,7 +78,6 @@ describe('Shop E2E', () => {
     birth_place: 'Jakarta',
     gender: 'Male',
     image: "img-1.com",
-    location: "sawangan",
     user: user2,
     created_at: new Date(),
     updated_at: null,
@@ -163,7 +161,6 @@ describe('Shop E2E', () => {
       birth_place: "Bogor",
       gender: "Trans",
       image: "img-1.com",
-      location: "cikarang",
     }
     return request(app.getHttpServer())
       .put('/shop')
@@ -173,7 +170,7 @@ describe('Shop E2E', () => {
         const body = res.body
         const { message, result } = body
         const { id, shop_name, shop_address, birth_date, birth_place, gender, 
-          created_at, updated_at, is_active, image, location } = result
+          created_at, updated_at, is_active, image } = result
         expect(message).toEqual('ok')
         expect(id).toEqual("seller-1")
         expect(shop_name).toEqual(reqBody.shop_name)
@@ -185,7 +182,6 @@ describe('Shop E2E', () => {
         expect(updated_at).toBeDefined()
         expect(is_active).toBeTruthy()
         expect(image).toEqual(reqBody.image)
-        expect(location).toEqual(reqBody.location)
       })
   })
 
@@ -219,7 +215,41 @@ describe('Shop E2E', () => {
         expect(updated_at).toBeNull()
         expect(deleted_at).toBeNull()
         expect(seller.id).toEqual("seller-1")
-        expect(category.id).toEqual("category-1")
+        expect(category.id).toEqual(reqBody.categoryId)
+        expect(available).toEqual(reqBody.available)
+      })
+  })
+
+  it('should return edited product when edit product', () => {
+    const reqBody = {
+      id: "product_1",
+      name: "Paprika",
+      categoryId: vegetableCategory.id,
+      price_per_quantiy: 10000,
+      discount: 0.5,
+      description: "Buah atau sayur gatau tp segar",
+      images: ["img1.com","img2.com"],
+      available: true
+    }
+    return request(app.getHttpServer())
+      .put('/shop/products')
+      .send(reqBody)
+      .expect(201)
+      .then(res => {
+        const body = res.body
+        const { message, result } = body
+        const { id, name, price_per_quantity, discount, description, images, 
+          created_at, updated_at, category, available } = result
+        expect(message).toEqual('ok')
+        expect(id).toBeDefined()
+        expect(name).toEqual(reqBody.name)
+        expect(price_per_quantity).toEqual(reqBody.price_per_quantiy)
+        expect(discount).toEqual(reqBody.discount)
+        expect(description).toEqual(reqBody.description)
+        expect(images).toEqual(reqBody.images)
+        expect(created_at).toBeDefined()
+        expect(updated_at).toBeDefined()
+        expect(category.id).toEqual(reqBody.categoryId)
         expect(available).toEqual(reqBody.available)
       })
   })
@@ -415,7 +445,6 @@ describe('Create Shop', () => {
       birth_place: "Bogor",
       gender: "Trans",
       image: "img-1.com",
-      location: "cikarang",
     }
     return request(app.getHttpServer())
       .post('/shop')
@@ -425,7 +454,7 @@ describe('Create Shop', () => {
         const body = res.body
         const { message, result } = body
         const { id, shop_name, shop_address, birth_date, birth_place, gender, 
-          created_at, updated_at, is_active, image, seller, location } = result
+          created_at, updated_at, is_active, image, seller } = result
         expect(message).toEqual('ok')
         expect(id).toBeDefined()
         expect(shop_name).toEqual(reqBody.shop_name)
@@ -438,7 +467,6 @@ describe('Create Shop', () => {
         expect(is_active).toBeFalsy()
         expect(seller.id).toEqual("seller-1")
         expect(image).toEqual(reqBody.image)
-        expect(location).toEqual(reqBody.location)
       })
     })
   })
