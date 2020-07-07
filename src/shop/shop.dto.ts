@@ -14,7 +14,7 @@ export class ProductDeleteParam {
 export class ProductPostParam {
   @jf.string().optional()
   id: string
-  
+
   @jf.string().required()
   categoryId: string
 
@@ -53,7 +53,7 @@ export class ShopPostParam {
   @jf.string().required()
   gender: string
 
-  @jf.string().optional()
+  @jf.string().required()
   image: string
 
   @jf.string().required()
