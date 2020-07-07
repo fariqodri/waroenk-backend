@@ -44,7 +44,6 @@ export class ShopService {
       birth_place: param.birth_place,
       gender: param.gender,
       image: param.image,
-      location: param.location,
       created_at: new Date(),
       updated_at: null,
       is_active: false
@@ -67,7 +66,6 @@ export class ShopService {
     seller.birth_place = param.birth_place
     seller.gender = param.gender
     seller.image = param.image
-    seller.location = param.location
     seller.updated_at = new Date()
     await this.sellerRepo.save(seller)
     return new ResponseBody(seller);
