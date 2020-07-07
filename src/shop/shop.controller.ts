@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Query, Req, Delete, HttpCode, Body, Post } from '@nestjs/common';
+import { Controller, UseGuards, Get, Query, Req, Delete, HttpCode, Body, Post, Put } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolePermissionGuard } from '../auth/guards/role.permission.guard';
 import { Roles } from '../utils/decorators';
@@ -51,5 +51,14 @@ export class ShopController {
   async createShop(@Body() param: ShopPostParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.createShop(user.userId, param);
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('seller')
+  @Put()
+  @HttpCode(201)
+  async editShop(@Body() param: ShopPostParam, @Req() request: Request) {
+    const user: { userId } = request.user as { userId }
+    return this.service.editShop(user.userId, param);
   }
 }

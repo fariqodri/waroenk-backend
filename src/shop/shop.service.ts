@@ -44,12 +44,33 @@ export class ShopService {
       birth_place: param.birth_place,
       gender: param.gender,
       image: param.image,
+      location: param.location,
       created_at: new Date(),
       updated_at: null,
       is_active: false
     }
     await this.sellerRepo.insert(newSeller)
     return new ResponseBody(newSeller);
+  }
+
+  async editShop(userId: string, param: ShopPostParam): Promise<ResponseBody<SellerAttribute>> {
+    const seller = await this.sellerRepo
+      .createQueryBuilder()
+      .where('userId = :userId', { userId: userId }).getOne();
+    if (seller === undefined) {
+      throw new BadRequestException(new ResponseBody(null,
+        "there is no shop with userId: [" + userId + "]"))
+    }
+    seller.shop_name = param.shop_name
+    seller.shop_address = param.shop_address
+    seller.birth_date = param.birth_date
+    seller.birth_place = param.birth_place
+    seller.gender = param.gender
+    seller.image = param.image
+    seller.location = param.location
+    seller.updated_at = new Date()
+    await this.sellerRepo.save(seller)
+    return new ResponseBody(seller);
   }
 
   async createProduct(userId: string, param: ProductPostParam): Promise<ResponseBody<ProductEntity>> {
