@@ -32,6 +32,9 @@ export class SellerAttribute {
   @Column()
   image: string
 
+  @Column()
+  location: string
+
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date
 
