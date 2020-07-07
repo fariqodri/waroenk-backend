@@ -12,6 +12,9 @@ export class ProductDeleteParam {
 }
 
 export class ProductPostParam {
+  @jf.string().optional()
+  id: string
+  
   @jf.string().required()
   categoryId: string
 

@@ -46,6 +46,15 @@ export class ShopController {
 
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('seller')
+  @Put('products')
+  @HttpCode(201)
+  async editProduct(@Body() param: ProductPostParam, @Req() request: Request) {
+    const user: { userId } = request.user as { userId }
+    return this.service.editProduct(user.userId, param);
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('seller')
   @Post()
   @HttpCode(201)
   async createShop(@Body() param: ShopPostParam, @Req() request: Request) {

@@ -54,7 +54,7 @@ export class ShopService {
   }
 
   async editShop(userId: string, param: ShopPostParam): Promise<ResponseBody<SellerAttribute>> {
-    const seller = await this.sellerRepo
+    let seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId }).getOne();
     if (seller === undefined) {
@@ -102,6 +102,36 @@ export class ShopService {
       available: param.available
     }
     await this.productRepo.insert(product)
+    return new ResponseBody(product);
+  }
+
+  async editProduct(userId: string, param: ProductPostParam): Promise<ResponseBody<ProductEntity>> {
+    const seller = await this.sellerRepo
+      .createQueryBuilder()
+      .where('userId = :userId', { userId: userId })
+      .andWhere('is_active IS TRUE').getOne();
+    if (seller === undefined) {
+      throw new BadRequestException(new ResponseBody(null,
+        "seller with userId: [" + userId + "] is inactive so it can't edit product"))
+    }
+    const category = await this.categoryRepo.findOne(param.categoryId);
+    let discount = 0
+    if (param.discount) {
+      discount = param.discount
+    }
+    let product = await this.productRepo
+      .createQueryBuilder()
+      .where('sellerId = :sellerId', { sellerId: seller.id })
+      .andWhere('id = :id', { id: param.id }).getOne();
+    product.category = category
+    product.name = param.name
+    product.price_per_quantity = param.price_per_quantiy
+    product.discount = param.discount
+    product.description = param.description
+    product.images = param.images
+    product.available = param.available
+    product.updated_at = new Date()
+    await this.productRepo.save(product)
     return new ResponseBody(product);
   }
 
