@@ -160,8 +160,8 @@ export class ShopService {
     const skippedItems = (query.page - 1) * query.limit;
     let queryBuilder = this.productRepo
       .createQueryBuilder('products')
-      .where('products.sellerId = :sellerId', { sellerId: seller.id });
-    queryBuilder = queryBuilder.andWhere('products.deleted_at IS NULL');
+      .where('products.sellerId = :sellerId', { sellerId: seller.id })
+      .andWhere('products.deleted_at IS NULL');
     if (query.search) {
       queryBuilder = queryBuilder.andWhere('LOWER(products.name) LIKE :name', {
         name: `%${query.search.toLowerCase()}%`,

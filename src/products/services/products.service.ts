@@ -10,9 +10,10 @@ export class ProductsService {
   async findAll(param: ProductQuery): Promise<ResponseBody<ProductResponse[]>> {
     let products: any[];
     const skippedItems = (param.page - 1) * param.limit;
-    let queryBuilder = this.productRepository.createQueryBuilder('products');
-    queryBuilder = queryBuilder.andWhere('products.deleted_at IS NULL');
-    queryBuilder = queryBuilder.andWhere('products.available IS TRUE');
+    let queryBuilder = this.productRepository
+      .createQueryBuilder('products')
+      .andWhere('products.deleted_at IS NULL')
+      .andWhere('products.available IS TRUE');
     if (param.search) {
       queryBuilder = queryBuilder.andWhere('LOWER(products.name) LIKE :name', {
         name: `%${param.search.toLowerCase()}%`,
