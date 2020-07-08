@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,7 +7,6 @@ import { CategoryEntity } from '../src/products/entities/category.entity';
 import { ProductEntity } from '../src/products/entities/product.entity';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { getConnection, getRepository } from 'typeorm';
-import { nanoid } from 'nanoid';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
 
 describe('GET Product and Categories (e2e)', () => {
