@@ -8,10 +8,10 @@ export class ProductEntity {
   @PrimaryColumn()
   id: string
 
-  @ManyToOne(type => CategoryEntity, category => category.products)
+  @ManyToOne(type => CategoryEntity, category => category.products, { eager: true })
   category: CategoryEntity
 
-  @ManyToOne(type => SellerAttribute, seller => seller.products)
+  @ManyToOne(type => SellerAttribute, seller => seller.products, { eager: true })
   seller: SellerAttribute
 
   @Column()

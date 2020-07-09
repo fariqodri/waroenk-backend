@@ -235,4 +235,33 @@ describe('GET Product and Categories (e2e)', () => {
         ]
       })
   })
+
+  it('Get product by ID success', () => {
+    return request(app.getHttpServer())
+      .get('/products/product_1')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: {
+          id: 'product_1',
+          name: 'KangKunG',
+          price_per_quantity: 10000,
+          seller_name: seller.shop_name,
+          discount: 0,
+          description: 'kangkung',
+          images: ['1'],
+          category: vegetableCategory.name
+        }
+      })
+  })
+
+  it('Get product by ID not found', () => {
+    return request(app.getHttpServer())
+      .get('/products/wrong_product')
+      .expect(404)
+      .expect({
+        message: 'product wrong_product not found',
+        result: null
+      })
+  })
 });
