@@ -55,7 +55,4 @@ export class ShopPostParam {
 
   @jf.string().required()
   image: string
-
-  @jf.string().required()
-  location: string
 }

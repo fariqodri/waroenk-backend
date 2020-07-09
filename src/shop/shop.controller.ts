@@ -1,10 +1,11 @@
-import { Controller, UseGuards, Get, Query, Req, Delete, HttpCode, Body, Post, Put } from '@nestjs/common';
+import { Controller, UseGuards, Get, Query, Req, Delete, HttpCode, Body, Post, Put, UsePipes } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolePermissionGuard } from '../auth/guards/role.permission.guard';
 import { Roles } from '../utils/decorators';
 import { ShopProductQuery, ProductDeleteParam, ProductPostParam, ShopPostParam } from './shop.dto';
 import { ShopService } from './shop.service';
 import { Request } from 'express';
+import { ValidationPipe } from '../utils/validation.pipe';
 
 @Controller('shop')
 export class ShopController {
@@ -35,6 +36,7 @@ export class ShopController {
     return this.service.deleteProduct(user.userId, param.id);
   }
 
+  @UsePipes(ValidationPipe)
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('seller')
   @Post('products')
@@ -44,6 +46,7 @@ export class ShopController {
     return this.service.createProduct(user.userId, param);
   }
 
+  @UsePipes(ValidationPipe)
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('seller')
   @Put('products')
@@ -53,6 +56,7 @@ export class ShopController {
     return this.service.editProduct(user.userId, param);
   }
 
+  @UsePipes(ValidationPipe)
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('seller')
   @Post()
@@ -62,6 +66,7 @@ export class ShopController {
     return this.service.createShop(user.userId, param);
   }
 
+  @UsePipes(ValidationPipe)
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('seller')
   @Put()
