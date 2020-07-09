@@ -14,7 +14,7 @@ export class ProductResponse {
   id: string;
   name: string;
   price_per_quantity: number;
-  seller: string;
+  seller_name: string;
   discount: number;
   description: string;
   images: string[];

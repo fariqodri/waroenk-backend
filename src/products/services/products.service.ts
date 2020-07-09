@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { ResponseBody } from '../../utils/response';
 import { ProductRepository } from '../repositories/product.repository';
 import { ProductQuery, ProductResponse } from '../dto/product.dto';
@@ -67,5 +67,26 @@ export class ProductsService {
       images: p.images.split(','),
     }));
     return new ResponseBody(products);
+  }
+
+  async findOne(productId: string): Promise<ResponseBody<ProductResponse>> {
+    try {
+      const product = await this.productRepository.findOneOrFail({
+        where: { id: productId },
+      })
+      const response: ProductResponse = {
+        id: product.id,
+        name: product.name,
+        price_per_quantity: product.price_per_quantity,
+        seller_name: product.seller.shop_name,
+        discount: product.discount,
+        description: product.description,
+        images: product.images,
+        category: product.category.name
+      }
+      return new ResponseBody(response)
+    } catch(err) {
+      throw new NotFoundException(new ResponseBody(null, `product ${productId} not found`))
+    }
   }
 }
