@@ -90,7 +90,7 @@ export class ShopService {
       seller: seller,
       category: category,
       name: param.name,
-      price_per_quantity: param.price_per_quantiy,
+      price_per_quantity: param.price_per_quantity,
       discount: discount,
       description: param.description,
       images: param.images,
@@ -123,7 +123,7 @@ export class ShopService {
       .andWhere('id = :id', { id: param.id }).getOne();
     product.category = category
     product.name = param.name
-    product.price_per_quantity = param.price_per_quantiy
+    product.price_per_quantity = param.price_per_quantity
     product.discount = param.discount
     product.description = param.description
     product.images = param.images
