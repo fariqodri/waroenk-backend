@@ -8,6 +8,7 @@ import { RedisModule } from './redis/redis.module';
 import * as config from "./ormconfig";
 import { REDIS_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from './constants';
 import { ShopModule } from './shop/shop.module';
+import { AgendaModule } from './agenda/agenda.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ShopModule } from './shop/shop.module';
     UsersModule,
     ProductsModule,
     PermissionModule,
+    AgendaModule,
     RedisModule.register({
       host: REDIS_HOST,
       port: REDIS_PORT,

@@ -189,7 +189,7 @@ describe('Shop E2E', () => {
     const reqBody = {
       name: "Paprika",
       categoryId: "category-1",
-      price_per_quantiy: 10000,
+      price_per_quantity: 10000,
       discount: 0.5,
       description: "Buah atau sayur gatau tp segar",
       images: ["img1.com","img2.com"],
@@ -207,7 +207,7 @@ describe('Shop E2E', () => {
         expect(message).toEqual('ok')
         expect(id).toBeDefined()
         expect(name).toEqual(reqBody.name)
-        expect(price_per_quantity).toEqual(reqBody.price_per_quantiy)
+        expect(price_per_quantity).toEqual(reqBody.price_per_quantity)
         expect(discount).toEqual(reqBody.discount)
         expect(description).toEqual(reqBody.description)
         expect(images).toEqual(reqBody.images)
@@ -225,7 +225,7 @@ describe('Shop E2E', () => {
       id: "product_1",
       name: "Paprika",
       categoryId: vegetableCategory.id,
-      price_per_quantiy: 10000,
+      price_per_quantity: 10000,
       discount: 0.5,
       description: "Buah atau sayur gatau tp segar",
       images: ["img1.com","img2.com"],
@@ -243,7 +243,7 @@ describe('Shop E2E', () => {
         expect(message).toEqual('ok')
         expect(id).toBeDefined()
         expect(name).toEqual(reqBody.name)
-        expect(price_per_quantity).toEqual(reqBody.price_per_quantiy)
+        expect(price_per_quantity).toEqual(reqBody.price_per_quantity)
         expect(discount).toEqual(reqBody.discount)
         expect(description).toEqual(reqBody.description)
         expect(images).toEqual(reqBody.images)
