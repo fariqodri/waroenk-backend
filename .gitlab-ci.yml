@@ -17,7 +17,7 @@ backend-unit-test:
     - npm run test:cov
 
 backend-end-to-end-test:
-  image: node:10
+  image: node:11
   stage: test
   only:
     refs:
