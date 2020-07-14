@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
+import { DiscussionModule } from './discussion/discussion.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PermissionModule } from './permission/permission.module';
 import { RedisModule } from './redis/redis.module';
@@ -18,6 +19,7 @@ import { AgendaModule } from './agenda/agenda.module';
     ProductsModule,
     PermissionModule,
     AgendaModule,
+    DiscussionModule,
     RedisModule.register({
       host: REDIS_HOST,
       port: REDIS_PORT,

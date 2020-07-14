@@ -1,5 +1,6 @@
 import { Entity, PrimaryColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Exclude } from 'class-transformer';
+import { DiscussionEntity } from "../../discussion/entities/discussion.entity";
 
 @Entity({ name: "users" })
 export class UserEntity {
@@ -31,4 +32,8 @@ export class UserEntity {
 
   @Column({ default: true })
   is_active: boolean
+
+  @OneToMany(type => DiscussionEntity, discussion => discussion.user)
+  discussions?: DiscussionEntity[]
+  
 }
