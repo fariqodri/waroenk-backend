@@ -1,6 +1,7 @@
-import { Entity, PrimaryColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
 import { CategoryEntity } from './category.entity';
 import { SellerAttribute } from "../../users/entities/seller.entity";
+import { DiscussionEntity } from "../../discussion/entities/discussion.entity";
 
 @Entity({ name: "product" })
 export class ProductEntity {
@@ -13,6 +14,9 @@ export class ProductEntity {
 
   @ManyToOne(type => SellerAttribute, seller => seller.products, { eager: true })
   seller: SellerAttribute
+
+  @OneToMany(type => DiscussionEntity, discussion => discussion.product)
+  discussions?: DiscussionEntity[]
 
   @Column()
   name: string
