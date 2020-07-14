@@ -15,6 +15,7 @@ import { JwtAuthGuard } from "../src/auth/guards/jwt-auth.guard";
 import { getRepository, getConnection } from "typeorm";
 import { ShopModule } from "../src/shop/shop.module";
 import { RedisClientProvider } from "../src/redis/redis.client.provider";
+import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
 
 
 const fakeRedisClientProvider = {
@@ -93,7 +94,13 @@ describe('Shop E2E', () => {
           database: ":memory:",
           dropSchema: true,
           synchronize: true,
-          entities: [CategoryEntity, UserEntity, SellerAttribute, ProductEntity],
+          entities: [
+            CategoryEntity, 
+            UserEntity, 
+            SellerAttribute, 
+            ProductEntity,
+            DiscussionEntity
+          ],
         }),
         AuthModule,
         RedisModule.register({}),

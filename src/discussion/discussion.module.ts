@@ -7,7 +7,7 @@ import { UserRepository } from '../users/repositories/users.repository';
 import { ProductRepository } from '../products/repositories/product.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserRepository, ProductRepository])],
+  imports: [TypeOrmModule.forFeature([UserRepository, ProductRepository, DiscussionRepository])],
   controllers: [DiscussionController],
   providers: [DiscussionService],
   exports: [TypeOrmModule.forFeature([DiscussionRepository])]
