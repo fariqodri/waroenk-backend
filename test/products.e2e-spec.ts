@@ -8,6 +8,7 @@ import { ProductEntity } from '../src/products/entities/product.entity';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { getConnection, getRepository } from 'typeorm';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
+import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
@@ -52,6 +53,7 @@ describe('GET Product and Categories (e2e)', () => {
             UserEntity,
             SellerAttribute,
             ProductEntity,
+            DiscussionEntity
           ],
         }),
       ],

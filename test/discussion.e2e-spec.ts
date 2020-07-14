@@ -72,11 +72,12 @@ describe('Discussion (e2e)', () => {
         }),
       ],
     })
-    .overrideGuard(JwtAuthGuard)
-    .useValue(fakeJwtAuthGuard)
-    .overrideProvider(RedisClientProvider)
-    .useValue(fakeRedisClientProvider)
-    .compile()
+      .overrideGuard(JwtAuthGuard)
+      .useValue(fakeJwtAuthGuard)
+      .overrideProvider(RedisClientProvider)
+      .useValue(fakeRedisClientProvider)
+      .compile()
+
     app = moduleFixture.createNestApplication();
     await app.init();
     await getRepository(UserEntity).insert([user])

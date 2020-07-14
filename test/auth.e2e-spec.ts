@@ -15,6 +15,7 @@ import { getConnection } from 'typeorm';
 import { ProductEntity } from '../src/products/entities/product.entity';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { CategoryEntity } from '../src/products/entities/category.entity';
+import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
 
 describe('Login and Logout E2E Test', () => {
   let app: INestApplication;
@@ -45,7 +46,13 @@ describe('Login and Logout E2E Test', () => {
           database: ":memory:",
           dropSchema: true,
           synchronize: true,
-          entities: [CategoryEntity, UserEntity, SellerAttribute, ProductEntity]
+          entities: [
+            CategoryEntity, 
+            UserEntity, 
+            SellerAttribute, 
+            ProductEntity,
+            DiscussionEntity
+          ]
         })
       ],
     })

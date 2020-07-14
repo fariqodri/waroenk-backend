@@ -16,6 +16,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { ProductEntity } from '../src/products/entities/product.entity';
 import { CategoryEntity } from '../src/products/entities/category.entity';
+import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
 
 describe('Users E2E', () => {
   let app: INestApplication;
@@ -44,7 +45,13 @@ describe('Users E2E', () => {
           database: ":memory:",
           dropSchema: true,
           synchronize: true,
-          entities: [CategoryEntity, UserEntity, SellerAttribute, ProductEntity]
+          entities: [
+            CategoryEntity, 
+            UserEntity, 
+            SellerAttribute, 
+            ProductEntity,
+            DiscussionEntity
+          ]
         }),
         AuthModule,
         RedisModule.register({}),
