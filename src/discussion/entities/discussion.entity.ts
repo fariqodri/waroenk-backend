@@ -21,13 +21,7 @@ export class DiscussionEntity {
   replies?: DiscussionEntity[]
 
   @Column()
-  title: string
-
-  @Column()
   description: string
-
-  @Column('simple-array')
-  images: string[]
 
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date

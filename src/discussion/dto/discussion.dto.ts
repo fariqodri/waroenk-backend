@@ -9,12 +9,6 @@ export class DiscussionPostParam {
     productId: string
   
     @jf.string().required()
-    title: string
-  
-    @jf.string().required()
     description: string
-  
-    @jf.array().required()
-    images: string[]
-    
+
   }

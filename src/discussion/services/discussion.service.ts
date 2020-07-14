@@ -44,9 +44,7 @@ export class DiscussionService {
       user: user,
       product: product,
       parent: parentDiscussion,
-      title: param.title,
       description: param.description,
-      images: param.images,
       created_at: new Date(),
       updated_at: null,
       deleted_at: null
