@@ -15,6 +15,9 @@ export class SellerAttribute {
   products?: ProductEntity[]
 
   @Column()
+  tier: number
+
+  @Column()
   shop_name: string
 
   @Column()

@@ -33,6 +33,7 @@ describe('GET Product and Categories (e2e)', () => {
     birth_place: 'Jakarta',
     gender: 'Male',
     image: "img-1.com",
+    tier: 1,
     user: user,
     created_at: new Date(),
     updated_at: null,
