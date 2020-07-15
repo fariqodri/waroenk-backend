@@ -2,7 +2,7 @@ import { Controller, UseGuards, Get, Query, Req, Delete, HttpCode, Body, Post, P
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolePermissionGuard } from '../auth/guards/role.permission.guard';
 import { Roles } from '../utils/decorators';
-import { ShopProductQuery, ProductDeleteParam, ProductPostParam, ShopPostParam } from './shop.dto';
+import { ShopProductQuery, ProductDeleteParam, ProductCreateParam, ProductEditParam, ShopPostParam } from './shop.dto';
 import { ShopService } from './shop.service';
 import { Request } from 'express';
 import { ValidationPipe } from '../utils/validation.pipe';
@@ -41,7 +41,7 @@ export class ShopController {
   @Roles('seller')
   @Post('products')
   @HttpCode(201)
-  async createProduct(@Body() param: ProductPostParam, @Req() request: Request) {
+  async createProduct(@Body() param: ProductCreateParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.createProduct(user.userId, param);
   }
@@ -51,7 +51,7 @@ export class ShopController {
   @Roles('seller')
   @Put('products')
   @HttpCode(201)
-  async editProduct(@Body() param: ProductPostParam, @Req() request: Request) {
+  async editProduct(@Body() param: ProductEditParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.editProduct(user.userId, param);
   }

@@ -5,7 +5,6 @@ import { AgendaRepository } from '../repositories/agenda.repository';
 
 jest.mock('../repositories/agenda.repository')
 
-
 describe('Agenda Controller', () => {
   let controller: AgendaController;
 
