@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
-import { ShopProductQuery, ProductPostParam, ShopPostParam } from './shop.dto';
+import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam } from './shop.dto';
 import { ResponseBody } from '../utils/response';
 import { SellerAttributeRepository } from '../users/repositories/seller.repository';
 import { UserRepository } from '../users/repositories/users.repository';
@@ -72,7 +72,7 @@ export class ShopService {
     return new ResponseBody(seller);
   }
 
-  async createProduct(userId: string, param: ProductPostParam): Promise<ResponseBody<ProductEntity>> {
+  async createProduct(userId: string, param: ProductCreateParam): Promise<ResponseBody<ProductEntity>> {
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId })
@@ -104,7 +104,7 @@ export class ShopService {
     return new ResponseBody(product);
   }
 
-  async editProduct(userId: string, param: ProductPostParam): Promise<ResponseBody<ProductEntity>> {
+  async editProduct(userId: string, param: ProductEditParam): Promise<ResponseBody<ProductEntity>> {
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId })
@@ -113,22 +113,32 @@ export class ShopService {
       throw new BadRequestException(new ResponseBody(null,
         "seller with userId: [" + userId + "] is inactive so it can't edit product"))
     }
-    const category = await this.categoryRepo.findOne(param.categoryId);
-    let discount = 0
-    if (param.discount) {
-      discount = param.discount
-    }
     let product = await this.productRepo
       .createQueryBuilder()
       .where('sellerId = :sellerId', { sellerId: seller.id })
       .andWhere('id = :id', { id: param.id }).getOne();
-    product.category = category
-    product.name = param.name
-    product.price_per_quantity = param.price_per_quantity
-    product.discount = param.discount
-    product.description = param.description
-    product.images = param.images
-    product.available = param.available
+    if (param.categoryId) {
+      const category = await this.categoryRepo.findOne(param.categoryId);
+      product.category = category
+    }
+    if (param.discount) {
+      product.discount = param.discount
+    }
+    if (param.name) {
+      product.name = param.name
+    }
+    if (param.price_per_quantity) {
+      product.price_per_quantity = param.price_per_quantity
+    }
+    if (param.description) {
+      product.description = param.description
+    }
+    if (param.images) {
+      product.images = param.images
+    }
+    if (param.available) {
+      product.available = param.available
+    }
     product.updated_at = new Date()
     await this.productRepo.save(product)
     return new ResponseBody(product);

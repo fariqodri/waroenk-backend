@@ -11,9 +11,7 @@ export class ProductDeleteParam {
   id: string
 }
 
-export class ProductPostParam {
-  @jf.string().optional()
-  id: string
+export class ProductCreateParam {
 
   @jf.string().required()
   categoryId: string
@@ -34,6 +32,33 @@ export class ProductPostParam {
   images: string[]
 
   @jf.boolean().required()
+  available: boolean
+}
+
+export class ProductEditParam {
+
+  @jf.string().required()
+  id: string
+
+  @jf.string().optional()
+  categoryId: string
+
+  @jf.string().optional()
+  name: string
+
+  @jf.number().optional()
+  price_per_quantity: number
+
+  @jf.number().optional()
+  discount: number
+
+  @jf.string().optional()
+  description: string
+
+  @jf.array().optional()
+  images: string[]
+
+  @jf.boolean().optional()
   available: boolean
 }
 
