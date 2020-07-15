@@ -55,6 +55,7 @@ describe('Shop E2E', () => {
     birth_place: 'Jakarta',
     gender: 'Male',
     image: "img-1.com",
+    tier: 1,
     user: user,
     created_at: new Date(),
     updated_at: null,
@@ -79,6 +80,7 @@ describe('Shop E2E', () => {
     birth_place: 'Jakarta',
     gender: 'Male',
     image: "img-1.com",
+    tier: 1,
     user: user2,
     created_at: new Date(),
     updated_at: null,
@@ -461,7 +463,7 @@ describe('Create Shop', () => {
         const body = res.body
         const { message, result } = body
         const { id, shop_name, shop_address, birth_date, birth_place, gender, 
-          created_at, updated_at, is_active, image, seller } = result
+          created_at, updated_at, is_active, image, seller, tier } = result
         expect(message).toEqual('ok')
         expect(id).toBeDefined()
         expect(shop_name).toEqual(reqBody.shop_name)
@@ -474,6 +476,7 @@ describe('Create Shop', () => {
         expect(is_active).toBeFalsy()
         expect(seller.id).toEqual("seller-1")
         expect(image).toEqual(reqBody.image)
+        expect(tier).toEqual(1)
       })
     })
   })

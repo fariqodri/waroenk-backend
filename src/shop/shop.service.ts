@@ -44,6 +44,7 @@ export class ShopService {
       birth_place: param.birth_place,
       gender: param.gender,
       image: param.image,
+      tier: 1,
       created_at: new Date(),
       updated_at: null,
       is_active: false
