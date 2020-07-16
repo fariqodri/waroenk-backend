@@ -249,11 +249,22 @@ describe('GET Product and Categories (e2e)', () => {
           id: 'product_1',
           name: 'KangKunG',
           price_per_quantity: 10000,
-          seller_name: seller.shop_name,
+          seller: {
+            id: seller.id,
+            name: seller.shop_name,
+            address: seller.shop_address,
+            image: seller.image,
+            is_active: seller.is_active,
+            tier: seller.tier
+          },
           discount: 0,
           description: 'kangkung',
           images: ['1'],
-          category: vegetableCategory.name
+          category: {
+            id: vegetableCategory.id,
+            name: vegetableCategory.name,
+            image: vegetableCategory.image
+          }
         }
       })
   })
