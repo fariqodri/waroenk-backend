@@ -78,11 +78,22 @@ export class ProductsService {
         id: product.id,
         name: product.name,
         price_per_quantity: product.price_per_quantity,
-        seller_name: product.seller.shop_name,
+        seller: {
+          id: product.seller.id,
+          name: product.seller.shop_name,
+          address: product.seller.shop_address,
+          image: product.seller.image,
+          is_active: product.seller.is_active,
+          tier: product.seller.tier
+        },
         discount: product.discount,
         description: product.description,
         images: product.images,
-        category: product.category.name
+        category: {
+          id: product.category.id,
+          name: product.category.name,
+          image: product.category.image
+        }
       }
       return new ResponseBody(response)
     } catch(err) {
