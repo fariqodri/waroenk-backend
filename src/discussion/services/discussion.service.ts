@@ -22,7 +22,7 @@ export class DiscussionService {
       .andWhere('is_active IS TRUE').getOne();
     if (user === undefined) {
       throw new BadRequestException(new ResponseBody(null,
-        "user with userId: [" + userId + "] is not a seller so it can't create shop"))
+        "user with userId: [" + userId + "] is inactive so it can't create discussion"))
     }
     const product = await this.productRepo
       .createQueryBuilder()
