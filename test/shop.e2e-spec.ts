@@ -231,9 +231,8 @@ describe('Shop E2E', () => {
 
   it('should return edited product when edit product', () => {
     const reqBody = {
-      id: "product_1",
-      name: "Paprika",
       categoryId: vegetableCategory.id,
+      name: "Paprika",
       price_per_quantity: 10000,
       discount: 0.5,
       description: "Buah atau sayur gatau tp segar",
@@ -241,7 +240,7 @@ describe('Shop E2E', () => {
       available: true
     }
     return request(app.getHttpServer())
-      .put('/shop/products')
+      .put('/shop/products/product_1')
       .send(reqBody)
       .expect(201)
       .then(res => {
@@ -269,10 +268,7 @@ describe('Shop E2E', () => {
 
   it('should delete product', () => {
     return request(app.getHttpServer())
-      .delete('/shop/products')
-      .send({
-        id: "product_1"
-      })
+      .delete('/shop/products/product_1')
       .expect(200)
       .expect({
         message: 'ok',
@@ -282,10 +278,7 @@ describe('Shop E2E', () => {
 
   it('should return 400 when user is wrong when delete product', () => {
     return request(app.getHttpServer())
-      .delete('/shop/products')
-      .send({
-        id: "product_3"
-      })
+      .delete('/shop/products/product_3')
       .expect(400)
       .expect({
         message: "user is not authorized to delete product or product doesn't exist with id [product_3]",
@@ -295,10 +288,7 @@ describe('Shop E2E', () => {
 
   it('should return 400 when product does not exist when delete product', () => {
     return request(app.getHttpServer())
-      .delete('/shop/products')
-      .send({
-        id: "product_xyz"
-      })
+      .delete('/shop/products/product_xyz')
       .expect(400)
       .expect({
         message: "user is not authorized to delete product or product doesn't exist with id [product_xyz]",

@@ -7,12 +7,7 @@ export class ShopProductQuery {
   search?: string
 }
 
-export class ProductDeleteParam {
-  id: string
-}
-
 export class ProductCreateParam {
-
   @jf.string().required()
   categoryId: string
 
@@ -36,30 +31,13 @@ export class ProductCreateParam {
 }
 
 export class ProductEditParam {
-
-  @jf.string().required()
-  id: string
-
-  @jf.string().optional()
-  categoryId: string
-
-  @jf.string().optional()
-  name: string
-
-  @jf.number().optional()
-  price_per_quantity: number
-
-  @jf.number().optional()
-  discount: number
-
-  @jf.string().optional()
-  description: string
-
-  @jf.array().optional()
-  images: string[]
-
-  @jf.boolean().optional()
-  available: boolean
+  categoryId?: string
+  name?: string
+  price_per_quantity?: number
+  discount?: number
+  description?: string
+  images?: string[]
+  available?: boolean
 }
 
 export class ShopPostParam {

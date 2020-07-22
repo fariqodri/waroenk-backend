@@ -116,7 +116,8 @@ export class ShopService {
     return new ResponseBody(product);
   }
 
-  async editProduct(userId: string, param: ProductEditParam): Promise<ResponseBody<ProductEntity>> {
+  async editProduct(id: string, userId: string, param: ProductEditParam): Promise<ResponseBody<ProductEntity>> {
+    console.log(id)
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId })
@@ -128,7 +129,7 @@ export class ShopService {
     let product = await this.productRepo
       .createQueryBuilder()
       .where('sellerId = :sellerId', { sellerId: seller.id })
-      .andWhere('id = :id', { id: param.id }).getOne();
+      .andWhere('id = :id', { id: id }).getOne();
     if (param.categoryId) {
       const category = await this.categoryRepo.findOne(param.categoryId);
       product.category = category
@@ -156,7 +157,7 @@ export class ShopService {
     return new ResponseBody(product);
   }
 
-  async deleteProduct(userId: string, id: string): Promise<ResponseBody<string>> {
+  async deleteProduct(id: string, userId: string): Promise<ResponseBody<string>> {
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId })
