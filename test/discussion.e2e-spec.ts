@@ -116,14 +116,12 @@ describe('Discussion (e2e)', () => {
       .then(res => {
         const body = res.body
         const { message, result } = body
-        const { id, product, description, created_at, updated_at, deleted_at } = result
+        const { id, productId, description, created_at, updated_at, deleted_at } = result
         expect(message).toEqual('ok')
         expect(id).toBeDefined()
-        expect(product.id).toEqual(reqBody.productId)
+        expect(productId).toEqual(reqBody.productId)
         expect(description).toEqual(reqBody.description)
         expect(created_at).toBeDefined()
-        expect(updated_at).toBeNull()
-        expect(deleted_at).toBeNull()
       })
   });
 });

@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ResponseBody } from '../../utils/response';
 import { DiscussionRepository } from '../repositories/discussion.repository';
-import { DiscussionPostParam } from '../dto/discussion.dto';
+import { DiscussionPostParam, DiscussionResponse } from '../dto/discussion.dto';
 import { DiscussionEntity } from '../entities/discussion.entity';
 import { UserRepository } from '../../users/repositories/users.repository';
 import { nanoid } from 'nanoid';
@@ -15,7 +15,7 @@ export class DiscussionService {
     private productRepo: ProductRepository,
   ) {}
 
-  async createDiscussion(userId: string, param: DiscussionPostParam): Promise<ResponseBody<DiscussionEntity>> {
+  async createDiscussion(userId: string, param: DiscussionPostParam): Promise<ResponseBody<DiscussionResponse>> {
     const user = await this.userRepo
       .createQueryBuilder()
       .where('id = :userId', { userId: userId })
@@ -32,7 +32,7 @@ export class DiscussionService {
       throw new BadRequestException(new ResponseBody(null,
          "product doesn't exist with id [" + param.productId + "]"))
     }
-    let parentDiscussion = null
+    let parentDiscussion: DiscussionEntity = null
     if (param.parentId) {
       parentDiscussion = await this.discussionRepo
       .createQueryBuilder()
@@ -50,6 +50,14 @@ export class DiscussionService {
       deleted_at: null
     }
     await this.discussionRepo.insert(newDiscussion)
-    return new ResponseBody(newDiscussion)
+    const response: DiscussionResponse = {
+      id: newDiscussion.id,
+      userId: user.id,
+      productId: product.id,
+      parentId: parentDiscussion? parentDiscussion.id : null,
+      description: param.description,
+      created_at: newDiscussion.created_at
+    }
+    return new ResponseBody(response)
   }
 }
