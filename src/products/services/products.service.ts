@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { ResponseBody } from '../../utils/response';
+import { ResponseBody, ResponseListBody } from '../../utils/response';
 import { ProductRepository } from '../repositories/product.repository';
 import { ProductQuery, ProductResponse } from '../dto/product.dto';
 
@@ -7,7 +7,7 @@ import { ProductQuery, ProductResponse } from '../dto/product.dto';
 export class ProductsService {
   constructor(private productRepository: ProductRepository) {}
 
-  async findAll(param: ProductQuery): Promise<ResponseBody<ProductResponse[]>> {
+  async findAll(param: ProductQuery): Promise<ResponseListBody<ProductResponse[]>> {
     let products: any[];
     const skippedItems = (param.page - 1) * param.limit;
     let queryBuilder = this.productRepository
@@ -42,6 +42,10 @@ export class ProductsService {
           'products.price_per_quantity',
           param.sort_type === 'desc' ? 'DESC' : 'ASC',
         );
+      } else if (param.sort_by === 'newest') {
+        queryBuilder = queryBuilder.orderBy(
+          'products.created_at', 'DESC',
+        );
       }
     }
     queryBuilder = queryBuilder
@@ -66,7 +70,7 @@ export class ProductsService {
       ...p,
       images: p.images.split(','),
     }));
-    return new ResponseBody(products);
+    return new ResponseListBody(products, "ok", Number(param.page), Number(param.limit));
   }
 
   async findOne(productId: string): Promise<ResponseBody<ProductResponse>> {

@@ -79,7 +79,8 @@ describe('GET Product and Categories (e2e)', () => {
         description: 'kangkung',
         images: ['1'],
         category: vegetableCategory,
-        seller: seller
+        seller: seller,
+        created_at: new Date('123')
       },
       {
         id: 'product_2',
@@ -89,7 +90,9 @@ describe('GET Product and Categories (e2e)', () => {
         description: 'bayam',
         images: ['1'],
         category: vegetableCategory,
-        seller: seller
+        seller: seller,
+
+        created_at: new Date('124')
       },
       {
         id: 'product_3',
@@ -99,7 +102,8 @@ describe('GET Product and Categories (e2e)', () => {
         description: 'jeruk',
         images: ['1'],
         category: fruitsCategory,
-        seller: seller
+        seller: seller,
+        created_at: new Date('125')
       },
     ])
   });
@@ -164,6 +168,8 @@ describe('GET Product and Categories (e2e)', () => {
             category: vegetableCategory.name
           }
         ],
+        page: 1,
+        limit: 10,
       });
   });
 
@@ -174,6 +180,8 @@ describe('GET Product and Categories (e2e)', () => {
       .expect({
         message: 'ok',
         result: [],
+        page: 1,
+        limit: 10,
       });
   })
 
@@ -215,6 +223,8 @@ describe('GET Product and Categories (e2e)', () => {
             seller_name: seller.shop_name
           }
         ],
+        page: 1,
+        limit: 10,
       });
   })
 
@@ -235,7 +245,32 @@ describe('GET Product and Categories (e2e)', () => {
             category: vegetableCategory.name,
             seller_name: seller.shop_name
           },
-        ]
+        ],
+        page: 2,
+        limit: 1,
+      })
+  })
+
+  it('Query product with sort by newest', () => {
+    return request(app.getHttpServer())
+      .get('/products?sort_by=newest&page=1&limit=1')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          {
+            id: 'product_3',
+            name: 'Jeruk',
+            price_per_quantity: 20000,
+            discount: 0,
+            description: 'jeruk',
+            images: ['1'],
+            category: fruitsCategory.name,
+            seller_name: seller.shop_name
+          }
+        ],
+        page: 1,
+        limit: 1,
       })
   })
 

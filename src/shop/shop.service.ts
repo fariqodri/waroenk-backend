@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
 import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam } from './shop.dto';
-import { ResponseBody } from '../utils/response';
+import { ResponseBody, ResponseListBody } from '../utils/response';
 import { SellerAttributeRepository } from '../users/repositories/seller.repository';
 import { UserRepository } from '../users/repositories/users.repository';
 import { ProductEntity } from '../products/entities/product.entity';
@@ -18,7 +18,7 @@ export class ShopService {
     private userRepo: UserRepository
   ) {}
 
-  async createShop(userId: string, param: ShopPostParam): Promise<ResponseBody<SellerAttribute>> {
+  async createShop(userId: string, param: ShopPostParam): Promise<ResponseBody<any>> {
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId }).getOne();
@@ -50,7 +50,19 @@ export class ShopService {
       is_active: false
     }
     await this.sellerRepo.insert(newSeller)
-    return new ResponseBody(newSeller);
+    const response = {
+      id: newSeller.id,
+      userId: user.id,
+      shop_name: param.shop_name,
+      shop_address: param.shop_address,
+      birth_date: param.birth_date,
+      birth_place: param.birth_place,
+      gender: param.gender,
+      image: param.image,
+      tier: 1,
+      created_at: newSeller.created_at,
+    }
+    return new ResponseBody(response);
   }
 
   async editShop(userId: string, param: ShopPostParam): Promise<ResponseBody<SellerAttribute>> {
@@ -163,7 +175,7 @@ export class ShopService {
     return new ResponseBody("product with id [" + id + "] deleted");
   }
 
-  async getProducts(userId: string, query: ShopProductQuery): Promise<ResponseBody<any[]>> {
+  async getProducts(userId: string, query: ShopProductQuery): Promise<ResponseListBody<any[]>> {
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId })
@@ -195,6 +207,6 @@ export class ShopService {
       ...p,
       images: p.images.split(','),
     }));
-    return new ResponseBody(products)
+    return new ResponseListBody(products, "ok", query.page, query.limit)
   }
 }

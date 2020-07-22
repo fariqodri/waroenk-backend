@@ -12,7 +12,7 @@ export class DiscussionController {
 
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @UsePipes(ValidationPipe)
-  @Post('')
+  @Post()
   @HttpCode(201)
   async createProduct(@Body() param: DiscussionPostParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
