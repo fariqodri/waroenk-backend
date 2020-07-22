@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AgendaRepository } from '../repositories/agenda.repository';
 import { AgendaQuery } from '../dto/agenda.dto';
-import { ResponseBody } from '../../utils/response';
+import { ResponseBody, ResponseListBody } from '../../utils/response';
 
 @Injectable()
 export class AgendaService {
@@ -9,7 +9,7 @@ export class AgendaService {
     private agendaRepo: AgendaRepository
   ) {}
 
-  async getAgenda(query: AgendaQuery): Promise<ResponseBody<any[]>> {
+  async getAgenda(query: AgendaQuery): Promise<ResponseListBody<any[]>> {
     const skippedItems = (query.page - 1) * query.limit;
     let queryBuilder = this.agendaRepo
       .createQueryBuilder('agendas')
@@ -42,6 +42,6 @@ export class AgendaService {
       ...p,
       images: p.images.split(','),
     }));
-    return new ResponseBody(agendas)
+    return new ResponseListBody(agendas, "ok", query.page, query.limit)
   }
 }

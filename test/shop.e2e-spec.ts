@@ -320,7 +320,9 @@ describe('Shop E2E', () => {
             discount: 0,
             images: ['1']
           },
-        ]
+        ],
+        page: 1,
+        limit: 10,
       })
   })
 
@@ -345,7 +347,9 @@ describe('Shop E2E', () => {
             discount: 0,
             images: ['1']
           }
-        ]
+        ],
+        page: 1,
+        limit: 10,
       })
   })
 })

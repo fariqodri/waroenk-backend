@@ -83,6 +83,8 @@ describe('Agenda (e2e)', () => {
             images: ['img-1.com']
           }
         ],
+        page: 1,
+        limit: 10,
       });
   });
 
@@ -93,6 +95,8 @@ describe('Agenda (e2e)', () => {
       .expect({
         message: 'ok',
         result: [],
+        page: 1,
+        limit: 10,
       });
   })
 
@@ -120,6 +124,8 @@ describe('Agenda (e2e)', () => {
             images: ['img-1.com']
           },
         ],
+        page: 1,
+        limit: 10,
       });
   })
 });
