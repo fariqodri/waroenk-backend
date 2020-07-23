@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Param } from '@nestjs/common';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
 import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam } from './shop.dto';
@@ -17,6 +17,25 @@ export class ShopService {
     private categoryRepo: CategoryRepository,
     private userRepo: UserRepository
   ) {}
+
+  async getShop(id: string): Promise<ResponseBody<any>> {
+    const seller = await this.sellerRepo.findOneOrFail(id);
+    if (seller === undefined) {
+      throw new BadRequestException(new ResponseBody(null,
+        "there is no shop with id: [" + id + "]"))
+    }
+    const response = {
+      id: id,
+      shop_name: seller.shop_name,
+      shop_address: seller.shop_address,
+      birth_date: seller.birth_date,
+      birth_place: seller.birth_place,
+      gender: seller.gender,
+      image: seller.image,
+      tier: seller.tier
+    }
+    return new ResponseBody(response);
+  }
 
   async createShop(userId: string, param: ShopPostParam): Promise<ResponseBody<any>> {
     const seller = await this.sellerRepo
@@ -117,7 +136,6 @@ export class ShopService {
   }
 
   async editProduct(id: string, userId: string, param: ProductEditParam): Promise<ResponseBody<ProductEntity>> {
-    console.log(id)
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId })

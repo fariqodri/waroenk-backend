@@ -162,6 +162,25 @@ describe('Shop E2E', () => {
     ])
   })
 
+  it('should search by name', () => {
+    return request(app.getHttpServer())
+      .get('/shop/seller-1')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: {
+          id: 'seller-1',
+          shop_name: 'Toko Sayur',
+          shop_address: 'Jakarta',
+          birth_date: '1999-09-21',
+          birth_place: 'Jakarta',
+          gender: 'Male',
+          image: 'img-1.com',
+          tier: 1
+        }
+      })
+  })
+
   it('should return edited shop when edit shop', () => {
     const reqBody = {
       shop_name: "shoppi",
