@@ -161,11 +161,12 @@ describe('GET Product and Categories (e2e)', () => {
             id: 'product_1',
             name: 'KangKunG',
             price_per_quantity: 10000,
-            seller_name: seller.shop_name,
             discount: 0,
             description: 'kangkung',
             images: ['1'],
-            category: vegetableCategory.name
+            category: vegetableCategory.name,
+            seller_name: seller.shop_name,
+            seller_id: seller.id
           }
         ],
         page: 1,
@@ -196,21 +197,23 @@ describe('GET Product and Categories (e2e)', () => {
             id: 'product_1',
             name: 'KangKunG',
             price_per_quantity: 10000,
-            seller_name: seller.shop_name,
             discount: 0,
             description: 'kangkung',
             images: ['1'],
-            category: vegetableCategory.name
+            category: vegetableCategory.name,
+            seller_name: seller.shop_name,
+            seller_id: seller.id
           },
           {
             id: 'product_2',
             name: 'kangkung amerika',
             price_per_quantity: 5000,
-            seller_name: seller.shop_name,
             discount: 0,
             description: 'bayam',
             images: ['1'],
-            category: vegetableCategory.name
+            category: vegetableCategory.name,
+            seller_name: seller.shop_name,
+            seller_id: seller.id
           },
           {
             id: 'product_3',
@@ -220,7 +223,8 @@ describe('GET Product and Categories (e2e)', () => {
             description: 'jeruk',
             images: ['1'],
             category: fruitsCategory.name,
-            seller_name: seller.shop_name
+            seller_name: seller.shop_name,
+            seller_id: seller.id
           }
         ],
         page: 1,
@@ -243,7 +247,8 @@ describe('GET Product and Categories (e2e)', () => {
             description: 'kangkung',
             images: ['1'],
             category: vegetableCategory.name,
-            seller_name: seller.shop_name
+            seller_name: seller.shop_name,
+            seller_id: seller.id
           },
         ],
         page: 2,
@@ -266,7 +271,8 @@ describe('GET Product and Categories (e2e)', () => {
             description: 'jeruk',
             images: ['1'],
             category: fruitsCategory.name,
-            seller_name: seller.shop_name
+            seller_name: seller.shop_name,
+            seller_id: seller.id
           }
         ],
         page: 1,
