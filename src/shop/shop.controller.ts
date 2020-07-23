@@ -74,4 +74,9 @@ export class ShopController {
     const user: { userId } = request.user as { userId }
     return this.service.editShop(user.userId, param);
   }
+
+  @Get(':id')
+  async getShop(@Param('id') id: string) {
+    return this.service.getShop(id) 
+  }
 }
