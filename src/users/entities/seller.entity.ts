@@ -14,7 +14,7 @@ export class SellerAttribute {
   @OneToMany(type => ProductEntity, product => product.seller)
   products?: ProductEntity[]
 
-  @Column()
+  @Column({ default: 1 })
   tier: number
 
   @Column()
