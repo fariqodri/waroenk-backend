@@ -64,6 +64,7 @@ export class ProductsService {
       .addSelect([
         'categories.name AS category',
         'seller.shop_name AS seller_name',
+        'seller.id AS seller_id'
       ]);
     products = await queryBuilder.execute();
     products = products.map(p => ({
