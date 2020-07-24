@@ -57,7 +57,7 @@ export class ShopController {
 
   @UsePipes(ValidationPipe)
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
-  @Roles('seller')
+  @Roles('buyer')
   @Post()
   @HttpCode(201)
   async createShop(@Body() param: ShopPostParam, @Req() request: Request) {
