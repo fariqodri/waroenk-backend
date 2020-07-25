@@ -1,10 +1,14 @@
-import { Controller, Get, Query, Delete, HttpCode, Body, UseGuards, Req, Param } from '@nestjs/common';
+import { Controller, Get, Query, Req, Param, Headers, UseGuards } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
 import { ProductQuery } from '../dto/product.dto';
+import { Request } from 'express';
+import { OptionalJwtAuthGuard } from '../../auth/guards/optional-jwt-auth.guard';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private productsService: ProductsService) {}
+  constructor(
+    private productsService: ProductsService
+  ) {}
 
   @Get()
   findAll(
@@ -17,22 +21,34 @@ export class ProductsController {
       limit = 10,
       page = 1,
       sort_type
-    }: ProductQuery
-  ) {
-    return this.productsService.findAll({
-      search,
-      limit,
-      page,
-      sort_by,
-      price_from,
-      price_to,
-      category,
-      sort_type
-    });
+    }: ProductQuery, @Req() request: Request) {
+      let userId = ''
+      if (request.user) {
+        const user: { userId } = request.user as { userId }
+        userId = user.userId
+      }
+      return this.productsService.findAll({
+        search,
+        limit,
+        page,
+        sort_by,
+        price_from,
+        price_to,
+        category,
+        sort_type
+      }, userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(id) 
+  @UseGuards(OptionalJwtAuthGuard)
+  findOne(@Param('id') id: string, @Req() request: Request) {
+    let userId = ''
+    let role: string
+    if (request.user) {
+      const user: { userId, role } = request.user as { userId, role }
+      userId = user.userId
+      role = user.role
+    }
+    return this.productsService.findOne(id, userId, role) 
   }
 }

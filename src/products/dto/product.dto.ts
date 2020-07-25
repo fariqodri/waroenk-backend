@@ -30,4 +30,5 @@ export class ProductResponse {
     name: string;
     image: string;
   };
+  is_my_product: boolean;
 }

@@ -1,13 +1,14 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ResponseBody, ResponseListBody } from '../../utils/response';
 import { ProductRepository } from '../repositories/product.repository';
 import { ProductQuery, ProductResponse } from '../dto/product.dto';
 
 @Injectable()
 export class ProductsService {
-  constructor(private productRepository: ProductRepository) {}
+  constructor(
+    private productRepository: ProductRepository) {}
 
-  async findAll(param: ProductQuery): Promise<ResponseListBody<ProductResponse[]>> {
+  async findAll(param: ProductQuery, userId: string): Promise<ResponseListBody<ProductResponse[]>> {
     let products: any[];
     const skippedItems = (param.page - 1) * param.limit;
     let queryBuilder = this.productRepository
@@ -71,14 +72,28 @@ export class ProductsService {
       ...p,
       images: p.images.split(','),
     }));
+    products.forEach(function(p) {
+      delete p.userId
+    });
     return new ResponseListBody(products, "ok", Number(param.page), Number(param.limit));
   }
 
-  async findOne(productId: string): Promise<ResponseBody<ProductResponse>> {
+  async findOne(productId: string, userId: string, role: string): Promise<ResponseBody<ProductResponse>> {
     try {
       const product = await this.productRepository.findOneOrFail({
         where: { id: productId },
+        join: {
+          alias: 'product',
+          innerJoinAndSelect: {
+            seller: 'product.seller',
+            user: 'seller.user'
+          }
+        }
       })
+      let isMyProduct: boolean
+      if (userId != '' && role === 'seller') {
+        isMyProduct = product.seller.user.id == userId
+      }
       const response: ProductResponse = {
         id: product.id,
         name: product.name,
@@ -98,7 +113,8 @@ export class ProductsService {
           id: product.category.id,
           name: product.category.name,
           image: product.category.image
-        }
+        },
+        is_my_product: isMyProduct
       }
       return new ResponseBody(response)
     } catch(err) {
