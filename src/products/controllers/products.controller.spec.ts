@@ -22,13 +22,4 @@ describe('Products Controller', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
-
-  it('should call ProductsService', () => {
-    const spy = jest.spyOn(service, "findAll").mockImplementation()
-    controller.findAll({
-      page: 10,
-      limit: 1
-    })
-    expect(spy).toBeCalled()
-  })
 });

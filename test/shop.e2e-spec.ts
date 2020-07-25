@@ -17,7 +17,6 @@ import { ShopModule } from "../src/shop/shop.module";
 import { RedisClientProvider } from "../src/redis/redis.client.provider";
 import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
 
-
 const fakeRedisClientProvider = {
   set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
   get: jest.fn().mockImplementation((key, cb) => cb(null, `{}`)),
