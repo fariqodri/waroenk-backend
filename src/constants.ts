@@ -7,3 +7,6 @@ export const REDIS_URL = process.env.REDIS_URL
 export const REDIS_PORT = parseInt(process.env.REDIS_PORT)
 export const REDIS_HOST = process.env.REDIS_HOST
 export const REDIS_PASSWORD = process.env.REDIS_PASSWORD
+export const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID
+export const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY
+export const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME
