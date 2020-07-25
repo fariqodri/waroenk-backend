@@ -10,6 +10,7 @@ import * as config from "./ormconfig";
 import { REDIS_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from './constants';
 import { ShopModule } from './shop/shop.module';
 import { AgendaModule } from './agenda/agenda.module';
+import { FileUploadModule } from './file.upload/file.upload.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { AgendaModule } from './agenda/agenda.module';
       port: REDIS_PORT,
       password: REDIS_PASSWORD,
     }),
-    ShopModule
+    ShopModule,
+    FileUploadModule,
   ],
 })
 export class AppModule {}
