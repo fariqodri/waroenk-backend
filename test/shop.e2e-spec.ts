@@ -314,7 +314,7 @@ describe('Shop E2E', () => {
       })
   })
 
-  it('should search by name', () => {
+  it('`should search` by name', () => {
     return request(app.getHttpServer())
       .get('/shop/products?search=NgKung')
       .expect(200)
@@ -326,7 +326,9 @@ describe('Shop E2E', () => {
             name: 'KangKunG',
             price_per_quantity: 10000,
             discount: 0,
-            images: ['1']
+            images: ['1'],
+            category_name: vegetableCategory.name,
+            category_id: vegetableCategory.id
           },
         ],
         page: 1,
@@ -347,13 +349,17 @@ describe('Shop E2E', () => {
             price_per_quantity: 10000,
             discount: 0,
             images: ['1'],
+            category_name: vegetableCategory.name,
+            category_id: vegetableCategory.id
           },
           {
             id: 'product_2',
             name: 'Jeruk',
             price_per_quantity: 20000,
             discount: 0,
-            images: ['1']
+            images: ['1'],
+            category_name: fruitsCategory.name,
+            category_id: fruitsCategory.id
           }
         ],
         page: 1,

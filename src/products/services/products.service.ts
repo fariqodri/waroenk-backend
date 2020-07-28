@@ -20,10 +20,14 @@ export class ProductsService {
         name: `%${param.search.toLowerCase()}%`,
       });
     }
-    if (param.category) {
-      queryBuilder = queryBuilder.andWhere('products.categoryId = :categoryId', {
-        categoryId: param.category,
-      });
+    if (param.categories) {
+      const paramCategories = param.categories.split(',')
+      let categoryIds:string[] = []
+      for (var index in paramCategories) {
+        categoryIds.push("'" + paramCategories[index] + "'")
+      }
+      let categoryQuery = "(" + categoryIds.join(',') + ")"
+      queryBuilder = queryBuilder.andWhere("products.categoryId IN " + categoryQuery);
     }
     if (param.price_from) {
       queryBuilder = queryBuilder.andWhere(
@@ -63,7 +67,8 @@ export class ProductsService {
         products.images AS images`,
       )
       .addSelect([
-        'categories.name AS category',
+        'categories.name AS category_name',
+        'categories.id AS category_id',
         'seller.shop_name AS seller_name',
         'seller.id AS seller_id'
       ]);

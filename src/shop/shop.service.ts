@@ -209,18 +209,32 @@ export class ShopService {
         name: `%${query.search.toLowerCase()}%`,
       });
     }
+    if (query.categories) {
+      const paramCategories = query.categories.split(',')
+      let categoryIds:string[] = []
+      for (var index in paramCategories) {
+        categoryIds.push("'" + paramCategories[index] + "'")
+      }
+      let categoryQuery = "(" + categoryIds.join(',') + ")"
+      queryBuilder = queryBuilder.andWhere("products.categoryId IN " + categoryQuery);
+    }
     queryBuilder = queryBuilder
       .orderBy('products.created_at', 'DESC')
       .addOrderBy('products.name', 'ASC')
       .offset(skippedItems)
       .limit(query.limit)
+      .innerJoin('products.category', 'categories')
       .select(
         `products.id AS id,
         products.name AS name,
         products.discount AS discount,
         products.price_per_quantity AS price_per_quantity,
         products.images AS images`,
-      );
+      )
+      .addSelect([
+        'categories.name AS category_name',
+        'categories.id AS category_id',
+      ]);
     let products: any[] = await queryBuilder.execute();
     products = products.map(p => ({
       ...p,

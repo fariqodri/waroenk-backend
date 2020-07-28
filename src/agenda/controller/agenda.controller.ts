@@ -7,7 +7,7 @@ export class AgendaController {
   constructor(private service: AgendaService) {}
 
   @Get()
-  getProducts(@Query() {
+  getAgendas(@Query() {
     limit = 10,
     page = 1,
     title,
