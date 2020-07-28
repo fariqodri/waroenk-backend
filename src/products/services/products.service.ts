@@ -63,7 +63,8 @@ export class ProductsService {
         products.images AS images`,
       )
       .addSelect([
-        'categories.name AS category',
+        'categories.name AS category_name',
+        'categories.id AS category_id',
         'seller.shop_name AS seller_name',
         'seller.id AS seller_id'
       ]);
