@@ -16,7 +16,7 @@ export class ProductsController {
       search,
       price_from,
       price_to,
-      category,
+      categories,
       sort_by,
       limit = 10,
       page = 1,
@@ -34,7 +34,7 @@ export class ProductsController {
         sort_by,
         price_from,
         price_to,
-        category,
+        categories,
         sort_type
       }, userId);
   }

@@ -7,7 +7,7 @@ export class ProductQuery {
   search?: string
   price_from?: number
   price_to?: number
-  category?: string
+  categories?: string
 }
 
 export class ProductResponse {

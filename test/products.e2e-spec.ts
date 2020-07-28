@@ -11,9 +11,6 @@ import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
 import { RedisClientProvider } from '../src/redis/redis.client.provider';
 import { OptionalJwtAuthGuard } from '../src/auth/guards/optional-jwt-auth.guard';
-import { AuthModule } from '../src/auth/auth.module';
-import { RedisModule } from '../src/redis/redis.module';
-import { JwtModule } from '@nestjs/jwt';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
@@ -156,7 +153,7 @@ describe('GET Product and Categories (e2e)', () => {
 
   it('Query products with results', () => {
     return request(app.getHttpServer())
-      .get('/products?search=AngkUng&price_from=5001&price_to=20000&category=category-1')
+      .get('/products?search=AngkUng&price_from=5001&price_to=20000&categories=category-1')
       .expect(200)
       .expect({
         message: 'ok',
@@ -181,7 +178,7 @@ describe('GET Product and Categories (e2e)', () => {
 
   it('Query products without results', () => {
     return request(app.getHttpServer())
-      .get('/products?search=AngkUng&price_from=20000&price_to=30000&category=category-1')
+      .get('/products?search=AngkUng&price_from=20000&price_to=30000&categories=category-1')
       .expect(200)
       .expect({
         message: 'ok',

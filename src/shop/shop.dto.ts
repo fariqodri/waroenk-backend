@@ -5,6 +5,7 @@ export class ShopProductQuery {
   page: number
   
   search?: string
+  categories?: string
 }
 
 export class ProductCreateParam {

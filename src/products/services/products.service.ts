@@ -20,10 +20,14 @@ export class ProductsService {
         name: `%${param.search.toLowerCase()}%`,
       });
     }
-    if (param.category) {
-      queryBuilder = queryBuilder.andWhere('products.categoryId = :categoryId', {
-        categoryId: param.category,
-      });
+    if (param.categories) {
+      const paramCategories = param.categories.split(',')
+      let categoryIds:string[] = []
+      for (var index in paramCategories) {
+        categoryIds.push("'" + paramCategories[index] + "'")
+      }
+      let categoryQuery = "(" + categoryIds.join(',') + ")"
+      queryBuilder = queryBuilder.andWhere("products.categoryId IN " + categoryQuery);
     }
     if (param.price_from) {
       queryBuilder = queryBuilder.andWhere(
