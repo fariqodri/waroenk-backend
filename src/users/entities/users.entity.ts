@@ -1,6 +1,7 @@
-import { Entity, PrimaryColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable } from "typeorm";
 import { Exclude } from 'class-transformer';
 import { DiscussionEntity } from "../../discussion/entities/discussion.entity";
+import { AgendaEntity } from "../../agenda/entities/agenda.entity";
 
 @Entity({ name: "users" })
 export class UserEntity {
@@ -35,5 +36,9 @@ export class UserEntity {
 
   @OneToMany(type => DiscussionEntity, discussion => discussion.user)
   discussions?: DiscussionEntity[]
+
+  @ManyToMany(type => AgendaEntity, agenda => agenda.users, { eager: true })
+  @JoinTable()
+  savedAgendas?: AgendaEntity[]
   
 }

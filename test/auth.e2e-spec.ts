@@ -16,6 +16,7 @@ import { ProductEntity } from '../src/products/entities/product.entity';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { CategoryEntity } from '../src/products/entities/category.entity';
 import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
+import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
 
 describe('Login and Logout E2E Test', () => {
   let app: INestApplication;
@@ -51,7 +52,8 @@ describe('Login and Logout E2E Test', () => {
             UserEntity, 
             SellerAttribute, 
             ProductEntity,
-            DiscussionEntity
+            DiscussionEntity,
+            AgendaEntity
           ]
         })
       ],

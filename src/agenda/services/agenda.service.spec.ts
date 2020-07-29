@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AgendaService } from './agenda.service';
 import { AgendaRepository } from '../repositories/agenda.repository';
+import { UserRepository } from '../../users/repositories/users.repository';
 
 jest.mock('../repositories/agenda.repository')
 
@@ -11,7 +12,7 @@ describe('Agenda Service', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AgendaService, AgendaRepository],
+      providers: [AgendaService, AgendaRepository, UserRepository],
     }).compile();
 
     service = module.get<AgendaService>(AgendaService);

@@ -17,6 +17,7 @@ import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { ProductEntity } from '../src/products/entities/product.entity';
 import { CategoryEntity } from '../src/products/entities/category.entity';
 import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
+import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
 
 describe('Users E2E', () => {
   let app: INestApplication;
@@ -50,7 +51,8 @@ describe('Users E2E', () => {
             UserEntity, 
             SellerAttribute, 
             ProductEntity,
-            DiscussionEntity
+            DiscussionEntity,
+            AgendaEntity
           ]
         }),
         AuthModule,

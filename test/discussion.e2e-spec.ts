@@ -11,6 +11,7 @@ import { CategoryEntity } from '../src/products/entities/category.entity';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
 import { RedisClientProvider } from '../src/redis/redis.client.provider';
+import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
 
 const fakeRedisClientProvider = {
   set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
@@ -68,7 +69,8 @@ describe('Discussion (e2e)', () => {
             UserEntity,
             ProductEntity,
             CategoryEntity,
-            SellerAttribute
+            SellerAttribute,
+            AgendaEntity
           ],
         }),
       ],

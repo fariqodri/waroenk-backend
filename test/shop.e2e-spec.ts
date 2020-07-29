@@ -16,6 +16,7 @@ import { getRepository, getConnection } from "typeorm";
 import { ShopModule } from "../src/shop/shop.module";
 import { RedisClientProvider } from "../src/redis/redis.client.provider";
 import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
+import { AgendaEntity } from "../src/agenda/entities/agenda.entity";
 
 const fakeRedisClientProvider = {
   set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
@@ -100,7 +101,8 @@ describe('Shop E2E', () => {
             UserEntity, 
             SellerAttribute, 
             ProductEntity,
-            DiscussionEntity
+            DiscussionEntity,
+            AgendaEntity
           ],
         }),
         AuthModule,
@@ -388,7 +390,13 @@ describe('Negative test E2E shop', () => {
           database: ":memory:",
           dropSchema: true,
           synchronize: true,
-          entities: [CategoryEntity, UserEntity, SellerAttribute, ProductEntity],
+          entities: [
+            CategoryEntity, 
+            UserEntity, 
+            SellerAttribute, 
+            ProductEntity,
+            AgendaEntity
+          ],
         }),
         AuthModule,
         RedisModule.register({}),
