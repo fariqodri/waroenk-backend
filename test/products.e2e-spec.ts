@@ -11,6 +11,7 @@ import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
 import { RedisClientProvider } from '../src/redis/redis.client.provider';
 import { OptionalJwtAuthGuard } from '../src/auth/guards/optional-jwt-auth.guard';
+import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
@@ -56,7 +57,8 @@ describe('GET Product and Categories (e2e)', () => {
             UserEntity,
             SellerAttribute,
             ProductEntity,
-            DiscussionEntity
+            DiscussionEntity,
+            AgendaEntity
           ],
         }),
       ],
@@ -389,7 +391,8 @@ describe('GET Product and Categories (e2e) with user login', () => {
             UserEntity,
             SellerAttribute,
             ProductEntity,
-            DiscussionEntity
+            DiscussionEntity,
+            AgendaEntity
           ],
         }),
       ],

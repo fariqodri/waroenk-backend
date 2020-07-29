@@ -1,10 +1,14 @@
-import { Entity, PrimaryColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable } from "typeorm";
+import { UserEntity } from "../../users/entities/users.entity";
 
 @Entity({ name: "agendas" })
 export class AgendaEntity {
 
   @PrimaryColumn()
   id: string
+
+  @ManyToMany(type => UserEntity, user => user.savedAgendas)
+  users?: UserEntity[]
 
   @Column()
   title: string
