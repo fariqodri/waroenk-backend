@@ -16,12 +16,7 @@ export class AgendaController {
     page = 1,
     title,
     location
-  }: AgendaQuery, @Req() request: Request) {
-    let userId = ''
-    if (request.user) {
-      const user: { userId } = request.user as { userId }
-      userId = user.userId
-    }
+  }: AgendaQuery) {
     return this.service.listAgenda({
       limit,
       page,

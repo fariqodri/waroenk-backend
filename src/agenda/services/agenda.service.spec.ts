@@ -5,7 +5,6 @@ import { UserRepository } from '../../users/repositories/users.repository';
 
 jest.mock('../repositories/agenda.repository')
 
-
 describe('Agenda Service', () => {
   let service: AgendaService;
   let agendaRepo: AgendaRepository;

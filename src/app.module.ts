@@ -11,6 +11,7 @@ import { REDIS_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } from './constants';
 import { ShopModule } from './shop/shop.module';
 import { AgendaModule } from './agenda/agenda.module';
 import { FileUploadModule } from './file.upload/file.upload.module';
+import { MiscModule } from './misc/misc.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { FileUploadModule } from './file.upload/file.upload.module';
     }),
     ShopModule,
     FileUploadModule,
+    MiscModule
   ],
 })
 export class AppModule {}
