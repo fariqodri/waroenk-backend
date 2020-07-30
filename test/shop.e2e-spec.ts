@@ -334,7 +334,7 @@ describe('Shop E2E', () => {
           },
         ],
         page: 1,
-        limit: 10,
+        limit: 1,
       })
   })
 
@@ -365,7 +365,7 @@ describe('Shop E2E', () => {
           }
         ],
         page: 1,
-        limit: 10,
+        limit: 2,
       })
   })
 })

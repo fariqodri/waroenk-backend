@@ -80,7 +80,7 @@ export class ProductsService {
     products.forEach(function(p) {
       delete p.userId
     });
-    return new ResponseListBody(products, "ok", Number(param.page), Number(param.limit));
+    return new ResponseListBody(products, "ok", Number(param.page), products.length);
   }
 
   async findOne(productId: string, userId: string, role: string): Promise<ResponseBody<ProductResponse>> {
