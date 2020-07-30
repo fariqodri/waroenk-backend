@@ -96,7 +96,7 @@ describe('Agenda (e2e)', () => {
           }
         ],
         page: 1,
-        limit: 10,
+        limit: 1,
       });
   });
 
@@ -108,7 +108,7 @@ describe('Agenda (e2e)', () => {
         message: 'ok',
         result: [],
         page: 1,
-        limit: 10,
+        limit: 0,
       });
   })
 
@@ -137,7 +137,7 @@ describe('Agenda (e2e)', () => {
           },
         ],
         page: 1,
-        limit: 10,
+        limit: 2,
       });
   })
 });
@@ -265,7 +265,7 @@ describe('Agenda with users (e2e)', () => {
           }  
         ],
         page: 1,
-        limit: 10,
+        limit: 2,
       });
   });
 

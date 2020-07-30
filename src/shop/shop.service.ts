@@ -240,6 +240,6 @@ export class ShopService {
       ...p,
       images: p.images.split(','),
     }));
-    return new ResponseListBody(products, "ok", query.page, query.limit)
+    return new ResponseListBody(products, "ok", query.page, products.length)
   }
 }

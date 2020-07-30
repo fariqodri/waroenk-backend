@@ -86,7 +86,7 @@ export class AgendaService {
       ...p,
       images: p.images.split(',')
     }));
-    return new ResponseListBody(agendas, "ok", query.page, query.limit)
+    return new ResponseListBody(agendas, "ok", query.page, agendas.length)
   }
 
   async listSavedAgenda(query: AgendaQuery, userId: string): Promise<ResponseListBody<any[]>> {
@@ -126,6 +126,6 @@ export class AgendaService {
       ...p,
       images: p.images.split(','),
     }));
-    return new ResponseListBody(agendas, "ok", query.page, query.limit)
+    return new ResponseListBody(agendas, "ok", query.page, agendas.length)
   }
 }

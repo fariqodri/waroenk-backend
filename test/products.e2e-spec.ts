@@ -174,7 +174,7 @@ describe('GET Product and Categories (e2e)', () => {
           }
         ],
         page: 1,
-        limit: 10,
+        limit: 1,
       });
   });
 
@@ -186,7 +186,7 @@ describe('GET Product and Categories (e2e)', () => {
         message: 'ok',
         result: [],
         page: 1,
-        limit: 10,
+        limit: 0,
       });
   })
 
@@ -235,7 +235,7 @@ describe('GET Product and Categories (e2e)', () => {
           }
         ],
         page: 1,
-        limit: 10,
+        limit: 3,
       });
   })
 

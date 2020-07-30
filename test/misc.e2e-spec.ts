@@ -76,7 +76,7 @@ describe('GET Product and Categories (e2e)', () => {
           }
         ],
         page: 1,
-        limit: 10
+        limit: 3
       });
   });
 
@@ -99,7 +99,7 @@ describe('GET Product and Categories (e2e)', () => {
           }
         ],
         page: 1,
-        limit: 10
+        limit: 2
       });
   });
 });

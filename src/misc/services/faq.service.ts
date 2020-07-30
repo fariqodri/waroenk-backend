@@ -32,6 +32,6 @@ export class MiscService {
         faq.description AS description`,
       );
     let faqs: any[] = await queryBuilder.execute();
-    return new ResponseListBody(faqs, "ok", query.page, query.limit)
+    return new ResponseListBody(faqs, "ok", query.page, faqs.length)
   }
 }
