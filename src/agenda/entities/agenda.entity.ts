@@ -22,6 +22,9 @@ export class AgendaEntity {
   @Column()
   date: string
 
+  @Column({ default: 'pelatihan' })
+  type: 'pelatihan' | 'pembinaan'
+
   @Column('simple-array')
   images: string[]
 

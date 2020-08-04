@@ -48,7 +48,8 @@ describe('Agenda (e2e)', () => {
         images: ['img-1.com'],
         created_at: new Date(),
         updated_at: null,
-        is_active: true
+        is_active: true,
+        type: 'pelatihan'
       },
       {
         id: 'agenda-2',
@@ -59,7 +60,8 @@ describe('Agenda (e2e)', () => {
         images: ['img-1.com'],
         created_at: new Date(),
         updated_at: null,
-        is_active: false
+        is_active: false,
+        type: 'pembinaan'
       },
       {
         id: 'agenda-3',
@@ -70,7 +72,8 @@ describe('Agenda (e2e)', () => {
         images: ['img-1.com'],
         created_at: new Date(),
         updated_at: null,
-        is_active: true
+        is_active: true,
+        type: 'pelatihan'
       },
     ])
   });
@@ -81,7 +84,7 @@ describe('Agenda (e2e)', () => {
   
   it('Query agenda with results', () => {
     return request(app.getHttpServer())
-      .get('/agenda?title=training-1&location=jakarta')
+      .get('/agenda?title=training-1&location=jakarta&type=pelatihan')
       .expect(200)
       .expect({
         message: 'ok',
@@ -92,7 +95,8 @@ describe('Agenda (e2e)', () => {
             description: 'training1 bla bla bla',
             location: 'jakarta',
             date: '12 May 2021',
-            images: ['img-1.com']
+            images: ['img-1.com'],
+            type: 'pelatihan'
           }
         ],
         page: 1,
@@ -125,7 +129,8 @@ describe('Agenda (e2e)', () => {
             description: 'training1 bla bla bla',
             location: 'jakarta',
             date: '12 May 2021',
-            images: ['img-1.com']
+            images: ['img-1.com'],
+            type: 'pelatihan'
           },
           {
             id: 'agenda-3',
@@ -133,7 +138,8 @@ describe('Agenda (e2e)', () => {
             description: 'training3 bla bla bla',
             location: 'bogor',
             date: '2 May 2021',
-            images: ['img-1.com']
+            images: ['img-1.com'],
+            type: 'pelatihan'
           },
         ],
         page: 1,
@@ -177,7 +183,8 @@ describe('Agenda with users (e2e)', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    users: [user1]
+    users: [user1],
+    type: 'pelatihan'
   }
   const agenda2: AgendaEntity = {
     id: 'agenda-2',
@@ -189,7 +196,8 @@ describe('Agenda with users (e2e)', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    users: [user1]
+    users: [user1],
+    type: 'pembinaan'
   }
   const agenda3: AgendaEntity = {
     id: 'agenda-3',
@@ -200,7 +208,8 @@ describe('Agenda with users (e2e)', () => {
     images: ['img-3.com'],
     created_at: new Date(),
     updated_at: null,
-    is_active: true
+    is_active: true,
+    type: 'pelatihan'
   }
   
   beforeEach(async () => {
@@ -253,7 +262,8 @@ describe('Agenda with users (e2e)', () => {
             description: 'training1 bla bla bla',
             location: 'jakarta',
             date: '12 May 2021',
-            images: ['img-1.com']
+            images: ['img-1.com'],
+            type: 'pelatihan'
           },
           {
             id: 'agenda-2',
@@ -261,7 +271,8 @@ describe('Agenda with users (e2e)', () => {
             description: 'training2 bla bla bla',
             location: 'bandung',
             date: '12 May 2022',
-            images: ['img-2.com']
+            images: ['img-2.com'],
+            type: 'pembinaan'
           }  
         ],
         page: 1,

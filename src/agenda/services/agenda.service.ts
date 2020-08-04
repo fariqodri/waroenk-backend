@@ -68,6 +68,11 @@ export class AgendaService {
         location: `%${query.location.toLowerCase()}%`,
       });
     }
+    if (query.type) {
+      queryBuilder = queryBuilder.andWhere('LOWER(agendas.type) LIKE :type', {
+        type: `%${query.type.toLowerCase()}%`,
+      });
+    }
     queryBuilder = queryBuilder
       .orderBy('agendas.created_at', 'DESC')
       .addOrderBy('agendas.title', 'ASC')
@@ -79,7 +84,8 @@ export class AgendaService {
         agendas.description AS description,
         agendas.location AS location,
         agendas.date AS date,
-        agendas.images AS images`,
+        agendas.images AS images,
+        agendas.type AS type`,
       );
     let agendas: any[] = await queryBuilder.execute();
     agendas = agendas.map(p => ({
@@ -107,6 +113,11 @@ export class AgendaService {
         location: `%${query.location.toLowerCase()}%`,
       });
     }
+    if (query.type) {
+      queryBuilder = queryBuilder.andWhere('LOWER(agendas.type) LIKE :type', {
+        type: `%${query.type.toLowerCase()}%`,
+      });
+    }
     queryBuilder = queryBuilder
       .orderBy('agendas.created_at', 'DESC')
       .addOrderBy('agendas.title', 'ASC')
@@ -119,7 +130,8 @@ export class AgendaService {
         agendas.description AS description,
         agendas.location AS location,
         agendas.date AS date,
-        agendas.images AS images`,
+        agendas.images AS images,
+        agendas.type AS type`,
       );
     let agendas: any[] = await queryBuilder.execute();
     agendas = agendas.map(p => ({

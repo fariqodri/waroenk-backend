@@ -4,4 +4,5 @@ export class AgendaQuery {
     
     title?: string
     location?: string
+    type?: string
   }
