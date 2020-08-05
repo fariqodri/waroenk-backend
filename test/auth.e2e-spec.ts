@@ -17,6 +17,8 @@ import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { CategoryEntity } from '../src/products/entities/category.entity';
 import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
 import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
+import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
+import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
 
 describe('Login and Logout E2E Test', () => {
   let app: INestApplication;
@@ -49,11 +51,13 @@ describe('Login and Logout E2E Test', () => {
           synchronize: true,
           entities: [
             CategoryEntity, 
-            UserEntity, 
+            UserEntity,
             SellerAttribute, 
             ProductEntity,
             DiscussionEntity,
-            AgendaEntity
+            AgendaEntity,
+            ProposalEntity,
+            ProposalData
           ]
         })
       ],

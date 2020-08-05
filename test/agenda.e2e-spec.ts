@@ -12,6 +12,8 @@ import { CategoryEntity } from '../src/products/entities/category.entity';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
 import { RedisClientProvider } from '../src/redis/redis.client.provider';
+import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
+import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
 
 describe('Agenda (e2e)', () => {
   let app: INestApplication;
@@ -31,7 +33,9 @@ describe('Agenda (e2e)', () => {
             DiscussionEntity,
             ProductEntity,
             CategoryEntity,
-            SellerAttribute
+            SellerAttribute,
+            ProposalEntity,
+            ProposalData
           ],
         }),
       ],
@@ -227,7 +231,9 @@ describe('Agenda with users (e2e)', () => {
             DiscussionEntity,
             ProductEntity,
             CategoryEntity,
-            SellerAttribute
+            SellerAttribute,
+            ProposalEntity,
+            ProposalData
           ],
         }),
       ],

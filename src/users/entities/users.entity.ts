@@ -2,6 +2,7 @@ import { Entity, PrimaryColumn, Column, OneToMany, CreateDateColumn, UpdateDateC
 import { Exclude } from 'class-transformer';
 import { DiscussionEntity } from "../../discussion/entities/discussion.entity";
 import { AgendaEntity } from "../../agenda/entities/agenda.entity";
+import { ProposalEntity } from "../../proposal/entities/proposal.entity";
 
 @Entity({ name: "users" })
 export class UserEntity {
@@ -41,4 +42,6 @@ export class UserEntity {
   @JoinTable()
   savedAgendas?: AgendaEntity[]
   
+  @OneToMany(type => ProposalEntity, proposal => proposal.user)
+  proposals?: ProposalEntity[]
 }

@@ -80,6 +80,7 @@ export class ShopService {
       image: param.image,
       tier: 1,
       created_at: newSeller.created_at,
+      is_active: false
     }
     return new ResponseBody(response);
   }

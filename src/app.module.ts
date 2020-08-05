@@ -12,6 +12,7 @@ import { ShopModule } from './shop/shop.module';
 import { AgendaModule } from './agenda/agenda.module';
 import { FileUploadModule } from './file.upload/file.upload.module';
 import { MiscModule } from './misc/misc.module';
+import { ProposalModule } from './proposal/proposal.module';
 
 @Module({
   imports: [
@@ -22,14 +23,15 @@ import { MiscModule } from './misc/misc.module';
     PermissionModule,
     AgendaModule,
     DiscussionModule,
+    ShopModule,
+    FileUploadModule,
+    MiscModule,
+    ProposalModule,
     RedisModule.register({
       host: REDIS_HOST,
       port: REDIS_PORT,
       password: REDIS_PASSWORD,
-    }),
-    ShopModule,
-    FileUploadModule,
-    MiscModule
+    })
   ],
 })
 export class AppModule {}
