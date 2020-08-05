@@ -85,12 +85,14 @@ export class AgendaService {
         agendas.location AS location,
         agendas.date AS date,
         agendas.images AS images,
-        agendas.type AS type`,
+        agendas.type AS type,
+        agendas.sponsors AS sponsors`,
       );
     let agendas: any[] = await queryBuilder.execute();
     agendas = agendas.map(p => ({
       ...p,
-      images: p.images.split(',')
+      images: p.images.split(','),
+      sponsors: p.sponsors.split(',')
     }));
     return new ResponseListBody(agendas, "ok", query.page, agendas.length)
   }
@@ -131,13 +133,40 @@ export class AgendaService {
         agendas.location AS location,
         agendas.date AS date,
         agendas.images AS images,
-        agendas.type AS type`,
+        agendas.type AS type,
+        agendas.sponsors AS sponsors`,
       );
     let agendas: any[] = await queryBuilder.execute();
     agendas = agendas.map(p => ({
       ...p,
       images: p.images.split(','),
+      sponsors: p.sponsors.split(',')
     }));
     return new ResponseListBody(agendas, "ok", query.page, agendas.length)
+  }
+
+  async detailAgenda(id: string, userId: string): Promise<ResponseBody<any>> {
+    const agenda = await this.agendaRepo.findOne(id, { relations: ['users'] })
+    const users = agenda.users
+    let isMyAgenda: boolean = false
+    for (var i in users) {
+      if (users[i].id == userId) {
+        isMyAgenda = true
+        break
+      }
+    }
+    const response = {
+      id: agenda.id,
+      title: agenda.title,
+      description: agenda.description,
+      location: agenda.location,
+      date: agenda.date,
+      type: agenda.type,
+      images: agenda.images,
+      sponsors: agenda.sponsors,
+      is_active: agenda.is_active,
+      is_my_agenda: isMyAgenda
+    }
+    return new ResponseBody(response)
   }
 }
