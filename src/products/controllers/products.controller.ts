@@ -21,12 +21,7 @@ export class ProductsController {
       limit = 10,
       page = 1,
       sort_type
-    }: ProductQuery, @Req() request: Request) {
-      let userId = ''
-      if (request.user) {
-        const user: { userId } = request.user as { userId }
-        userId = user.userId
-      }
+    }: ProductQuery) {
       return this.productsService.findAll({
         search,
         limit,
@@ -36,7 +31,7 @@ export class ProductsController {
         price_to,
         categories,
         sort_type
-      }, userId);
+      });
   }
 
   @Get(':id')

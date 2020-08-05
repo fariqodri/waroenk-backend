@@ -8,7 +8,7 @@ export class ProductsService {
   constructor(
     private productRepository: ProductRepository) {}
 
-  async findAll(param: ProductQuery, userId: string): Promise<ResponseListBody<ProductResponse[]>> {
+  async findAll(param: ProductQuery): Promise<ResponseListBody<ProductResponse[]>> {
     let products: any[];
     const skippedItems = (param.page - 1) * param.limit;
     let queryBuilder = this.productRepository

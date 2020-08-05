@@ -28,6 +28,9 @@ export class AgendaEntity {
   @Column('simple-array')
   images: string[]
 
+  @Column('simple-array', { nullable: true })
+  sponsors: string[]
+
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date
 
