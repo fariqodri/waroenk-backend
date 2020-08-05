@@ -14,7 +14,7 @@ export class DiscussionController {
   @UsePipes(ValidationPipe)
   @Post()
   @HttpCode(201)
-  async createProduct(@Body() param: DiscussionPostParam, @Req() request: Request) {
+  async createDiscussion(@Body() param: DiscussionPostParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.createDiscussion(user.userId, param);
   }

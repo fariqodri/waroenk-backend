@@ -18,6 +18,8 @@ import { ProductEntity } from '../src/products/entities/product.entity';
 import { CategoryEntity } from '../src/products/entities/category.entity';
 import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
 import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
+import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
+import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
 
 describe('Users E2E', () => {
   let app: INestApplication;
@@ -52,7 +54,9 @@ describe('Users E2E', () => {
             SellerAttribute, 
             ProductEntity,
             DiscussionEntity,
-            AgendaEntity
+            AgendaEntity,
+            ProposalEntity,
+            ProposalData
           ]
         }),
         AuthModule,

@@ -17,6 +17,8 @@ import { ShopModule } from "../src/shop/shop.module";
 import { RedisClientProvider } from "../src/redis/redis.client.provider";
 import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
 import { AgendaEntity } from "../src/agenda/entities/agenda.entity";
+import { ProposalEntity } from "../src/proposal/entities/proposal.entity";
+import { ProposalData } from "../src/proposal/entities/proposal-data.entity";
 
 const fakeRedisClientProvider = {
   set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
@@ -102,7 +104,9 @@ describe('Shop E2E', () => {
             SellerAttribute, 
             ProductEntity,
             DiscussionEntity,
-            AgendaEntity
+            AgendaEntity,
+            ProposalEntity,
+            ProposalData
           ],
         }),
         AuthModule,
@@ -453,7 +457,13 @@ describe('Create Shop', () => {
           database: ":memory:",
           dropSchema: true,
           synchronize: true,
-          entities: [UserEntity, SellerAttribute, ProductEntity],
+          entities: [
+            UserEntity, 
+            SellerAttribute, 
+            ProductEntity,
+            ProposalEntity,
+            ProposalData
+          ],
         }),
         AuthModule,
         RedisModule.register({}),

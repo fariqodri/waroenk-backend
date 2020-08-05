@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesController } from './categories.controller';
 import { CategoriesService } from '../services/categories.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoryRepository } from '../repositories/category.repository';
 
 jest.mock('../repositories/category.repository')
