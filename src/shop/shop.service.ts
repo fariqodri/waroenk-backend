@@ -52,7 +52,7 @@ export class ShopService {
       .andWhere("role = 'buyer'").getOne();
     if (user === undefined) {
       throw new BadRequestException(new ResponseBody(null,
-        "user with userId: [" + userId + "] is not a seller so it can't create shop"))
+        "user with userId: [" + userId + "] is not a buyer or not active so it can't create shop"))
     }
     const newSeller: SellerAttribute = {
       id: nanoid(11),
