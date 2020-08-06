@@ -91,8 +91,8 @@ export class AgendaService {
     let agendas: any[] = await queryBuilder.execute();
     agendas = agendas.map(p => ({
       ...p,
-      images: p.images.split(','),
-      sponsors: p.sponsors.split(',')
+      images: p.images? p.images.split(','): null,
+      sponsors: p.sponsors? p.sponsors.split(','): null
     }));
     return new ResponseListBody(agendas, "ok", query.page, agendas.length)
   }
@@ -139,8 +139,8 @@ export class AgendaService {
     let agendas: any[] = await queryBuilder.execute();
     agendas = agendas.map(p => ({
       ...p,
-      images: p.images.split(','),
-      sponsors: p.sponsors.split(',')
+      images: p.images? p.images.split(','): null,
+      sponsors: p.sponsors? p.sponsors.split(','): null
     }));
     return new ResponseListBody(agendas, "ok", query.page, agendas.length)
   }
