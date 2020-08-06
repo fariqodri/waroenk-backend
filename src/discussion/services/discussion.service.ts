@@ -60,4 +60,23 @@ export class DiscussionService {
     }
     return new ResponseBody(response)
   }
+
+  async getDiscussion(productId: string, parentId?: string): Promise<ResponseBody<DiscussionResponse>> {
+    let query = this.discussionRepo
+      .createQueryBuilder('d')
+      .select(`
+        d.id AS id,
+        d.parentId AS parentId,
+        d.productId AS productId,
+        d.description AS description,
+        d.created_at AS created_at,
+        d.updated_at AS updated_at
+      `)
+      .where('d.productId = :productId', { productId })
+    if (parentId && parentId !== "") {
+      query = query.andWhere('d.parentId = :parentId', { parentId })
+    }
+    const discussions = await query.execute()
+    return new ResponseBody(discussions)
+  }
 }

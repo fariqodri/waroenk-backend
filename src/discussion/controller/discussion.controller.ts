@@ -1,4 +1,4 @@
-import { Controller, Req, HttpCode, Body, Post, UsePipes, UseGuards } from '@nestjs/common';
+import { Controller, Req, HttpCode, Body, Post, UsePipes, UseGuards, Get, Param, Query } from '@nestjs/common';
 import { Request } from 'express';
 import { ValidationPipe } from '../../utils/validation.pipe';
 import { DiscussionService } from '../services/discussion.service';
@@ -17,5 +17,10 @@ export class DiscussionController {
   async createDiscussion(@Body() param: DiscussionPostParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.createDiscussion(user.userId, param);
+  }
+
+  @Get('product/:productId')
+  getDiscussions(@Param('productId') productId: string, @Query('parent') parentId?: string) {
+    return this.service.getDiscussion(productId, parentId)
   }
 }
