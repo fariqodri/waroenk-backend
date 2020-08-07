@@ -7,9 +7,10 @@ import { OrderRepository } from './repositories/order.repository';
 import { CartRepository } from './repositories/cart.repository';
 import { UserRepository } from '../users/repositories/users.repository';
 import { ProductRepository } from '../products/repositories/product.repository';
+import { OrderController } from './controllers/order.controller';
 
 @Module({
-  controllers: [CartController],
+  controllers: [CartController, OrderController],
   providers: [OrderService],
   imports: [TypeOrmModule.forFeature([
     CartRepository, 
@@ -17,7 +18,8 @@ import { ProductRepository } from '../products/repositories/product.repository';
     OrderItemRepository,
     OrderRepository, 
     UserRepository, 
-    ProductRepository])],
+    ProductRepository
+  ])],
   exports: [TypeOrmModule.forFeature([CartRepository, OrderRepository, OrderItemRepository])]
 })
 export class OrderModule {}

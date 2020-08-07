@@ -44,7 +44,7 @@ describe('Order e2e test', () => {
     name: 'Sayuran', 
     image: 's3_url_1'
   };
-  let user1: UserEntity = {
+  const user1: UserEntity = {
     id: 'user-1',
     full_name: 'user 1',
     email: 'user@example.com',
@@ -55,7 +55,7 @@ describe('Order e2e test', () => {
     updated_at: null,
     is_active: true
   };
-  let user2: UserEntity = {
+  const user2: UserEntity = {
     id: 'user-2',
     full_name: 'user 2',
     email: 'use2r@example.com',
@@ -66,7 +66,7 @@ describe('Order e2e test', () => {
     updated_at: null,
     is_active: true
   };
-  let user3: UserEntity = {
+  const user3: UserEntity = {
     id: 'user-3',
     full_name: 'user 3',
     email: 'user3@example.com',
@@ -77,7 +77,18 @@ describe('Order e2e test', () => {
     updated_at: null,
     is_active: true
   };
-  const seller: SellerAttribute = {
+  const user4: UserEntity = {
+    id: 'user-4',
+    full_name: 'user 4',
+    email: 'user4@example.com',
+    phone: '0812334112',
+    role: 'seller',
+    password: 'hehe1234',
+    created_at: new Date(),
+    updated_at: null,
+    is_active: true
+  };
+  const seller1: SellerAttribute = {
     id: 'seller-1',
     description: 'lalala1',
     shop_name: 'Toko Sayur',
@@ -92,7 +103,22 @@ describe('Order e2e test', () => {
     updated_at: null,
     is_active: true
   }
-  let product1: ProductEntity = {
+  const seller2: SellerAttribute = {
+    id: 'seller-2',
+    description: 'lalala2',
+    shop_name: 'Toko Buah',
+    shop_address: 'Jakarta',
+    birth_date: '1999-09-22',
+    birth_place: 'Jakarta',
+    gender: 'Male',
+    image: 'img-2.com',
+    tier: 1,
+    user: user4,
+    created_at: new Date(),
+    updated_at: null,
+    is_active: true
+  }
+  const product1: ProductEntity = {
     id: 'product_1',
     name: 'KangKunG',
     price_per_quantity: 10000,
@@ -100,13 +126,13 @@ describe('Order e2e test', () => {
     description: 'kangkung',
     images: ['1'],
     category: vegetableCategory,
-    seller: seller,
+    seller: seller1,
     created_at: new Date(),
     updated_at: null,
     deleted_at: null,
     available: true,
   }
-  let product2: ProductEntity = {
+  const product2: ProductEntity = {
     id: 'product_2',
     name: 'oyong',
     price_per_quantity: 20000,
@@ -114,13 +140,13 @@ describe('Order e2e test', () => {
     description: 'otong',
     images: ['1'],
     category: vegetableCategory,
-    seller: seller,
+    seller: seller1,
     created_at: new Date(),
     updated_at: null,
     deleted_at: null,
     available: true,
   }
-  let product3: ProductEntity = {
+  const product3: ProductEntity = {
     id: 'product_3',
     name: 'Bayam',
     price_per_quantity: 5000,
@@ -128,7 +154,21 @@ describe('Order e2e test', () => {
     description: 'bayam',
     images: ['1'],
     category: vegetableCategory,
-    seller: seller,
+    seller: seller1,
+    created_at: new Date(),
+    updated_at: null,
+    deleted_at: null,
+    available: true,
+  }
+  const product4: ProductEntity = {
+    id: 'product_4',
+    name: 'Bayamayam',
+    price_per_quantity: 6000,
+    discount: 0,
+    description: 'bayami',
+    images: ['2'],
+    category: vegetableCategory,
+    seller: seller2,
     created_at: new Date(),
     updated_at: null,
     deleted_at: null,
@@ -147,12 +187,18 @@ describe('Order e2e test', () => {
     is_active: false
   }
   const cart3: CartEntity = {
+    product: product4,
+    user: user1,
+    quantity: 3,
+    is_active: true
+  }
+  const cart4: CartEntity = {
     product: product1,
     user: user3,
     quantity: 0,
     is_active: false
   }
-  const cart4: CartEntity = {
+  const cart5: CartEntity = {
     product: product2,
     user: user3,
     quantity: 0,
@@ -195,16 +241,32 @@ describe('Order e2e test', () => {
     app = moduleFixture.createNestApplication()
     await app.init()
 
-    await getRepository(UserEntity).insert([user1, user2, user3])
-    await getRepository(SellerAttribute).insert([seller])
+    await getRepository(UserEntity).insert([user1, user2, user3, user4])
+    await getRepository(SellerAttribute).insert([seller1, seller2])
     await getRepository(CategoryEntity).insert([vegetableCategory])
-    await getRepository(ProductEntity).insert([product1, product2, product3])
-    await getRepository(CartEntity).insert([cart1, cart2, cart3, cart4])
+    await getRepository(ProductEntity).insert([product1, product2, product3, product4])
+    await getRepository(CartEntity).insert([cart1, cart2, cart3, cart4, cart5])
   })
 
   afterEach(async () => {
     await getConnection().close();
   });
+
+  it('should create new order', () => {
+    const reqBody = {
+      address: 'jalan tendean'
+    }
+    return request(app.getHttpServer())
+      .post('/order')
+      .send(reqBody)
+      .expect(201)
+      .then(res => {
+        const body = res.body;
+        const { message, result } = body;
+        expect(message).toEqual('ok');
+        expect(result).toHaveLength(2);
+      });
+  })
 
   it('should return list of cart', () => {
     return request(app.getHttpServer())
@@ -220,10 +282,18 @@ describe('Order e2e test', () => {
             price_per_quantity: 10000,
             discount: 0,
             images: '1'
+          },
+          {
+            quantity: 3,
+            product_id: 'product_4',
+            product_name: 'Bayamayam',
+            price_per_quantity: 6000,
+            discount: 0,
+            images: '2'
           }
         ],
         page: 1,
-        limit: 1,
+        limit: 2,
       });
   })
 

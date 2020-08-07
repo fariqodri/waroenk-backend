@@ -1,6 +1,7 @@
 import { Entity, Column, ManyToOne, PrimaryColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { UserEntity } from "../../users/entities/users.entity";
 import { OrderItem } from "./order-item.entity";
+import { SellerAttribute } from "../../users/entities/seller.entity";
 
 @Entity({ name: "order" })
 export class OrderEntity {
@@ -10,6 +11,9 @@ export class OrderEntity {
 
   @ManyToOne(type => UserEntity, user => user.orders, { eager: true })
   user: UserEntity
+
+  @ManyToOne(type => SellerAttribute, seller => seller.orders, { eager: true })
+  seller: SellerAttribute
 
   @OneToMany(type => OrderItem, item => item.order)
   items: OrderItem[]

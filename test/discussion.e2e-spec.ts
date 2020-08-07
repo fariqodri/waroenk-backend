@@ -188,8 +188,6 @@ describe('Discussion (e2e)', () => {
           productId,
           description,
           created_at,
-          updated_at,
-          deleted_at,
         } = result;
         expect(message).toEqual('ok');
         expect(id).toBeDefined();

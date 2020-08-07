@@ -1,6 +1,7 @@
 import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { UserEntity } from './users.entity';
 import { ProductEntity } from "../../products/entities/product.entity";
+import { OrderEntity } from "../../order/entities/order.entity";
 
 @Entity({ name: "seller" })
 export class SellerAttribute {
@@ -13,6 +14,9 @@ export class SellerAttribute {
 
   @OneToMany(type => ProductEntity, product => product.seller)
   products?: ProductEntity[]
+
+  @OneToMany(type => OrderEntity, order => order.seller)
+  orders?: OrderEntity[]
 
   @Column({ default: 1 })
   tier: number
