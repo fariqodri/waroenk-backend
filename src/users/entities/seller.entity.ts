@@ -17,6 +17,9 @@ export class SellerAttribute {
   @Column({ default: 1 })
   tier: number
 
+  @Column({ nullable: true })
+  description: string
+
   @Column()
   shop_name: string
 

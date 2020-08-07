@@ -8,7 +8,7 @@ export class FaqController {
 
   @Get()
   getFaqs(@Query() {
-    limit = 10,
+    limit = 100,
     page = 1,
     search
   }: FaqQuery) {

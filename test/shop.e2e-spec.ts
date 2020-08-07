@@ -51,6 +51,7 @@ describe('Shop E2E', () => {
   };
   const seller: SellerAttribute = {
     id: 'seller-1',
+    description: 'lalala1',
     shop_name: 'Toko Sayur',
     shop_address: 'Jakarta',
     birth_date: '1999-09-21',
@@ -76,6 +77,7 @@ describe('Shop E2E', () => {
   };
   const seller2: SellerAttribute = {
     id: 'seller-2',
+    description: 'lalala2',
     shop_name: 'Toko Sayur',
     shop_address: 'Jakarta',
     birth_date: '1999-09-21',
@@ -175,6 +177,7 @@ describe('Shop E2E', () => {
         message: 'ok',
         result: {
           id: 'seller-1',
+          description: 'lalala1',
           shop_name: 'Toko Sayur',
           shop_address: 'Jakarta',
           birth_date: '1999-09-21',
@@ -188,6 +191,7 @@ describe('Shop E2E', () => {
 
   it('should return edited shop when edit shop', () => {
     const reqBody = {
+      description: 'ccd',
       shop_name: "shoppi",
       shop_address: "jalan anggur",
       birth_date: "25/2/1998",
@@ -203,7 +207,7 @@ describe('Shop E2E', () => {
         const body = res.body
         const { message, result } = body
         const { id, shop_name, shop_address, birth_date, birth_place, gender, 
-          created_at, updated_at, is_active, image } = result
+          created_at, updated_at, is_active, image, description } = result
         expect(message).toEqual('ok')
         expect(id).toEqual("seller-1")
         expect(shop_name).toEqual(reqBody.shop_name)
@@ -215,6 +219,7 @@ describe('Shop E2E', () => {
         expect(updated_at).toBeDefined()
         expect(is_active).toBeTruthy()
         expect(image).toEqual(reqBody.image)
+        expect(description).toEqual(reqBody.description)
       })
   })
 

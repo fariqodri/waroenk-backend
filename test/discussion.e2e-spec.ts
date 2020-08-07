@@ -55,6 +55,7 @@ describe('Discussion (e2e)', () => {
   };
   const seller: SellerAttribute = {
     id: 'seller-1',
+    description: 'lalala',
     shop_name: 'Toko Sayur',
     shop_address: 'Jakarta',
     birth_date: '1999-09-21',
