@@ -45,6 +45,9 @@ export class ShopPostParam {
   @jf.string().required()
   shop_name: string
 
+  @jf.string().optional()
+  description: string
+
   @jf.string().required()
   shop_address: string
 

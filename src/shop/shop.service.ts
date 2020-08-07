@@ -26,6 +26,7 @@ export class ShopService {
     }
     const response = {
       id: id,
+      description: seller.description,
       shop_name: seller.shop_name,
       shop_address: seller.shop_address,
       birth_date: seller.birth_date,
@@ -57,6 +58,7 @@ export class ShopService {
     const newSeller: SellerAttribute = {
       id: nanoid(11),
       user: user,
+      description: param.description,
       shop_name: param.shop_name,
       shop_address: param.shop_address,
       birth_date: param.birth_date,
@@ -72,6 +74,7 @@ export class ShopService {
     const response = {
       id: newSeller.id,
       userId: user.id,
+      description: param.description,
       shop_name: param.shop_name,
       shop_address: param.shop_address,
       birth_date: param.birth_date,
@@ -93,12 +96,27 @@ export class ShopService {
       throw new BadRequestException(new ResponseBody(null,
         "there is no shop with userId: [" + userId + "]"))
     }
-    seller.shop_name = param.shop_name
-    seller.shop_address = param.shop_address
-    seller.birth_date = param.birth_date
-    seller.birth_place = param.birth_place
-    seller.gender = param.gender
-    seller.image = param.image
+    if (param.description) {
+      seller.description = param.description
+    }
+    if (param.shop_name) {
+      seller.shop_name = param.shop_name
+    }
+    if (param.shop_address) {
+      seller.shop_address = param.shop_address
+    }
+    if (param.birth_date) {
+      seller.birth_date = param.birth_date
+    }
+    if (param.birth_place) {
+      seller.birth_place = param.birth_place
+    }
+    if (param.gender) {
+      seller.gender = param.gender
+    }
+    if (param.image) {
+      seller.image = param.image
+    }
     seller.updated_at = new Date()
     await this.sellerRepo.save(seller)
     return new ResponseBody(seller);
