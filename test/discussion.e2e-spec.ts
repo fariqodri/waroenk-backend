@@ -14,6 +14,9 @@ import { RedisClientProvider } from '../src/redis/redis.client.provider';
 import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
 import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
 import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
+import { OrderEntity } from '../src/order/entities/order.entity';
+import { OrderItem } from '../src/order/entities/order-item.entity';
+import { CartEntity } from '../src/order/entities/cart.entity';
 
 const fakeRedisClientProvider = {
   set: jest
@@ -142,7 +145,10 @@ describe('Discussion (e2e)', () => {
             SellerAttribute,
             AgendaEntity,
             ProposalEntity,
-            ProposalData
+            ProposalData,
+            OrderEntity,
+            OrderItem,
+            CartEntity
           ],
         }),
       ],
@@ -182,8 +188,6 @@ describe('Discussion (e2e)', () => {
           productId,
           description,
           created_at,
-          updated_at,
-          deleted_at,
         } = result;
         expect(message).toEqual('ok');
         expect(id).toBeDefined();

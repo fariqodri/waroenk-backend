@@ -3,6 +3,8 @@ import { Exclude } from 'class-transformer';
 import { DiscussionEntity } from "../../discussion/entities/discussion.entity";
 import { AgendaEntity } from "../../agenda/entities/agenda.entity";
 import { ProposalEntity } from "../../proposal/entities/proposal.entity";
+import { CartEntity } from "../../order/entities/cart.entity";
+import { OrderEntity } from "../../order/entities/order.entity";
 
 @Entity({ name: "users" })
 export class UserEntity {
@@ -37,6 +39,12 @@ export class UserEntity {
 
   @OneToMany(type => DiscussionEntity, discussion => discussion.user)
   discussions?: DiscussionEntity[]
+
+  @OneToMany(type => CartEntity, cart => cart.user)
+  carts?: CartEntity[]
+
+  @OneToMany(type => OrderEntity, order => order.user)
+  orders?: OrderEntity[]
 
   @ManyToMany(type => AgendaEntity, agenda => agenda.users, { eager: true })
   @JoinTable()

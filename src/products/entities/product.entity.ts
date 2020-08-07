@@ -2,6 +2,7 @@ import { Entity, PrimaryColumn, ManyToOne, Column, CreateDateColumn, UpdateDateC
 import { CategoryEntity } from './category.entity';
 import { SellerAttribute } from "../../users/entities/seller.entity";
 import { DiscussionEntity } from "../../discussion/entities/discussion.entity";
+import { CartEntity } from "../../order/entities/cart.entity";
 
 @Entity({ name: "product" })
 export class ProductEntity {
@@ -17,6 +18,9 @@ export class ProductEntity {
 
   @OneToMany(type => DiscussionEntity, discussion => discussion.product)
   discussions?: DiscussionEntity[]
+
+  @OneToMany(type => CartEntity, cart => cart.user)
+  carts?: CartEntity[]
 
   @Column()
   name: string

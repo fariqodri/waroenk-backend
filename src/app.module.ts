@@ -13,6 +13,7 @@ import { AgendaModule } from './agenda/agenda.module';
 import { FileUploadModule } from './file.upload/file.upload.module';
 import { MiscModule } from './misc/misc.module';
 import { ProposalModule } from './proposal/proposal.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ProposalModule } from './proposal/proposal.module';
     FileUploadModule,
     MiscModule,
     ProposalModule,
+    OrderModule,
     RedisModule.register({
       host: REDIS_HOST,
       port: REDIS_PORT,

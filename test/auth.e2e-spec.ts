@@ -19,6 +19,9 @@ import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
 import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
 import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
 import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
+import { OrderEntity } from '../src/order/entities/order.entity';
+import { OrderItem } from '../src/order/entities/order-item.entity';
+import { CartEntity } from '../src/order/entities/cart.entity';
 
 describe('Login and Logout E2E Test', () => {
   let app: INestApplication;
@@ -57,7 +60,10 @@ describe('Login and Logout E2E Test', () => {
             DiscussionEntity,
             AgendaEntity,
             ProposalEntity,
-            ProposalData
+            ProposalData,
+            OrderEntity,
+            OrderItem,
+            CartEntity
           ]
         })
       ],

@@ -19,6 +19,9 @@ import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
 import { AgendaEntity } from "../src/agenda/entities/agenda.entity";
 import { ProposalEntity } from "../src/proposal/entities/proposal.entity";
 import { ProposalData } from "../src/proposal/entities/proposal-data.entity";
+import { OrderEntity } from "../src/order/entities/order.entity";
+import { OrderItem } from "../src/order/entities/order-item.entity";
+import { CartEntity } from "../src/order/entities/cart.entity";
 
 const fakeRedisClientProvider = {
   set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
@@ -108,7 +111,10 @@ describe('Shop E2E', () => {
             DiscussionEntity,
             AgendaEntity,
             ProposalEntity,
-            ProposalData
+            ProposalData,
+            OrderEntity,
+            OrderItem,
+            CartEntity
           ],
         }),
         AuthModule,
@@ -404,7 +410,10 @@ describe('Negative test E2E shop', () => {
             UserEntity, 
             SellerAttribute, 
             ProductEntity,
-            AgendaEntity
+            AgendaEntity,
+            OrderEntity,
+            OrderItem,
+            CartEntity
           ],
         }),
         AuthModule,
@@ -467,7 +476,10 @@ describe('Create Shop', () => {
             SellerAttribute, 
             ProductEntity,
             ProposalEntity,
-            ProposalData
+            ProposalData,
+            OrderEntity,
+            OrderItem,
+            CartEntity
           ],
         }),
         AuthModule,
