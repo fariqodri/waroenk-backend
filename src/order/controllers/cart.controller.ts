@@ -14,7 +14,7 @@ export class CartController {
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('all')
   @Get()
-  getProducts(@Req() request: Request) {
+  listCart(@Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.listCart(user.userId)
   }
@@ -24,7 +24,7 @@ export class CartController {
   @Roles('all')
   @Post()
   @HttpCode(201)
-  async createProduct(@Body() param: CreateCartParam, @Req() request: Request) {
+  async addCart(@Body() param: CreateCartParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.addCart(param, user.userId);
   }
