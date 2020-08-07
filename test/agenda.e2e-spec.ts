@@ -15,6 +15,9 @@ import { RedisClientProvider } from '../src/redis/redis.client.provider';
 import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
 import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
 import { OptionalJwtAuthGuard } from '../src/auth/guards/optional-jwt-auth.guard';
+import { OrderEntity } from '../src/order/entities/order.entity';
+import { OrderItem } from '../src/order/entities/order-item.entity';
+import { CartEntity } from '../src/order/entities/cart.entity';
 
 describe('Agenda (e2e)', () => {
   let app: INestApplication;
@@ -36,7 +39,10 @@ describe('Agenda (e2e)', () => {
             CategoryEntity,
             SellerAttribute,
             ProposalEntity,
-            ProposalData
+            ProposalData,
+            OrderEntity,
+            OrderItem,
+            CartEntity
           ],
         }),
       ],
@@ -264,7 +270,10 @@ describe('Agenda with users (e2e)', () => {
             CategoryEntity,
             SellerAttribute,
             ProposalEntity,
-            ProposalData
+            ProposalData,
+            OrderEntity,
+            OrderItem,
+            CartEntity
           ],
         }),
       ],
@@ -407,7 +416,10 @@ describe('Agenda with optional login (e2e)', () => {
             CategoryEntity,
             SellerAttribute,
             ProposalEntity,
-            ProposalData
+            ProposalData,
+            OrderEntity,
+            OrderItem,
+            CartEntity
           ],
         }),
       ],

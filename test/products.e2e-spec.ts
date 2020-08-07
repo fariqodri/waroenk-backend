@@ -14,6 +14,9 @@ import { OptionalJwtAuthGuard } from '../src/auth/guards/optional-jwt-auth.guard
 import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
 import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
 import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
+import { OrderItem } from '../src/order/entities/order-item.entity';
+import { CartEntity } from '../src/order/entities/cart.entity';
+import { OrderEntity } from '../src/order/entities/order.entity';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
@@ -63,7 +66,10 @@ describe('GET Product and Categories (e2e)', () => {
             DiscussionEntity,
             AgendaEntity,
             ProposalEntity,
-            ProposalData
+            ProposalData,
+            OrderEntity,
+            OrderItem,
+            CartEntity
           ],
         }),
       ],
@@ -400,7 +406,10 @@ describe('GET Product and Categories (e2e) with user login', () => {
             DiscussionEntity,
             AgendaEntity,
             ProposalEntity,
-            ProposalData
+            ProposalData,
+            OrderEntity,
+            OrderItem,
+            CartEntity
           ],
         }),
       ],

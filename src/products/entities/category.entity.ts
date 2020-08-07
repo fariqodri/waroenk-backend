@@ -8,7 +8,7 @@ export class CategoryEntity {
   id: string
 
   @OneToMany(type => ProductEntity, product => product.category)
-  products: ProductEntity[]
+  products?: ProductEntity[]
 
   @Column()
   name: string

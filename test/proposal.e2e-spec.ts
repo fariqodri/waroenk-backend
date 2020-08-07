@@ -15,6 +15,9 @@ import { ProposalItem } from '../src/proposal/entities/proposal-item.entity';
 import { ProductEntity } from '../src/products/entities/product.entity';
 import { CategoryEntity } from '../src/products/entities/category.entity';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
+import { OrderEntity } from '../src/order/entities/order.entity';
+import { OrderItem } from '../src/order/entities/order-item.entity';
+import { CartEntity } from '../src/order/entities/cart.entity';
 
 const fakeRedisClientProvider = {
   set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
@@ -104,7 +107,10 @@ describe('Proposals (e2e)', () => {
             ProposalItem,
             ProductEntity,
             CategoryEntity,
-            SellerAttribute
+            SellerAttribute,
+            OrderEntity,
+            OrderItem,
+            CartEntity
           ],
         }),
       ],
