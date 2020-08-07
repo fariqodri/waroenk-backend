@@ -76,6 +76,11 @@ export class OrderService {
     orders.forEach(function(p) {
       delete p.user
     })
+    for (let cart of carts) {
+      cart.quantity = 0
+      cart.is_active = false
+      await this.cartRepo.save(cart)
+    }
     return new ResponseBody(orders)
   }
 
