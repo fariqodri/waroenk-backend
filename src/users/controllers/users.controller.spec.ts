@@ -5,8 +5,10 @@ import { RegisterDto } from '../dto/users.dto';
 import { BadRequestException } from '@nestjs/common';
 import { PermissionModule } from '../../permission/permission.module';
 import { UserRepository } from '../repositories/users.repository';
+import { SellerAttributeRepository } from '../repositories/seller.repository';
 
 jest.mock('../repositories/users.repository')
+jest.mock('../repositories/seller.repository')
 
 describe('Users Controller', () => {
   let controller: UsersController;
@@ -15,7 +17,7 @@ describe('Users Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [UsersService, UserRepository],
+      providers: [UsersService, UserRepository, SellerAttributeRepository],
       imports: [PermissionModule]
     }).compile();
 
