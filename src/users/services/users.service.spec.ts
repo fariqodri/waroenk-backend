@@ -7,8 +7,10 @@ import { BUYER_ROLE_ID } from '../../constants';
 import { PermissionModule } from '../../permission/permission.module';
 import { UserRepository } from '../repositories/users.repository';
 import { UserEntity } from '../entities/users.entity';
+import { SellerAttributeRepository } from '../repositories/seller.repository';
 
 jest.mock('../repositories/users.repository')
+jest.mock('../repositories/seller.repository')
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -18,7 +20,7 @@ describe('UsersService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [PermissionModule],
-      providers: [UsersService, UserRepository]
+      providers: [UsersService, UserRepository, SellerAttributeRepository]
     }).compile();
 
     service = module.get<UsersService>(UsersService);
@@ -67,22 +69,4 @@ describe('UsersService', () => {
     rejection.toBeInstanceOf(BadRequestException)
     expect(spy).not.toHaveBeenCalled()
   });
-
-  it('should get a user from the repository', async () => {
-    const user: UserEntity = {
-      id: 'id_1',
-      email: 'user@example.com',
-      full_name: 'User 1',
-      phone: '08132312321',
-      password: 'password',
-      role: 'buyer',
-      created_at: new Date(),
-      updated_at: null,
-      is_active: true
-    }
-    const findSpy = jest.spyOn(userRepo, 'findOneOrFail').mockImplementation(async () => user)
-    const result = await service.findOne({ id: 'id_1' })
-    expect(findSpy).toBeCalledWith({ where: { id: 'id_1' } })
-    expect(result).toEqual(user)
-  })
 });

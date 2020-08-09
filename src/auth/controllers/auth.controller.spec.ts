@@ -6,9 +6,11 @@ import { RedisService } from '../../redis/redis.service';
 import { UsersService } from '../../users/services/users.service';
 import { PermissionService } from '../../permission/permission.service';
 import { UserRepository } from '../../users/repositories/users.repository';
+import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
 
 jest.mock('../../redis/redis.service')
 jest.mock('../../users/repositories/users.repository')
+jest.mock('../../users/repositories/seller.repository')
 
 describe('Auth Controller', () => {
   let controller: AuthController;
@@ -22,7 +24,8 @@ describe('Auth Controller', () => {
         RedisService,
         UsersService,
         PermissionService,
-        UserRepository
+        UserRepository,
+        SellerAttributeRepository
       ],
       imports: [
         JwtModule.register({}),
