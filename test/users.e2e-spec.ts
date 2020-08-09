@@ -104,7 +104,7 @@ describe('Users E2E', () => {
       .then(res => {
         const body = res.body
         const { message, result } = body
-        const { id, full_name, email, phone, role, created_at, is_active } = result
+        const { id, full_name, email, phone, role, created_at, is_active, sellerId } = result
         expect(message).toEqual('ok')
         expect(id).toBeDefined()
         expect(full_name).toEqual("full_name")
@@ -113,6 +113,7 @@ describe('Users E2E', () => {
         expect(role).toEqual("buyer")
         expect(created_at).toBeDefined()
         expect(is_active).toBeTruthy()
+        expect(sellerId).toBeNull()
       })
   })
 

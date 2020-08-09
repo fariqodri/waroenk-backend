@@ -9,6 +9,7 @@ import { SALT_ROUNDS, BUYER_ROLE_ID } from '../../constants';
 import { plainToClass } from 'class-transformer';
 import { PermissionService } from '../../permission/permission.service';
 import { UserRepository } from '../repositories/users.repository';
+import { SellerAttributeRepository } from '../repositories/seller.repository';
 
 @Injectable()
 export class UsersService {
@@ -17,12 +18,26 @@ export class UsersService {
   constructor(
     private permissionService: PermissionService,
     private userRepo: UserRepository,
+    private sellerRepo: SellerAttributeRepository
   ) {}
 
-  async findOne(params: { id?: string, email?: string }): Promise<UserEntity> {
+  async findOne(params: { id?: string, email?: string }): Promise<any> {
     try{
-      const user = this.userRepo.findOneOrFail({ where: params })
-      return user
+      const user = await this.userRepo.findOneOrFail({ where: params })
+      const seller = await this.sellerRepo.findOne({ where: { user: user.id }})
+      console.log(seller)
+      let response = {
+        id: user.id,
+        full_name: user.full_name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        created_at: user.created_at,
+        updated_at: user.updated_at,
+        is_active: user.is_active,
+        sellerId: seller? seller.id: null
+      }
+      return new ResponseBody(response)
     } catch(err) {
       throw new NotFoundException(new ResponseBody(null, 'user not found'))
     }

@@ -23,9 +23,8 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async findOne(@Req() req: Request): Promise<ResponseBody<UserEntity>> {
+  async findOne(@Req() req: Request) {
     const session: { userId: string } = req.user as { userId: string }
-    const result = plainToClass(UserEntity, await this.userService.findOne({ id: session.userId })) 
-    return new ResponseBody(result)
+    return this.userService.findOne({ id: session.userId })
   }
 }
