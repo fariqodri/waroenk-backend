@@ -86,6 +86,36 @@ describe('Users E2E', () => {
     await getConnection().close()
   })
 
+  it('Edit User Profile', () => {
+    const reqBody = {
+      full_name: "fullo",
+      email: "fullo@example.com",
+      phone: "081238192322",
+      password: "password",
+      confirm_password: "password",
+    }
+    getConnection()
+      .getRepository(UserEntity)
+      .insert({
+        id: 'user-1',
+        full_name: "full_name",
+        email: "full@example.com",
+        phone: "081238192312",
+        password: "password",
+        role: 'buyer'
+      })
+    return request(app.getHttpServer())
+      .put('/users')
+      .send(reqBody)
+      .expect(201)
+      .then(res => {
+        const body = res.body
+        const { message, result } = body
+        expect(message).toEqual('profile has been updated')
+        expect(result).toBeNull()
+      })
+  })
+
   it('Get User Info', () => {
     getConnection()
       .getRepository(UserEntity)
@@ -99,7 +129,7 @@ describe('Users E2E', () => {
       })
     return request(app.getHttpServer())
       .get('/users')
-      .set('Authorization', 'fake_token')
+      // .set('Authorization', 'fake_token')
       .expect(200)
       .then(res => {
         const body = res.body

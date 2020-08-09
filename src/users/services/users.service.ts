@@ -2,7 +2,7 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { nanoid } from 'nanoid';
 import * as bcrypt from 'bcrypt'
 
-import { RegisterDto } from '../dto/users.dto';
+import { RegisterDto, editProfileParam } from '../dto/users.dto';
 import { UserEntity } from '../entities/users.entity';
 import { ResponseBody } from '../../utils/response';
 import { SALT_ROUNDS, BUYER_ROLE_ID } from '../../constants';
@@ -21,11 +21,35 @@ export class UsersService {
     private sellerRepo: SellerAttributeRepository
   ) {}
 
+  async editProfile(param: editProfileParam, userId: string): Promise<any> {
+    const user = await this.userRepo.findOneOrFail(userId)
+    if (user === undefined) {
+      throw new NotFoundException(new ResponseBody(null, 'user not found'))
+    }
+    if (param.email) {
+      user.email = param.email
+    }
+    if (param.full_name) {
+      user.full_name = param.full_name
+    }
+    if (param.phone) {
+      user.phone = param.phone
+    }
+    if (param.password) {
+      if (param.password != param.confirm_password) {
+        throw new BadRequestException(new ResponseBody(null, "confirm password unequal with password"))
+      }
+      user.password = await bcrypt.hash(param.password, SALT_ROUNDS)
+    }
+    user.updated_at = new Date()
+    await this.userRepo.save(user)
+    return new ResponseBody(null, "profile has been updated")
+  }
+
   async findOne(params: { id?: string, email?: string }): Promise<any> {
     try{
       const user = await this.userRepo.findOneOrFail({ where: params })
       const seller = await this.sellerRepo.findOne({ where: { user: user.id }})
-      console.log(seller)
       let response = {
         id: user.id,
         full_name: user.full_name,
