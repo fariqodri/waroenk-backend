@@ -6,8 +6,6 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { AuthController } from './controllers/auth.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { SellerAttributeRepository } from 'src/users/repositories/seller.repository';
 
 @Global()
 @Module({

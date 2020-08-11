@@ -56,11 +56,12 @@ describe('AuthService', () => {
     const spy = jest.spyOn(userService, 'findOne').mockResolvedValue({
       id: 'id_1',
       email: 'user@example.com',
-      password: 'password'
     })
+    const spyPassword = jest.spyOn(userService, 'getUserPassword').mockResolvedValue('password')
     const bcryptCompareSpy = jest.spyOn(bcrypt, 'compare').mockImplementation(async () => true)
     await service.login('user@example.com', 'password')
     expect(spy).toBeCalledWith({ email: 'user@example.com' })
     expect(bcryptCompareSpy).toBeCalledWith('password', 'password')
+    expect(spyPassword).toBeCalledWith('id_1')
   })
 });
