@@ -94,4 +94,9 @@ export class UsersService {
       throw err
     }
   }
+
+  async getUserPassword(userId: string): Promise<string> {
+    const user = await this.userRepo.findOneOrFail(userId)
+    return user.password
+  }
 }

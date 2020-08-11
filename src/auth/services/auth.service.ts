@@ -16,12 +16,14 @@ export class AuthService {
 
   async login(email: string, password: string) {
     let user: UserEntity
+    let userPassword: string
     try {
       user = await this.usersService.findOne({ email });
+      userPassword = await this.usersService.getUserPassword(user.id)
     } catch (err) {
       throw new BadRequestException(new ResponseBody(null, 'invalid email'))
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    const isPasswordValid = await bcrypt.compare(password, userPassword)
     if (isPasswordValid) {
       const payload = { sub: user.id, role: user.role };
       return new ResponseBody({
