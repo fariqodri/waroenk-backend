@@ -11,6 +11,8 @@ import { SellerAttribute } from '../../users/entities/seller.entity';
 import { OrderEntity } from '../entities/order.entity';
 import { OrderItem } from '../entities/order-item.entity';
 import { OrderItemRepository } from '../repositories/order-item.repository';
+import { Cron } from '@nestjs/schedule';
+import { LessThan } from 'typeorm';
 
 @Injectable()
 export class OrderService {
@@ -21,6 +23,35 @@ export class OrderService {
     private productRepo: ProductRepository,
     private userRepo: UserRepository,
   ) {}
+
+  @Cron('* 10 * * * *')
+  async handleCron() {
+    let today = new Date()
+    let last7Days = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7)
+    let last5Days = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 5)
+    let newOrders = await this.orderRepo.find({
+      where: {
+        status: 'new',
+        created_at: LessThan(last7Days)
+      }
+    })
+    for (var order of newOrders) {
+      order.status = 'canceled',
+      order.updated_at = today
+      await this.orderRepo.save(order)
+    }
+    let onDeliveryOrders = await this.orderRepo.find({
+      where: {
+        status: 'on_delivery',
+        updated_at: LessThan(last5Days)
+      }
+    })
+    for (var order of onDeliveryOrders) {
+      order.status = 'finished',
+      order.updated_at = today
+      await this.orderRepo.save(order)
+    }
+  }
 
   async detailOrder(orderId: string): Promise<ResponseBody<any>> {
     const order = await this.orderRepo.findOneOrFail({
