@@ -21,6 +21,7 @@ import { AuthModule } from "../src/auth/auth.module";
 import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
 import { ProposalEntity } from "../src/proposal/entities/proposal.entity";
 import { ProposalData } from "../src/proposal/entities/proposal-data.entity";
+import { stat } from "fs";
 
 
 const fakeRedisClientProvider = {
@@ -204,6 +205,96 @@ describe('Order e2e test', () => {
     quantity: 0,
     is_active: false
   }
+  const newOrder: OrderEntity = {
+    id: 'neworder',
+    user: user3,
+    seller: seller1,
+    status: 'new',
+    address: 'jalan anggur',
+    recipient_name: 'joni',
+    recipient_number: '08589239129',
+    created_at: new Date(),
+    fare: 0,
+    courier: null,
+    notes: null,
+    payment_bank: null,
+    account_owner: null,
+    account_number: null,
+    payment_proof: null,
+    receipt_number: null,
+    updated_at: null,
+    items: []
+  }
+  const waitingPaymentOrder: OrderEntity = {
+    id: 'waitingpaymentorder',
+    user: user3,
+    seller: seller1,
+    status: 'waiting_for_payment',
+    address: 'jalan anggur',
+    recipient_name: 'joni',
+    recipient_number: '08589239129',
+    created_at: new Date(),
+    fare: 10000,
+    courier: 'jne reg',
+    notes: 'ke gang delima',
+    payment_bank: null,
+    account_owner: null,
+    account_number: null,
+    payment_proof: null,
+    receipt_number: null,
+    updated_at: new Date(),
+    items: []
+  }
+  const processedOrder: OrderEntity = {
+    id: 'processedorder',
+    user: user3,
+    seller: seller1,
+    status: 'processed',
+    address: 'jalan anggur',
+    recipient_name: 'joni',
+    recipient_number: '08589239129',
+    created_at: new Date(),
+    fare: 10000,
+    courier: 'jne reg',
+    notes: 'ke gang delima',
+    payment_bank: 'bca',
+    account_owner: 'joni',
+    account_number: '0125212',
+    payment_proof: 'img-proof',
+    receipt_number: null,
+    updated_at: new Date(),
+    items: []
+  }
+  const orderItem1: OrderItem = {
+    order: processedOrder,
+    product: product1,
+    quantity: 2
+  }
+  const orderItem2: OrderItem = {
+    order: processedOrder,
+    product: product2,
+    quantity: 2
+  }
+  const onDeliveryOrder: OrderEntity = {
+    id: 'ondeliveryorder',
+    user: user3,
+    seller: seller1,
+    status: 'on_delivery',
+    address: 'jalan anggur',
+    recipient_name: 'joni',
+    recipient_number: '08589239129',
+    created_at: new Date(),
+    fare: 10000,
+    courier: 'jne reg',
+    notes: 'ke gang delima',
+    payment_bank: 'bca',
+    account_owner: 'joni',
+    account_number: '0125212',
+    payment_proof: 'img-proof',
+    receipt_number: 'faktur-123121',
+    updated_at: new Date(),
+    items: []
+  }
   beforeEach(async () => {
     const moduleFixture = await Test.createTestingModule({
       imports: [
@@ -246,15 +337,148 @@ describe('Order e2e test', () => {
     await getRepository(CategoryEntity).insert([vegetableCategory])
     await getRepository(ProductEntity).insert([product1, product2, product3, product4])
     await getRepository(CartEntity).insert([cart1, cart2, cart3, cart4, cart5])
+    await getRepository(OrderEntity).insert([newOrder, waitingPaymentOrder, processedOrder, onDeliveryOrder])
+    await getRepository(OrderItem).insert([orderItem1, orderItem2])
   })
 
   afterEach(async () => {
     await getConnection().close();
   });
 
+  it('should update order to waiting for payment', () => {
+    const reqBody = {
+      fare: 5000,
+      courier: 'jne reg',
+      notes: 'swiper jangan mencuri'
+    }
+    return request(app.getHttpServer())
+      .put('/order/neworder')
+      .send(reqBody)
+      .expect(201)
+      .then(res => {
+        const body = res.body;
+        const { message, result } = body;
+        const { id, fare, courier, notes, status, updated_at} = result;
+        expect(message).toEqual('order successfully updated');
+        expect(id).toEqual(newOrder.id);
+        expect(fare).toEqual(reqBody.fare);
+        expect(courier).toEqual(reqBody.courier);
+        expect(notes).toEqual(reqBody.notes);
+        expect(status).toEqual('waiting_for_payment');
+        expect(updated_at).toBeDefined();
+      });
+  })
+
+  it('should update order to on delivery', () => {
+    const reqBody = {
+      receipt_number: '01212312931'
+    }
+    return request(app.getHttpServer())
+      .put('/order/processedorder')
+      .send(reqBody)
+      .expect(201)
+      .then(res => {
+        const body = res.body;
+        const { message, result } = body;
+        const { id, receipt_number, status, updated_at} = result;
+        expect(message).toEqual('order successfully updated');
+        expect(id).toEqual(processedOrder.id);
+        expect(receipt_number).toEqual(reqBody.receipt_number);
+        expect(status).toEqual('on_delivery');
+        expect(updated_at).toBeDefined();
+      });
+  })
+
+  it('should update order to processed', () => {
+    const reqBody = {
+      payment_proof: 'buktinyata.com',
+      payment_bank: 'bna',
+      account_number: '12031203',
+      account_owner: 'koni'
+    }
+    return request(app.getHttpServer())
+      .put('/order/waitingpaymentorder')
+      .send(reqBody)
+      .expect(201)
+      .then(res => {
+        const body = res.body;
+        const { message, result } = body;
+        const { id, payment_proof, payment_bank, account_number,
+          account_owner, status, updated_at} = result;
+        expect(message).toEqual('order successfully updated');
+        expect(id).toEqual(waitingPaymentOrder.id);
+        expect(payment_proof).toEqual(reqBody.payment_proof);
+        expect(payment_bank).toEqual(reqBody.payment_bank);
+        expect(account_number).toEqual(reqBody.account_number);
+        expect(account_owner).toEqual(reqBody.account_owner);
+        expect(status).toEqual('processed');
+        expect(updated_at).toBeDefined();
+      });
+  })
+
+  it('should get order detail', () => {
+    return request(app.getHttpServer())
+      .get('/order/processedorder')
+      .expect(200)
+      .then(res => {
+        const body = res.body;
+        const { message, result } = body;
+        const { id, userId, sellerId, items, status, address, recipient_name,
+          recipient_number, created_at, fare, courier, notes, payment_bank,
+          account_owner, account_number, payment_proof, receipt_number, 
+          updated_at, subtotal} = result;
+        expect(message).toEqual('ok');
+        expect(id).toEqual(processedOrder.id);
+        expect(userId).toEqual(processedOrder.user.id);
+        expect(sellerId).toEqual(processedOrder.seller.id);
+        expect(items).toHaveLength(2);
+        expect(status).toEqual(processedOrder.status);
+        expect(address).toEqual(processedOrder.address);
+        expect(recipient_name).toEqual(processedOrder.recipient_name);
+        expect(recipient_number).toEqual(processedOrder.recipient_number);
+        expect(created_at).toBeDefined();
+        expect(fare).toEqual(processedOrder.fare);
+        expect(courier).toEqual(processedOrder.courier);
+        expect(notes).toEqual(processedOrder.notes);
+        expect(payment_bank).toEqual(processedOrder.payment_bank);
+        expect(account_owner).toEqual(processedOrder.account_owner);
+        expect(account_number).toEqual(processedOrder.account_number);
+        expect(payment_proof).toEqual(processedOrder.payment_proof);
+        expect(receipt_number).toEqual(processedOrder.receipt_number);
+        expect(updated_at).toBeDefined();
+        expect(subtotal).toEqual(70000);
+      });
+  })
+
+  it('should delete order', () => {
+    return request(app.getHttpServer())
+      .delete('/order/neworder')
+      .expect(201)
+      .then(res => {
+        const body = res.body;
+        const { message, result } = body;
+        expect(message).toEqual('ok');
+        expect(result).toEqual('order successfully canceled');
+      });
+  })
+
+  it('should finish order', () => {
+    return request(app.getHttpServer())
+      .put('/order/finish/ondeliveryorder')
+      .expect(201)
+      .then(res => {
+        const body = res.body;
+        const { message, result } = body;
+        expect(message).toEqual('ok');
+        expect(result).toEqual('order successfully finished');
+      });
+  })
+
   it('should create new order', () => {
     const reqBody = {
-      address: 'jalan tendean'
+      address: 'jalan tendean',
+      recipient_name: 'jojon',
+      recipient_number: '0217823839'
     }
     return request(app.getHttpServer())
       .post('/order')
