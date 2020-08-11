@@ -8,17 +8,19 @@ import { CartRepository } from './repositories/cart.repository';
 import { UserRepository } from '../users/repositories/users.repository';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { OrderController } from './controllers/order.controller';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   controllers: [CartController, OrderController],
   providers: [OrderService],
-  imports: [TypeOrmModule.forFeature([
+  imports: [ScheduleModule.forRoot(), 
+    TypeOrmModule.forFeature([
     CartRepository, 
     OrderRepository,
     OrderItemRepository,
     OrderRepository, 
     UserRepository, 
-    ProductRepository
+    ProductRepository,
   ])],
   exports: [TypeOrmModule.forFeature([CartRepository, OrderRepository, OrderItemRepository])]
 })

@@ -5,12 +5,14 @@ import { OrderRepository } from '../repositories/order.repository';
 import { ProductRepository } from '../../products/repositories/product.repository';
 import { UserRepository } from '../../users/repositories/users.repository';
 import { CartEntity } from '../entities/cart.entity';
-import { CreateCartParam, CreateOrderParam } from '../dto/order.dto';
+import { CreateCartParam, CreateOrderParam, UpdateOrderParam } from '../dto/order.dto';
 import { nanoid } from 'nanoid';
 import { SellerAttribute } from '../../users/entities/seller.entity';
 import { OrderEntity } from '../entities/order.entity';
 import { OrderItem } from '../entities/order-item.entity';
 import { OrderItemRepository } from '../repositories/order-item.repository';
+import { Cron } from '@nestjs/schedule';
+import { LessThan } from 'typeorm';
 
 @Injectable()
 export class OrderService {
@@ -21,6 +23,112 @@ export class OrderService {
     private productRepo: ProductRepository,
     private userRepo: UserRepository,
   ) {}
+
+  @Cron('* 10 * * * *')
+  async handleCron() {
+    let today = new Date()
+    let last7Days = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7)
+    let last5Days = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 5)
+    let newOrders = await this.orderRepo.find({
+      where: {
+        status: 'new',
+        created_at: LessThan(last7Days)
+      }
+    })
+    for (var order of newOrders) {
+      order.status = 'canceled',
+      order.updated_at = today
+      await this.orderRepo.save(order)
+    }
+    let onDeliveryOrders = await this.orderRepo.find({
+      where: {
+        status: 'on_delivery',
+        updated_at: LessThan(last5Days)
+      }
+    })
+    for (var order of onDeliveryOrders) {
+      order.status = 'finished',
+      order.updated_at = today
+      await this.orderRepo.save(order)
+    }
+  }
+
+  async detailOrder(orderId: string): Promise<ResponseBody<any>> {
+    const order = await this.orderRepo.findOneOrFail({
+      relations: ['items'],
+      where: { id: orderId }
+    })
+    let subtotal = order.fare
+    for (var item of order.items) {
+      const discount = item.product.discount
+      const price = item.product.price_per_quantity
+      subtotal += (price * (1 - discount)) * item.quantity
+    }
+    let response = {
+      id: order.id,
+      userId: order.user.id,
+      sellerId: order.seller.id,
+      items: order.items,
+      status: order.status,
+      address: order.address,
+      recipient_name: order.recipient_name,
+      recipient_number: order.recipient_number,
+      fare: order.fare,
+      courier: order.courier,
+      notes: order.notes,
+      payment_bank: order.payment_bank,
+      account_owner: order.account_owner,
+      account_number: order.account_number,
+      payment_proof: order.payment_proof,
+      receipt_number: order.receipt_number,
+      created_at: order.created_at,
+      updated_at: order.updated_at,
+      subtotal: subtotal
+    }
+    return new ResponseBody(response)
+  }
+
+  async cancelOrder(orderId: string): Promise<ResponseBody<any>> {
+    let order = await this.orderRepo.findOneOrFail(orderId)
+    order.status = 'canceled'
+    order.updated_at = new Date()
+    await this.orderRepo.save(order)
+    return new ResponseBody('order successfully canceled')
+  }
+
+  async finishOrder(orderId: string): Promise<ResponseBody<any>> {
+    let order = await this.orderRepo.findOneOrFail(orderId)
+    if (order.status == 'on_delivery') {
+      order.status = 'finished'
+      order.updated_at = new Date()
+      await this.orderRepo.save(order)
+      return new ResponseBody('order successfully finished')
+    }
+    throw new BadRequestException(new ResponseBody(null, "order can't be finished yet"))
+  }
+
+  async updateOrder(orderId: string, param: UpdateOrderParam): Promise<ResponseBody<any>> {
+    let order = await this.orderRepo.findOneOrFail(orderId)
+    if (param.fare && (order.status == 'new')) {
+      order.fare = param.fare
+      order.courier = param.courier
+      order.notes = param.notes? param.notes: null
+      order.status = 'waiting_for_payment'
+    } else if (param.payment_proof && (order.status == 'waiting_for_payment')) {
+      order.payment_proof = param.payment_proof
+      order.payment_bank = param.payment_bank? param.payment_bank: null
+      order.account_number = param.account_number? param.account_number: null
+      order.account_owner = param.account_owner? param.account_owner: null
+      order.status = 'processed'
+    } else if (param.receipt_number && (order.status == 'processed')) {
+      order.receipt_number = param.receipt_number
+      order.status = 'on_delivery'
+    }
+    order.updated_at = new Date()
+    await this.orderRepo.save(order)
+    delete order.user
+    return new ResponseBody(order, 'order successfully updated')
+  }
 
   async createOrder(param: CreateOrderParam, userId: string): Promise<ResponseBody<any>> {
     const user = await this.userRepo.findOne({
@@ -52,14 +160,25 @@ export class OrderService {
     })
     let orders = []
     for (let [seller, carts] of sellerMap) {
-      let newOrder = {
+      let newOrder: OrderEntity = {
         id: nanoid(11),
         user: user,
         seller: seller,
-        status: 'diajukan',
+        status: 'new',
         address: param.address,
+        recipient_name: param.recipient_name,
+        recipient_number: param.recipient_number,
         created_at: new Date(),
-        is_active: true
+        fare: 0,
+        courier: null,
+        notes: null,
+        payment_bank: null,
+        account_owner: null,
+        account_number: null,
+        payment_proof: null,
+        receipt_number: null,
+        updated_at: null,
+        items: []
       }
       await this.orderRepo.insert(newOrder)
       let newInsertedOrder: OrderEntity = await this.orderRepo.findOne(newOrder.id)

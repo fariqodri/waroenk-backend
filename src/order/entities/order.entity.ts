@@ -19,10 +19,16 @@ export class OrderEntity {
   items: OrderItem[]
 
   @Column()
-  status: string
+  status: 'new' | 'waiting_for_payment' | 'processed' | 'on_delivery' | 'finished' | 'canceled'
 
   @Column()
   address: string
+
+  @Column()
+  recipient_name: string
+  
+  @Column()
+  recipient_number: string
 
   @Column({ default: 0 })
   fare: number
@@ -53,7 +59,4 @@ export class OrderEntity {
 
   @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updated_at: Date
-
-  @Column()
-  is_active: boolean
 }
