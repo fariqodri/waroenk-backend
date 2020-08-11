@@ -33,6 +33,7 @@ export class UsersController {
   @Get()
   async findOne(@Req() req: Request) {
     const session: { userId: string } = req.user as { userId: string }
-    return this.userService.findOne({ id: session.userId })
+    const response = await this.userService.findOne({ id: session.userId })
+    return new ResponseBody(response)
   }
 }

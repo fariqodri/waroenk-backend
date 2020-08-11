@@ -61,7 +61,7 @@ export class UsersService {
         is_active: user.is_active,
         sellerId: seller? seller.id: null
       }
-      return new ResponseBody(response)
+      return response
     } catch(err) {
       throw new NotFoundException(new ResponseBody(null, 'user not found'))
     }
