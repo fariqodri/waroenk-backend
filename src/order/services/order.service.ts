@@ -24,7 +24,7 @@ export class OrderService {
     private userRepo: UserRepository,
   ) {}
 
-  @Cron('* 10 * * * *')
+  @Cron('* 10 * * * *', { name: 'order' })
   async handleCron() {
     let today = new Date()
     let last7Days = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7)

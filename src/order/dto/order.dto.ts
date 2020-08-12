@@ -21,7 +21,7 @@ export class CreateOrderParam {
 
 export class UpdateOrderParam {
   @jf.number().optional()
-  fare?: number
+  fare: number
 
   @jf.string().optional()
   courier: string
