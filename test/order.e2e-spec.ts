@@ -21,7 +21,6 @@ import { AuthModule } from "../src/auth/auth.module";
 import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
 import { ProposalEntity } from "../src/proposal/entities/proposal.entity";
 import { ProposalData } from "../src/proposal/entities/proposal-data.entity";
-import { stat } from "fs";
 
 
 const fakeRedisClientProvider = {
