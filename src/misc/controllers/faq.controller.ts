@@ -1,5 +1,5 @@
 import { Controller, Get, Query, Req } from "@nestjs/common"
-import { MiscService } from "../services/faq.service";
+import { MiscService } from "../services/misc.service";
 import { FaqQuery } from "../dto/faq.dto";
 
 @Controller('faq')

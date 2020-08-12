@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnection, getRepository } from 'typeorm';
 import { FaqEntity } from '../src/misc/entities/faq.entity';
 import { MiscModule } from '../src/misc/misc.module';
+import { LocationEntity } from '../src/misc/entities/location.entity';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
@@ -19,7 +20,8 @@ describe('GET Product and Categories (e2e)', () => {
           dropSchema: true,
           synchronize: true,
           entities: [
-            FaqEntity
+            FaqEntity,
+            LocationEntity
           ],
         }),
       ],
@@ -46,10 +48,96 @@ describe('GET Product and Categories (e2e)', () => {
         created_at: new Date('125')
       },
     ])
+    await getRepository(LocationEntity).insert([
+      {
+        kode: '11',
+        nama: 'Aceh'
+      },
+      {
+        kode: '11.11',
+        nama: 'Kabupaten Aceh 1'
+      },
+      {
+        kode: '11.11.11',
+        nama: 'Kecamatan Aceh 1'
+      },
+      {
+        kode: '11.11.11.1111',
+        nama: 'Desa Aceh 1'
+      },
+      {
+        kode: '11.11.11.1112',
+        nama: 'Desa Aceh 2'
+      },
+      {
+        kode: '11.11.12',
+        nama: 'Kecamatan Aceh 2'
+      },
+      {
+        kode: '11.12',
+        nama: 'Kabupaten Aceh 2'
+      },
+      {
+        kode: '12',
+        nama: 'Jakarta'
+      },
+    ])
   });
 
   afterEach(async () => {
     await getConnection().close();
+  });
+
+  it(`should list provinces`, () => {
+    return request(app.getHttpServer())
+      .get('/location?type=province')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          { kode: '11', nama: 'Aceh' },
+          { kode: '12', nama: 'Jakarta' }
+        ]
+      });
+  });
+
+  it(`should list cities`, () => {
+    return request(app.getHttpServer())
+      .get('/location?type=city&province=11')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          { kode: '11', nama: 'Kabupaten Aceh 1' },
+          { kode: '12', nama: 'Kabupaten Aceh 2' }
+        ]
+      });
+  });
+
+  it(`should list districts`, () => {
+    return request(app.getHttpServer())
+      .get('/location?type=district&province=11&city=11')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          { kode: '11', nama: 'Kecamatan Aceh 1' },
+          { kode: '12', nama: 'Kecamatan Aceh 2' }
+        ]
+      });
+  });
+
+  it(`should list sub-districts`, () => {
+    return request(app.getHttpServer())
+      .get('/location?type=sub-district&province=11&city=11&district=11')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          { kode: '1111', nama: 'Desa Aceh 1' },
+          { kode: '1112', nama: 'Desa Aceh 2' }
+        ]
+      });
   });
 
   it(`should list faqs`, () => {
