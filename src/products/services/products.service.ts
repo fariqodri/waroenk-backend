@@ -53,6 +53,12 @@ export class ProductsService {
         );
       }
     }
+    if (param.sellerId) {
+      queryBuilder = queryBuilder.andWhere(
+        'seller.id = :sellerId',
+        { sellerId: param.sellerId },
+      );
+    }
     queryBuilder = queryBuilder
       .offset(skippedItems)
       .limit(param.limit)

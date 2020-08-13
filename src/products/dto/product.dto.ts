@@ -8,6 +8,7 @@ export class ProductQuery {
   price_from?: number
   price_to?: number
   categories?: string
+  sellerId?: string
 }
 
 export class ProductResponse {

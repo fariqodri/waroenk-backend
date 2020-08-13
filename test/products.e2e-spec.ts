@@ -166,7 +166,7 @@ describe('GET Product and Categories (e2e)', () => {
 
   it('Query products with results', () => {
     return request(app.getHttpServer())
-      .get('/products?search=AngkUng&price_from=5001&price_to=20000&categories=category-1')
+      .get('/products?search=AngkUng&price_from=5001&price_to=20000&categories=category-1&sellerId=seller-1')
       .expect(200)
       .expect({
         message: 'ok',

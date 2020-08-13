@@ -57,7 +57,7 @@ export class ShopController {
 
   @UsePipes(ValidationPipe)
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
-  @Roles('buyer')
+  @Roles('all')
   @Post()
   @HttpCode(201)
   async createShop(@Body() param: ShopPostParam, @Req() request: Request) {
@@ -67,7 +67,7 @@ export class ShopController {
 
   @UsePipes(ValidationPipe)
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
-  @Roles('seller')
+  @Roles('all')
   @Put()
   @HttpCode(201)
   async editShop(@Body() param: ShopPostParam, @Req() request: Request) {
