@@ -9,6 +9,6 @@ export class BulkUploadController {
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   parseUser(@UploadedFile() file) {
-    return this.service.parseUser(file)
+    return this.service.parseUser(file.buffer)
   }
 }

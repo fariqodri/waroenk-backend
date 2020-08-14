@@ -21,8 +21,8 @@ export class MiscService {
   ) {}
 
   async parseUser(file: Buffer): Promise<ResponseBody<any[]>> {
-    const stream = fs.createReadStream(file)
-    const entities = await this.csvParser.parse(stream, UserParsed)
+    // const stream = fs.createReadStream(file)
+    const entities = await this.csvParser.parse(file, UserParsed)
     // console.log(entities.list)
     return new ResponseBody(entities.list)
   }
