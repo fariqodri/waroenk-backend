@@ -3,13 +3,29 @@ import { ResponseListBody, ResponseBody } from '../../utils/response';
 import { FaqRepository } from '../repositories/faq.repository';
 import { FaqQuery, LocationQuery } from '../dto/faq.dto';
 import { LocationRepository } from '../repositories/location.repository';
+import { CsvParser } from 'nest-csv-parser'
+import fs from 'fs';
+
+class UserParsed {
+  full_name: string
+  email: string
+  phone: string
+}
 
 @Injectable()
 export class MiscService {
   constructor(
     private faqRepo: FaqRepository,
-    private locationRepo: LocationRepository
+    private locationRepo: LocationRepository,
+    private csvParser: CsvParser
   ) {}
+
+  async parseUser(file: Buffer): Promise<ResponseBody<any[]>> {
+    const stream = fs.createReadStream(file)
+    const entities = await this.csvParser.parse(stream, UserParsed)
+    // console.log(entities.list)
+    return new ResponseBody(entities.list)
+  }
 
   async listLocation(query: LocationQuery): Promise<ResponseBody<any[]>> {
     let index: number = 0

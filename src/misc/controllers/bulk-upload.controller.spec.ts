@@ -1,24 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MiscService } from './misc.service';
+import { MiscService } from '../services/misc.service';
 import { FaqRepository } from '../repositories/faq.repository';
 import { LocationRepository } from '../repositories/location.repository';
 import { CsvParser } from 'nest-csv-parser';
+import { BulkUploadController } from './bulk-upload.controller';
 
 jest.mock('../repositories/faq.repository')
 jest.mock('../repositories/location.repository')
 
-describe('Faq Service', () => {
-  let service: MiscService;
+describe('Faq Controller', () => {
+  let controller: BulkUploadController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MiscService, FaqRepository, LocationRepository, CsvParser],
+      controllers: [BulkUploadController],
+      providers: [MiscService, FaqRepository, LocationRepository, CsvParser]
     }).compile();
 
-    service = module.get<MiscService>(MiscService);
+    controller = module.get<BulkUploadController>(BulkUploadController);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined()
-  })
+    expect(controller).toBeDefined();
+  });
 });
