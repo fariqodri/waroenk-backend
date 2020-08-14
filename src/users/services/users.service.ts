@@ -39,7 +39,12 @@ export class UsersService {
       if (param.password != param.confirm_password) {
         throw new BadRequestException(new ResponseBody(null, "confirm password unequal with password"))
       }
-      user.password = await bcrypt.hash(param.password, SALT_ROUNDS)
+      const isPasswordValid = await bcrypt.compare(param.old_password, user.password)
+      if (isPasswordValid) {
+        user.password = await bcrypt.hash(param.password, SALT_ROUNDS)
+      } else {
+        throw new BadRequestException(new ResponseBody(null, 'invalid password'))
+      }
     }
     user.updated_at = new Date()
     await this.userRepo.save(user)

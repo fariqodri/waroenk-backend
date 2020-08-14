@@ -1,6 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { INestApplication, ExecutionContext } from '@nestjs/common';
 import * as request from 'supertest';
+import * as bcrypt from 'bcrypt'
+import { SALT_ROUNDS } from '../src/constants';
 
 import { UsersModule } from '../src/users/users.module'
 import { PermissionService } from '../src/permission/permission.service';
@@ -86,13 +88,14 @@ describe('Users E2E', () => {
     await getConnection().close()
   })
 
-  it('Edit User Profile', () => {
+  it('Edit User Profile', async () => {
     const reqBody = {
       full_name: "fullo",
       email: "fullo@example.com",
       phone: "081238192322",
-      password: "password",
-      confirm_password: "password",
+      old_password: "password",
+      password: "password2",
+      confirm_password: "password2",
     }
     getConnection()
       .getRepository(UserEntity)
@@ -101,7 +104,7 @@ describe('Users E2E', () => {
         full_name: "full_name",
         email: "full@example.com",
         phone: "081238192312",
-        password: "password",
+        password: await bcrypt.hash('password', SALT_ROUNDS),
         role: 'buyer'
       })
     return request(app.getHttpServer())

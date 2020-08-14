@@ -31,6 +31,9 @@ export class editProfileParam {
   phone: string
 
   @jf.string().optional().min(8)
+  old_password: string
+  
+  @jf.string().optional().min(8)
   password: string
 
   @jf.string().optional().min(8)
