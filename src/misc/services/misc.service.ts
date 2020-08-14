@@ -77,7 +77,7 @@ export class MiscService {
         full_name: user.full_name,
         email: user.full_name,
         phone: user.phone,
-        role: 'buyer',
+        role: 'seller',
         password: encrypted,
         created_at: new Date(),
         updated_at: null,
