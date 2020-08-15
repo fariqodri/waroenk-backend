@@ -10,3 +10,4 @@ export const REDIS_PASSWORD = process.env.REDIS_PASSWORD
 export const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID
 export const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY
 export const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME
+export const FIREBASE_DATABASE_URL = 'https://waroenk-umkm.firebaseio.com'

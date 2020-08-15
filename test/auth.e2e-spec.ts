@@ -22,6 +22,8 @@ import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
 import { OrderEntity } from '../src/order/entities/order.entity';
 import { OrderItem } from '../src/order/entities/order-item.entity';
 import { CartEntity } from '../src/order/entities/cart.entity';
+import { ChatEntity } from '../src/chat/entities/chat.entity';
+import { ChatRoomEntity } from '../src/chat/entities/chat-room.entity';
 
 describe('Login and Logout E2E Test', () => {
   let app: INestApplication;
@@ -63,7 +65,9 @@ describe('Login and Logout E2E Test', () => {
             ProposalData,
             OrderEntity,
             OrderItem,
-            CartEntity
+            CartEntity,
+            ChatEntity,
+            ChatRoomEntity
           ]
         })
       ],

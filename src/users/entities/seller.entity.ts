@@ -1,7 +1,8 @@
-import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn, OneToMany, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
 import { UserEntity } from './users.entity';
 import { ProductEntity } from "../../products/entities/product.entity";
 import { OrderEntity } from "../../order/entities/order.entity";
+import { ChatRoomEntity } from "../../chat/entities/chat-room.entity";
 
 @Entity({ name: "seller" })
 export class SellerAttribute {
@@ -50,4 +51,7 @@ export class SellerAttribute {
 
   @Column({ default: false })
   is_active: boolean
+
+  @OneToMany(type => ChatRoomEntity, room => room.seller)
+  chats?: ChatRoomEntity[]
 }

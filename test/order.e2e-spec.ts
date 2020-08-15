@@ -21,6 +21,8 @@ import { AuthModule } from "../src/auth/auth.module";
 import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
 import { ProposalEntity } from "../src/proposal/entities/proposal.entity";
 import { ProposalData } from "../src/proposal/entities/proposal-data.entity";
+import { ChatRoomEntity } from "../src/chat/entities/chat-room.entity";
+import { ChatEntity } from "../src/chat/entities/chat.entity";
 
 
 const fakeRedisClientProvider = {
@@ -314,7 +316,9 @@ describe('Order e2e test', () => {
             ProposalData,
             OrderEntity,
             OrderItem,
-            CartEntity
+            CartEntity,
+            ChatEntity,
+            ChatRoomEntity
           ],
         }),
         AuthModule,
