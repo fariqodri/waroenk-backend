@@ -12,7 +12,7 @@ export class ChatRoomEntity {
   buyer: UserEntity
 
   @ManyToOne(type => UserEntity, user => user.chats_as_seller)
-  seller: SellerAttribute
+  seller: UserEntity
 
   @OneToMany(type => ChatEntity, chat => chat.room)
   chats?: ChatEntity[]
