@@ -51,7 +51,4 @@ export class SellerAttribute {
 
   @Column({ default: false })
   is_active: boolean
-
-  @OneToMany(type => ChatRoomEntity, room => room.seller)
-  chats?: ChatRoomEntity[]
 }
