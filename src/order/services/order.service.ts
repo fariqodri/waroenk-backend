@@ -53,6 +53,10 @@ export class OrderService {
     }
   }
 
+  findOrderById(orderId: string): Promise<OrderEntity> {
+    return this.orderRepo.findOneOrFail(orderId)
+  }
+
   async detailOrder(orderId: string): Promise<ResponseBody<any>> {
     const order = await this.orderRepo.findOneOrFail({
       relations: ['items'],

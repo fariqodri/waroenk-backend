@@ -18,6 +18,8 @@ import { OptionalJwtAuthGuard } from '../src/auth/guards/optional-jwt-auth.guard
 import { OrderEntity } from '../src/order/entities/order.entity';
 import { OrderItem } from '../src/order/entities/order-item.entity';
 import { CartEntity } from '../src/order/entities/cart.entity';
+import { ChatEntity } from '../src/chat/entities/chat.entity';
+import { ChatRoomEntity } from '../src/chat/entities/chat-room.entity';
 
 describe('Agenda (e2e)', () => {
   let app: INestApplication;
@@ -42,7 +44,9 @@ describe('Agenda (e2e)', () => {
             ProposalData,
             OrderEntity,
             OrderItem,
-            CartEntity
+            CartEntity,
+            ChatEntity,
+            ChatRoomEntity
           ],
         }),
       ],
@@ -273,7 +277,9 @@ describe('Agenda with users (e2e)', () => {
             ProposalData,
             OrderEntity,
             OrderItem,
-            CartEntity
+            CartEntity,
+            ChatEntity,
+            ChatRoomEntity
           ],
         }),
       ],
@@ -419,7 +425,9 @@ describe('Agenda with optional login (e2e)', () => {
             ProposalData,
             OrderEntity,
             OrderItem,
-            CartEntity
+            CartEntity,
+            ChatEntity,
+            ChatRoomEntity
           ],
         }),
       ],

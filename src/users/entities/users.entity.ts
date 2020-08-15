@@ -5,6 +5,7 @@ import { AgendaEntity } from "../../agenda/entities/agenda.entity";
 import { ProposalEntity } from "../../proposal/entities/proposal.entity";
 import { CartEntity } from "../../order/entities/cart.entity";
 import { OrderEntity } from "../../order/entities/order.entity";
+import { ChatRoomEntity } from "../../chat/entities/chat-room.entity";
 
 @Entity({ name: "users" })
 export class UserEntity {
@@ -28,6 +29,9 @@ export class UserEntity {
   @Column()
   password: string
 
+  @Column({ nullable: true, default: null })
+  device_token?: string
+
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date
 
@@ -45,6 +49,12 @@ export class UserEntity {
 
   @OneToMany(type => OrderEntity, order => order.user)
   orders?: OrderEntity[]
+
+  @OneToMany(type => ChatRoomEntity, room => room.buyer)
+  chats_as_buyer?: ChatRoomEntity[]
+
+  @OneToMany(type => ChatRoomEntity, room => room.seller)
+  chats_as_seller?: ChatRoomEntity[]
 
   @ManyToMany(type => AgendaEntity, agenda => agenda.users, { eager: true })
   @JoinTable()

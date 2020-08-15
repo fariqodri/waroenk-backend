@@ -17,6 +17,8 @@ import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
 import { OrderItem } from '../src/order/entities/order-item.entity';
 import { CartEntity } from '../src/order/entities/cart.entity';
 import { OrderEntity } from '../src/order/entities/order.entity';
+import { ChatEntity } from '../src/chat/entities/chat.entity';
+import { ChatRoomEntity } from '../src/chat/entities/chat-room.entity';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
@@ -69,7 +71,9 @@ describe('GET Product and Categories (e2e)', () => {
             ProposalData,
             OrderEntity,
             OrderItem,
-            CartEntity
+            CartEntity,
+            ChatEntity,
+            ChatRoomEntity
           ],
         }),
       ],
@@ -409,7 +413,9 @@ describe('GET Product and Categories (e2e) with user login', () => {
             ProposalData,
             OrderEntity,
             OrderItem,
-            CartEntity
+            CartEntity,
+            ChatEntity,
+            ChatRoomEntity
           ],
         }),
       ],

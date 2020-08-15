@@ -22,6 +22,6 @@ import { ScheduleModule } from '@nestjs/schedule';
     UserRepository, 
     ProductRepository,
   ])],
-  exports: [TypeOrmModule.forFeature([CartRepository, OrderRepository, OrderItemRepository])]
+  exports: [TypeOrmModule.forFeature([CartRepository, OrderRepository, OrderItemRepository]), OrderService]
 })
 export class OrderModule {}

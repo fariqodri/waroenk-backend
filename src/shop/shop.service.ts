@@ -261,4 +261,9 @@ export class ShopService {
     }));
     return new ResponseListBody(products, "ok", query.page, products.length)
   }
+
+  async getShopByUserId(userId: string) {
+    const shop = await this.sellerRepo.findOneOrFail({ where: { user: { id: userId } } })
+    return shop
+  }
 }

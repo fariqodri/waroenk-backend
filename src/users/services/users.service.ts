@@ -51,6 +51,10 @@ export class UsersService {
     return new ResponseBody(null, "profile has been updated")
   }
 
+  async findUserById(userId: string): Promise<UserEntity> {
+    return this.userRepo.findOneOrFail(userId)
+  }
+
   async findOne(params: { id?: string, email?: string }): Promise<any> {
     try{
       const user = await this.userRepo.findOneOrFail({ where: params })
@@ -103,5 +107,13 @@ export class UsersService {
   async getUserPassword(userId: string): Promise<string> {
     const user = await this.userRepo.findOneOrFail(userId)
     return user.password
+  }
+
+  async updateDeviceToken(userId: string, deviceToken: string): Promise<ResponseBody<{ user_id: string, device_token: string }>> {
+    await this.userRepo.update(userId, { device_token: deviceToken })
+    return new ResponseBody({
+      user_id: userId,
+      device_token: deviceToken
+    })
   }
 }

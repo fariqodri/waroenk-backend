@@ -21,8 +21,8 @@
     "test:e2e": "jest --config ./jest-e2e.json --coverage",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/ormconfig.ts",
     "migration:generate": "npm run typeorm migration:generate -- -n",
-    "migration:run:dev": "nest build && node ./node_modules/typeorm/cli.js migration:run --config dist/ormconfig.js",
-    "migration:revert:dev": "nest build && node ./node_modules/typeorm/cli.js migration:revert --config dist/ormconfig.js",
+    "migration:run:dev": "npm run prebuild && npm run build && node ./node_modules/typeorm/cli.js migration:run --config dist/ormconfig.js",
+    "migration:revert:dev": "npm run prebuild && npm run build && node ./node_modules/typeorm/cli.js migration:revert --config dist/ormconfig.js",
     "migration:run:prod": "node ./node_modules/typeorm/cli.js migration:run --config dist/ormconfig.js",
     "migration:revert:prod": "node ./node_modules/typeorm/cli.js migration:revert --config dist/ormconfig.js"
   },
@@ -40,6 +40,7 @@
     "bcrypt": "^5.0.0",
     "class-transformer": "^0.2.3",
     "dotenv": "^8.2.0",
+    "firebase-admin": "^9.0.0",
     "joiful": "^2.0.1",
     "mysql": "^2.18.1",
     "nanoid": "^3.1.10",

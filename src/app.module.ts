@@ -14,6 +14,7 @@ import { FileUploadModule } from './file.upload/file.upload.module';
 import { MiscModule } from './misc/misc.module';
 import { ProposalModule } from './proposal/proposal.module';
 import { OrderModule } from './order/order.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { OrderModule } from './order/order.module';
       host: REDIS_HOST,
       port: REDIS_PORT,
       password: REDIS_PASSWORD,
-    })
+    }),
+    ChatModule
   ],
 })
 export class AppModule {}
