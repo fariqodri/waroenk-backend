@@ -53,8 +53,12 @@ export class DiscussionService {
     const response: DiscussionResponse = {
       id: newDiscussion.id,
       userId: user.id,
+      userName: user.full_name,
+      userRole: user.role,
       productId: product.id,
       parentId: parentDiscussion? parentDiscussion.id : null,
+      parentUserName: parentDiscussion? parentDiscussion.user.full_name: null,
+      parentUserRole: parentDiscussion? parentDiscussion.user.role: null,
       description: param.description,
       created_at: newDiscussion.created_at
     }
