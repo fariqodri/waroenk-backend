@@ -82,7 +82,7 @@ export class MiscService {
       let newUser: UserEntity = {
         id: nanoid(11),
         full_name: user.full_name,
-        email: user.full_name,
+        email: user.email,
         phone: user.phone,
         role: 'seller',
         password: encrypted,
