@@ -17,14 +17,20 @@ export class MyAgendaController {
     limit = 10,
     page = 1,
     title,
-    location
+    location,
+    sort_type,
+    date_from,
+    date_to
   }: AgendaQuery, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.listSavedAgenda({
       limit,
       page,
       title,
-      location
+      location,
+      sort_type,
+      date_from,
+      date_to
     }, user.userId)
   }
 

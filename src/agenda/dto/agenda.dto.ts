@@ -5,4 +5,7 @@ export class AgendaQuery {
     title?: string
     location?: string
     type?: string
+    sort_type?: string
+    date_from?: string
+    date_to?: string
   }

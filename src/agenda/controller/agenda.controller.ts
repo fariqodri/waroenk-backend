@@ -13,13 +13,19 @@ export class AgendaController {
     limit = 10,
     page = 1,
     title,
-    location
+    location,
+    sort_type,
+    date_from,
+    date_to
   }: AgendaQuery) {
     return this.service.listAgenda({
       limit,
       page,
       title,
-      location
+      location,
+      sort_type,
+      date_from,
+      date_to
     })
   }
 

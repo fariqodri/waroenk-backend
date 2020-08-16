@@ -73,8 +73,24 @@ export class AgendaService {
         type: `%${query.type.toLowerCase()}%`,
       });
     }
+    if (query.sort_type) {
+      if (query.sort_type == 'newest') {
+        queryBuilder = queryBuilder.orderBy('agendas.created_at', 'DESC')
+      } else if (query.sort_type == 'closest') {
+        queryBuilder = queryBuilder
+          .andWhere('agendas.date >= :now', { now: new Date() })
+          .orderBy('agendas.date', 'DESC')
+      }
+    }
+    if (query.date_from || query.date_to) {
+      if (query.date_from) {
+        queryBuilder = queryBuilder.andWhere('agendas.date >= :from', { from: query.date_from })
+      }
+      if (query.date_to) {
+        queryBuilder = queryBuilder.andWhere('agendas.date <= :to', { to: query.date_to })
+      }
+    }
     queryBuilder = queryBuilder
-      .orderBy('agendas.created_at', 'DESC')
       .addOrderBy('agendas.title', 'ASC')
       .offset(skippedItems)
       .limit(query.limit)
@@ -91,6 +107,7 @@ export class AgendaService {
     let agendas: any[] = await queryBuilder.execute();
     agendas = agendas.map(p => ({
       ...p,
+      date: new Date(p.date).toString(),
       images: p.images? p.images.split(','): null,
       sponsors: p.sponsors? p.sponsors.split(','): null
     }));
@@ -120,8 +137,24 @@ export class AgendaService {
         type: `%${query.type.toLowerCase()}%`,
       });
     }
+    if (query.sort_type) {
+      if (query.sort_type == 'newest') {
+        queryBuilder = queryBuilder.orderBy('agendas.created_at', 'DESC')
+      } else if (query.sort_type == 'closest') {
+        queryBuilder = queryBuilder
+          .andWhere('agendas.date >= :now', { now: new Date() })
+          .orderBy('agendas.date', 'DESC')
+      }
+    }
+    if (query.date_from || query.date_to) {
+      if (query.date_from) {
+        queryBuilder = queryBuilder.andWhere('agendas.date >= :from', { from: query.date_from })
+      }
+      if (query.date_to) {
+        queryBuilder = queryBuilder.andWhere('agendas.date <= :to', { to: query.date_to })
+      }
+    }
     queryBuilder = queryBuilder
-      .orderBy('agendas.created_at', 'DESC')
       .addOrderBy('agendas.title', 'ASC')
       .offset(skippedItems)
       .limit(query.limit)
@@ -139,6 +172,7 @@ export class AgendaService {
     let agendas: any[] = await queryBuilder.execute();
     agendas = agendas.map(p => ({
       ...p,
+      date: new Date(p.date).toString(),
       images: p.images? p.images.split(','): null,
       sponsors: p.sponsors? p.sponsors.split(','): null
     }));
@@ -146,7 +180,7 @@ export class AgendaService {
   }
 
   async detailAgenda(id: string, userId: string): Promise<ResponseBody<any>> {
-    const agenda = await this.agendaRepo.findOne(id, { relations: ['users'] })
+    const agenda = await this.agendaRepo.findOneOrFail(id, { relations: ['users'] })
     const users = agenda.users
     let isMyAgenda: boolean = false
     for (var i in users) {
@@ -160,7 +194,7 @@ export class AgendaService {
       title: agenda.title,
       description: agenda.description,
       location: agenda.location,
-      date: agenda.date,
+      date: new Date(agenda.date).toString(),
       type: agenda.type,
       images: agenda.images,
       sponsors: agenda.sponsors,
