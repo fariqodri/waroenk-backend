@@ -12,6 +12,7 @@ import { ChatEntity } from './entities/chat.entity';
 import { ResponseBody } from '../utils/response';
 import * as serviceAccount from './service_account.json';
 import { FIREBASE_DATABASE_URL } from '../constants';
+import { ShopService } from '../shop/shop.service';
 
 @Injectable()
 export class ChatService {
@@ -21,7 +22,8 @@ export class ChatService {
     private readonly orderService: OrderService,
     private readonly userService: UsersService,
     private readonly chatRoomRepo: ChatRoomRepository,
-    private readonly chatRepo: ChatRepository
+    private readonly chatRepo: ChatRepository,
+    private readonly shopService: ShopService
   ) {
     this.firebaseApp = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
@@ -36,6 +38,7 @@ export class ChatService {
   ): Promise<void> {
     const sender = await this.userService.findUserById(senderId);
     const receiver = await this.userService.findUserById(body.receiver_user_id);
+    const seller = senderRole === 'seller' ? await this.shopService.getShopByUserId(sender.id) : await this.shopService.getShopByUserId(body.receiver_user_id)
     const receiverDeviceToken = receiver.device_token;
     const { chat_room_id, date, time, text, order_id } = body;
 
@@ -79,6 +82,12 @@ export class ChatService {
     }
     
     if (receiverDeviceToken) {
+      let notificationBody: string
+      if (text) {
+        notificationBody = text
+      } else if (order_id) {
+        notificationBody =  `${senderRole === 'seller' ? seller.shop_name: sender.full_name} mengirim sebuah pesan`
+      }
       await this.firebaseApp.messaging().sendToDevice(
         receiverDeviceToken,
         {
@@ -90,6 +99,11 @@ export class ChatService {
             date: chat.date,
             time: chat.time,
           },
+          notification: {
+            title: `Pesan dari ${senderRole === 'seller' ? seller.shop_name : sender.full_name}`,
+            body: notificationBody,
+            clickAction: "FLUTTER_NOTIFICATION_CLICK"
+          }
         },
         {
           collapseKey: 'Waroenk UMKM',
