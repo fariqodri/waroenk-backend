@@ -14,8 +14,12 @@ export class DiscussionPostParam {
 export class DiscussionResponse {
   id: string
   userId: string
+  userName: string
+  userRole: string
   productId: string
   parentId: string
+  parentUserName: string
+  parentUserRole: string
   description: string
   created_at: Date
 }
