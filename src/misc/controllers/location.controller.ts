@@ -1,6 +1,6 @@
-import { Controller, Get, Query, Req } from "@nestjs/common"
+import { Controller, Get, Query } from "@nestjs/common"
 import { MiscService } from "../services/misc.service";
-import { LocationQuery } from "../dto/faq.dto";
+import { LocationQuery } from "../dto/misc.dto";
 
 @Controller('location')
 export class LocationController {

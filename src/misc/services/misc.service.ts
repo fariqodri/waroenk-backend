@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ResponseListBody, ResponseBody } from '../../utils/response';
 import { FaqRepository } from '../repositories/faq.repository';
-import { FaqQuery, LocationQuery } from '../dto/faq.dto';
+import { FaqQuery, LocationQuery } from '../dto/misc.dto';
 import { LocationRepository } from '../repositories/location.repository';
 import { CsvParser } from 'nest-csv-parser';
 import { UserRepository } from '../../users/repositories/users.repository';
@@ -152,29 +152,37 @@ export class MiscService {
 
   async listLocation(query: LocationQuery): Promise<ResponseBody<any[]>> {
     let index: number = 0
-    let queryBuilder = await this.locationRepo
+    let queryBuilder = this.locationRepo
       .createQueryBuilder()
       .select('*')
-      .orderBy('nama', 'ASC');
+      .orderBy('nama', 'ASC')
+      .limit(50);
     if (query.type == 'province') {
-      queryBuilder = queryBuilder.where('kode NOT LIKE :regex', {
+      queryBuilder = queryBuilder.andWhere('kode NOT LIKE :regex', {
         regex: '%.%'
       })
     } else if (query.type == 'city') {
       queryBuilder = queryBuilder.where('kode LIKE :regex', {
-        regex: `${query.province}.__`
+        regex: (query.mode == 'kode')? `${query.province}.__`: `__.__`
       })
       index = 1
     } else if (query.type == 'district') {
       queryBuilder = queryBuilder.where('kode LIKE :regex', {
-        regex: `${query.province}.${query.city}.__`
+        regex: (query.mode == 'kode')? 
+        `${query.province}.${query.city}.__`: `__.__.__`
       })
       index = 2
     } else if (query.type == 'sub-district') {
       queryBuilder = queryBuilder.where('kode LIKE :regex', {
-        regex: `${query.province}.${query.city}.${query.district}.%`
+        regex: (query.mode == 'kode')? 
+        `${query.province}.${query.city}.${query.district}.%`: `__.__.__.%`
       })
       index = 3
+    }
+    if (query.mode == 'nama') {
+      queryBuilder = queryBuilder.andWhere('LOWER(nama) LIKE :search', {
+        search: `%${query.search.toLowerCase()}%`
+      })
     }
     let results: any[] = await queryBuilder.execute()
     results = results.map(p => ({

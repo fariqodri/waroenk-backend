@@ -114,185 +114,9 @@ describe('GET Product and Categories (e2e)', () => {
     await getConnection().close();
   });
 
-  // it(`should parse user and insert it`, () => {
-  //   return request(app.getHttpServer())
-  //     .post('/bulk-upload/user')
-  //     .set('Content-Type', 'multipart/form-data')
-  //     .attach('file', '../Downloads/user_list.csv')
-  //     .expect(201)
-  //     .expect({
-  //       message: 'ok',
-  //       result: [
-  //         {
-  //           full_name: 'Amiruddin',
-  //           email: 'waroeng.umkm@gmail.com',
-  //           phone: '00111232132'
-  //         },
-  //         { full_name: 'zzzz', email: 'nuril98@gmail.com', phone: '0000' }
-  //       ]
-  //     });
-  // });
-
-  // it('should parse seller and insert it', async () => {
-  //   getConnection()
-  //     .getRepository(UserEntity)
-  //     .insert([{
-  //       id: 'user-1',
-  //       full_name: "Amiruddin",
-  //       email: "waroeng.umkm@gmail.com",
-  //       phone: "081238192312",
-  //       password: 'password',
-  //       role: 'seller'
-  //     },
-  //     {
-  //       id: 'user-2',
-  //       full_name: "zzzz",
-  //       email: "nuril98@gmail.com",
-  //       phone: "0000",
-  //       password: 'password',
-  //       role: 'seller'
-  //     }])
-  //     return request(app.getHttpServer())
-  //         .post('/bulk-upload/seller')
-  //         .set('Content-Type', 'multipart/form-data')
-  //         .attach('file', '../Downloads/shop_list.csv')
-  //         .expect(201)
-  //         .expect({
-  //           message: 'ok',
-  //           result: [
-  //             {
-  //               email: 'waroeng.umkm@gmail.com',
-  //               shop_name: 'toko jaya raya',
-  //               shop_address: 'Makasar',
-  //               description: 'toko yang menjual perabotan dan mainan anak',
-  //               birth_date: '19/12/2018',
-  //               birth_place: 'Jakarta',
-  //               gender: 'Perempuan',
-  //               image: 'https://www.kindpng.com/picc/b/24/248253.png'
-  //             },
-  //             {
-  //               email: 'nuril98@gmail.com',
-  //               shop_name: 'Toko cihuy',
-  //               shop_address: 'Jatinegara',
-  //               description: 'toko menjual barang2 cihuy',
-  //               birth_date: '18/12/2008',
-  //               birth_place: 'Jakarta',
-  //               gender: 'Perempuan',
-  //               image: 'https://www.kindpng.com/picc/b/24/248253.png'
-  //             }
-  //           ]
-  //         });
-  // })
-
-  // it(`should parse product and insert it`, () => {
-  //   getConnection()
-  //     .getRepository(UserEntity)
-  //     .insert([{
-  //       id: 'user-1',
-  //       full_name: "Amiruddin",
-  //       email: "waroeng.umkm@gmail.com",
-  //       phone: "081238192312",
-  //       password: 'password',
-  //       role: 'seller'
-  //     },
-  //     {
-  //       id: 'user-2',
-  //       full_name: "zzzz",
-  //       email: "nuril98@gmail.com",
-  //       phone: "0000",
-  //       password: 'password',
-  //       role: 'seller'
-  //     }])
-  //   getConnection()
-  //     .getRepository(SellerAttribute)
-  //     .insert([{
-  //       id: 'seller-1',
-  //       user: {
-  //         id: 'user-1',
-  //         full_name: "Amiruddin",
-  //         email: "waroeng.umkm@gmail.com",
-  //         phone: "081238192312",
-  //         password: 'password',
-  //         role: 'seller'
-  //       },
-  //       tier: 1,
-  //       description: 'wawawawa',
-  //       shop_name: 'awawawa',
-  //       shop_address: 'awawaw',
-  //       birth_date: '01/02/1999',
-  //       birth_place: 'dantooine',
-  //       gender: 'lucky laki',
-  //       image: 'img-1.com'
-  //     },
-  //     {
-  //       id: 'seller-2',
-  //       user: {
-  //         id: 'user-2',
-  //         full_name: "zzzz",
-  //         email: "nuril98@gmail.com",
-  //         phone: "0000",
-  //         password: 'password',
-  //         role: 'seller'
-  //       },
-  //       tier: 1,
-  //       description: 'wawawawa',
-  //       shop_name: 'awawawa',
-  //       shop_address: 'awawaw',
-  //       birth_date: '01/02/1999',
-  //       birth_place: 'dantooine',
-  //       gender: 'lucky laki',
-  //       image: 'img-2.com'
-  //     }])
-  //     getConnection()
-  //     .getRepository(CategoryEntity)
-  //     .insert([{
-  //       id: "category-2",
-  //       name: "Minuman",
-  //       image: "minuman.jpg"
-  //     },{
-  //       id: "category-4",
-  //       name: "Pakaian",
-  //       image: "no_image"
-  //     }])
-  //   return request(app.getHttpServer())
-  //     .post('/bulk-upload/product')
-  //     .set('Content-Type', 'multipart/form-data')
-  //     .attach('file', '../Downloads/product_list.csv')
-  //     .expect(201)
-  //     .expect({
-  //       message: 'ok',
-  //       result: [
-  //         {
-  //           email: 'waroeng.umkm@gmail.com',
-  //           product_name: 'Peyek Teri',
-  //           product_images: 'https://www.noupe.com/wp-content/uploads/2016/09/basketball_shot-666x418.jpg, https://www.noupe.com/wp-content/uploads/2016/09/basketball_shot-666x418.jpg',
-  //           product_price: '15000',
-  //           category: 'category-4',
-  //           product_description: 'testing only'
-  //         },
-  //         {
-  //           email: 'nuril98@gmail.com',
-  //           product_name: 'pakaian',
-  //           product_images: 'https://www.noupe.com/wp-content/uploads/2016/09/basketball_shot-666x418.jpg',
-  //           product_price: '899999',
-  //           category: 'category-2',
-  //           product_description: 'asiiik'
-  //         },
-  //         {
-  //           email: 'waroeng.umkm@gmail.com',
-  //           product_name: 'Peyek udang',
-  //           product_images: 'https://www.noupe.com/wp-content/uploads/2016/09/basketball_shot-666x418.jpg',
-  //           product_price: '16000',
-  //           category: 'category-4',
-  //           product_description: 'testing only2'
-  //         }
-  //       ]  
-  //     });
-  // });
-
-  it(`should list provinces`, () => {
+  it(`should list provinces mode kode`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=province')
+      .get('/location?type=province&mode=kode')
       .expect(200)
       .expect({
         message: 'ok',
@@ -303,9 +127,19 @@ describe('GET Product and Categories (e2e)', () => {
       });
   });
 
-  it(`should list cities`, () => {
+  it(`should list provinces mode nama`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=city&province=11')
+      .get('/location?type=province&mode=nama&search=ac')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [{ kode: '11', nama: 'Aceh' }]
+      });
+  });
+
+  it(`should list cities mode kode`, () => {
+    return request(app.getHttpServer())
+      .get('/location?type=city&mode=kode&province=11')
       .expect(200)
       .expect({
         message: 'ok',
@@ -316,9 +150,19 @@ describe('GET Product and Categories (e2e)', () => {
       });
   });
 
-  it(`should list districts`, () => {
+  it(`should list cities mode nama`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=district&province=11&city=11')
+      .get('/location?type=city&mode=nama&search=1')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [{ kode: '11', nama: 'Kabupaten Aceh 1' }]
+      });
+  });
+
+  it(`should list districts mode kode`, () => {
+    return request(app.getHttpServer())
+      .get('/location?type=district&mode=kode&province=11&city=11')
       .expect(200)
       .expect({
         message: 'ok',
@@ -329,9 +173,19 @@ describe('GET Product and Categories (e2e)', () => {
       });
   });
 
-  it(`should list sub-districts`, () => {
+  it(`should list districts mode nama`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=sub-district&province=11&city=11&district=11')
+      .get('/location?type=district&mode=nama&search=1')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [{ kode: '11', nama: 'Kecamatan Aceh 1' }]
+      });
+  });
+
+  it(`should list sub-districts mode kode`, () => {
+    return request(app.getHttpServer())
+      .get('/location?type=sub-district&mode=kode&province=11&city=11&district=11')
       .expect(200)
       .expect({
         message: 'ok',
@@ -339,6 +193,16 @@ describe('GET Product and Categories (e2e)', () => {
           { kode: '1111', nama: 'Desa Aceh 1' },
           { kode: '1112', nama: 'Desa Aceh 2' }
         ]
+      });
+  });
+
+  it(`should list sub-districts mode nama`, () => {
+    return request(app.getHttpServer())
+      .get('/location?type=sub-district&mode=nama&search=1')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [{ kode: '1111', nama: 'Desa Aceh 1' }]
       });
   });
 

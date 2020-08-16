@@ -6,6 +6,8 @@ export class FaqQuery {
 
 export class LocationQuery {
   type: string
+  mode: string
+  search?: string
   province?: string
   city?: string
   district?: string
