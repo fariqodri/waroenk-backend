@@ -82,6 +82,7 @@ export class AgendaService {
           .orderBy('agendas.date', 'DESC')
       }
     }
+    // console.log(query)
     if (query.date_from || query.date_to) {
       if (query.date_from) {
         queryBuilder = queryBuilder.andWhere('agendas.date >= :from', { from: query.date_from })
