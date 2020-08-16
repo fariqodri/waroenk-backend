@@ -1,8 +1,10 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { AgendaRepository } from '../repositories/agenda.repository';
-import { AgendaQuery } from '../dto/agenda.dto';
+import { AgendaQuery, CreateAgendaParam } from '../dto/agenda.dto';
 import { ResponseBody, ResponseListBody } from '../../utils/response';
 import { UserRepository } from '../../users/repositories/users.repository';
+import { AgendaEntity } from '../entities/agenda.entity';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class AgendaService {
@@ -10,6 +12,25 @@ export class AgendaService {
     private agendaRepo: AgendaRepository,
     private userRepo: UserRepository
   ) {}
+
+  // TEMPORARY ENDPOINT
+  async createAgenda(param: CreateAgendaParam): Promise<ResponseBody<any>> {
+    const newAgenda: AgendaEntity = {
+      id: nanoid(11),
+      title: param.title,
+      description: param.description,
+      location: param.location,
+      date: new Date(param.date),
+      images: param.images,
+      type: param.type,
+      sponsors: param.sponsors,
+      created_at: new Date(),
+      updated_at: null,
+      is_active: true
+    }
+    await this.agendaRepo.insert(newAgenda)
+    return new ResponseBody(null, 'new agenda created')
+  }
 
   async saveAgenda(id: string, userId: string): Promise<ResponseBody<any>> {
     const user = await this.userRepo.findOne({
@@ -79,10 +100,9 @@ export class AgendaService {
       } else if (query.sort_type == 'closest') {
         queryBuilder = queryBuilder
           .andWhere('agendas.date >= :now', { now: new Date() })
-          .orderBy('agendas.date', 'DESC')
+          .orderBy('agendas.date', 'ASC')
       }
     }
-    // console.log(query)
     if (query.date_from || query.date_to) {
       if (query.date_from) {
         queryBuilder = queryBuilder.andWhere('agendas.date >= :from', { from: query.date_from })
@@ -144,7 +164,7 @@ export class AgendaService {
       } else if (query.sort_type == 'closest') {
         queryBuilder = queryBuilder
           .andWhere('agendas.date >= :now', { now: new Date() })
-          .orderBy('agendas.date', 'DESC')
+          .orderBy('agendas.date', 'ASC')
       }
     }
     if (query.date_from || query.date_to) {
@@ -195,7 +215,7 @@ export class AgendaService {
       title: agenda.title,
       description: agenda.description,
       location: agenda.location,
-      date: new Date(agenda.date).toString(),
+      date: agenda.date.toString(),
       type: agenda.type,
       images: agenda.images,
       sponsors: agenda.sponsors,

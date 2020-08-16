@@ -29,7 +29,7 @@ describe('Agenda (e2e)', () => {
     title: 'training-1',
     description: 'training1 bla bla bla',
     location: 'jakarta',
-    date: '12 May 2021',
+    date: new Date('2030-05-01'),
     images: ['img-1.com'],
     created_at: new Date(3),
     updated_at: null,
@@ -42,7 +42,7 @@ describe('Agenda (e2e)', () => {
     title: 'training-2',
     description: 'training2 bla bla bla',
     location: 'bandung',
-    date: '12 May 2015',
+    date: new Date('2030-05-02'),
     images: ['img-1.com'],
     created_at: new Date(2),
     updated_at: null,
@@ -55,7 +55,7 @@ describe('Agenda (e2e)', () => {
     title: 'training-3',
     description: 'training3 bla bla bla',
     location: 'bogor',
-    date: '2 May 2021',
+    date: new Date('2030-04-01'),
     images: ['img-1.com'],
     created_at: new Date(1),
     updated_at: null,
@@ -112,7 +112,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: new Date(agenda1.date).toString(),
+            date: new Date('2030-05-01 00:00:00').toString(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -135,7 +135,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-3',
             description: 'training3 bla bla bla',
             location: 'bogor',
-            date: new Date(agenda3.date).toString(),
+            date: new Date('2030-04-01 00:00:00').toString(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor3.com']
@@ -145,7 +145,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: new Date(agenda1.date).toString(),
+            date: new Date('2030-05-01 00:00:00').toString(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -156,28 +156,28 @@ describe('Agenda (e2e)', () => {
       });
   });
 
-  // it('Query agenda with filter date from to', () => {
-  //   return request(app.getHttpServer())
-  //     .get('/agenda?date_from=2021-05-01&date_to=2021-05-20')
-  //     .expect(200)
-  //     .expect({
-  //       message: 'ok',
-  //       result: [
-  //         {
-  //           id: 'agenda-1',
-  //           title: 'training-1',
-  //           description: 'training1 bla bla bla',
-  //           location: 'jakarta',
-  //           date: new Date(agenda1.date).toString(),
-  //           images: ['img-1.com'],
-  //           type: 'pelatihan',
-  //           sponsors: ['sponsor1.com']
-  //         }
-  //       ],
-  //       page: 1,
-  //       limit: 1,
-  //     });
-  // });
+  it('Query agenda with filter date from to', () => {
+    return request(app.getHttpServer())
+      .get('/agenda?date_from=2030-05-01&date_to=2030-05-20')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          {
+            id: 'agenda-1',
+            title: 'training-1',
+            description: 'training1 bla bla bla',
+            location: 'jakarta',
+            date: new Date('2030-05-01 00:00:00').toString(),
+            images: ['img-1.com'],
+            type: 'pelatihan',
+            sponsors: ['sponsor1.com']
+          }
+        ],
+        page: 1,
+        limit: 1,
+      });
+  });
 
   it('Query agenda without results', () => {
     return request(app.getHttpServer())
@@ -203,7 +203,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: new Date(agenda1.date).toString(),
+            date: new Date('2030-05-01 00:00:00').toString(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -213,7 +213,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-3',
             description: 'training3 bla bla bla',
             location: 'bogor',
-            date: new Date(agenda3.date).toString(),
+            date: new Date('2030-04-01 00:00:00').toString(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor3.com']
@@ -235,7 +235,7 @@ describe('Agenda (e2e)', () => {
           title: 'training-1',
           description: 'training1 bla bla bla',
           location: 'jakarta',
-          date: new Date(agenda1.date).toString(),
+          date: agenda1.date.toString(),
           type: 'pelatihan',
           images: [ 'img-1.com' ],
           sponsors: [ 'sponsor1.com' ],
@@ -276,9 +276,9 @@ describe('Agenda with users (e2e)', () => {
     title: 'training-1',
     description: 'training1 bla bla bla',
     location: 'jakarta',
-    date: '12 May 2021',
+    date: new Date('2050-05-01'),
     images: ['img-1.com'],
-    created_at: new Date(3),
+    created_at: new Date('2020-08-19'),
     updated_at: null,
     is_active: true,
     users: [user1],
@@ -290,9 +290,9 @@ describe('Agenda with users (e2e)', () => {
     title: 'training-2',
     description: 'training2 bla bla bla',
     location: 'bandung',
-    date: '12 May 2022',
+    date: new Date('2050-05-01'),
     images: ['img-2.com'],
-    created_at: new Date(2),
+    created_at: new Date('2020-08-18'),
     updated_at: null,
     is_active: true,
     users: [user1],
@@ -304,9 +304,9 @@ describe('Agenda with users (e2e)', () => {
     title: 'training-3',
     description: 'training3 bla bla bla',
     location: 'bogor',
-    date: '2 May 2021',
+    date: new Date('2050-05-01'),
     images: ['img-3.com'],
-    created_at: new Date(1),
+    created_at: new Date('2020-08-17'),
     updated_at: null,
     is_active: true,
     type: 'pelatihan',
@@ -369,7 +369,7 @@ describe('Agenda with users (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: new Date(agenda1.date).toString(),
+            date: new Date('2050-05-01 00:00:00').toString(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -379,7 +379,7 @@ describe('Agenda with users (e2e)', () => {
             title: 'training-2',
             description: 'training2 bla bla bla',
             location: 'bandung',
-            date: new Date(agenda2.date).toString(),
+            date: new Date('2050-05-01 00:00:00').toString(),
             images: ['img-2.com'],
             type: 'pembinaan',
             sponsors: ['sponsor2.com']
@@ -438,7 +438,7 @@ describe('Agenda with optional login (e2e)', () => {
     title: 'training-1',
     description: 'training1 bla bla bla',
     location: 'jakarta',
-    date: '12 May 2021',
+    date: new Date('05-01-2050'),
     images: ['img-1.com'],
     created_at: new Date(),
     updated_at: null,
@@ -504,7 +504,7 @@ describe('Agenda with optional login (e2e)', () => {
           title: 'training-1',
           description: 'training1 bla bla bla',
           location: 'jakarta',
-          date: new Date(agenda1.date).toString(),
+          date: agenda1.date.toString(),
           type: 'pelatihan',
           images: [ 'img-1.com' ],
           sponsors: [ 'sponsor1.com' ],
