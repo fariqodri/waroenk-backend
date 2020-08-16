@@ -67,6 +67,13 @@ export class MiscService {
     private categoryRepo: CategoryRepository
   ) {}
 
+  // TEMPORARY ENDPOINT
+  async activateSeller(id: string):Promise<ResponseBody<any>> {
+    const seller = await this.sellerRepo.findOne(id)
+    seller.is_active = true
+    return new ResponseBody(null, "seller activated")
+  }
+
   async parseUser(file: Buffer): Promise<ResponseBody<any[]>> {
     const stream = bufferToStream(file)
     const entities = await this.csvParser.parse(stream, UserParsed, null, null, { strict: true, separator: ',' })
@@ -75,7 +82,7 @@ export class MiscService {
       let newUser: UserEntity = {
         id: nanoid(11),
         full_name: user.full_name,
-        email: user.full_name,
+        email: user.email,
         phone: user.phone,
         role: 'seller',
         password: encrypted,

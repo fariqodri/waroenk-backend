@@ -52,17 +52,19 @@ export class ProposalService {
     return new ResponseListBody(proposals, 'ok', Number(param.page), proposals.length)
   }
 
-  async detailProposal(id: string): Promise<ResponseListBody<ProposalData[]>> {
-    let queryBuilder = this.proposalDataRepo.createQueryBuilder()
-        .where('deleted_at IS NULL')
-        .andWhere('proposalId = :id', { id: id })
-    queryBuilder = queryBuilder
-      .select(
-        `id AS id,
-        key AS key,
-        value AS value`
-      )
-    let proposalData = await queryBuilder.execute()
+  async detailProposal(id: string): Promise<ResponseListBody<any>> {
+    let proposalData = await this.proposalDataRepo.find({
+      relations: ['proposal'],
+      where: {
+        deleted_at: null,
+        proposal: id
+      }
+    })
+    proposalData.forEach(function(p) {
+      delete p.created_at
+      delete p.proposal
+      delete p.deleted_at
+    })
     return new ResponseListBody(proposalData, 'ok', 1, proposalData.length)
   }
 

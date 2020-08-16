@@ -24,6 +24,46 @@ import { ChatRoomEntity } from '../src/chat/entities/chat-room.entity';
 describe('Agenda (e2e)', () => {
   let app: INestApplication;
 
+  const agenda1: AgendaEntity = {
+    id: 'agenda-1',
+    title: 'training-1',
+    description: 'training1 bla bla bla',
+    location: 'jakarta',
+    date: '12 May 2021',
+    images: ['img-1.com'],
+    created_at: new Date(3),
+    updated_at: null,
+    is_active: true,
+    type: 'pelatihan',
+    sponsors: ['sponsor1.com']
+  }
+  const agenda2: AgendaEntity = {
+    id: 'agenda-2',
+    title: 'training-2',
+    description: 'training2 bla bla bla',
+    location: 'bandung',
+    date: '12 May 2015',
+    images: ['img-1.com'],
+    created_at: new Date(2),
+    updated_at: null,
+    is_active: false,
+    type: 'pembinaan',
+    sponsors: ['sponsor2.com']
+  }
+  const agenda3: AgendaEntity = {
+    id: 'agenda-3',
+    title: 'training-3',
+    description: 'training3 bla bla bla',
+    location: 'bogor',
+    date: '2 May 2021',
+    images: ['img-1.com'],
+    created_at: new Date(1),
+    updated_at: null,
+    is_active: true,
+    type: 'pelatihan',
+    sponsors: ['sponsor3.com']
+  }
+
   beforeEach(async () => {
     const moduleFixture = await Test.createTestingModule({
       imports: [
@@ -53,47 +93,7 @@ describe('Agenda (e2e)', () => {
     }).compile();
     app = moduleFixture.createNestApplication();
     await app.init();
-    await getRepository(AgendaEntity).insert([
-      {
-        id: 'agenda-1',
-        title: 'training-1',
-        description: 'training1 bla bla bla',
-        location: 'jakarta',
-        date: '12 May 2021',
-        images: ['img-1.com'],
-        created_at: new Date(),
-        updated_at: null,
-        is_active: true,
-        type: 'pelatihan',
-        sponsors: ['sponsor1.com']
-      },
-      {
-        id: 'agenda-2',
-        title: 'training-2',
-        description: 'training2 bla bla bla',
-        location: 'bandung',
-        date: '12 May 2022',
-        images: ['img-1.com'],
-        created_at: new Date(),
-        updated_at: null,
-        is_active: false,
-        type: 'pembinaan',
-        sponsors: ['sponsor2.com']
-      },
-      {
-        id: 'agenda-3',
-        title: 'training-3',
-        description: 'training3 bla bla bla',
-        location: 'bogor',
-        date: '2 May 2021',
-        images: ['img-1.com'],
-        created_at: new Date(),
-        updated_at: null,
-        is_active: true,
-        type: 'pelatihan',
-        sponsors: ['sponsor3.com']
-      },
-    ])
+    await getRepository(AgendaEntity).insert([agenda1, agenda2, agenda3])
   });
 
   afterEach(async () => {
@@ -112,7 +112,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: '12 May 2021',
+            date: new Date(agenda1.date).toString(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -122,6 +122,62 @@ describe('Agenda (e2e)', () => {
         limit: 1,
       });
   });
+
+  it('Query agenda with filter closest', () => {
+    return request(app.getHttpServer())
+      .get('/agenda?sort_type=closest')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          {
+            id: 'agenda-3',
+            title: 'training-3',
+            description: 'training3 bla bla bla',
+            location: 'bogor',
+            date: new Date(agenda3.date).toString(),
+            images: ['img-1.com'],
+            type: 'pelatihan',
+            sponsors: ['sponsor3.com']
+          },
+          {
+            id: 'agenda-1',
+            title: 'training-1',
+            description: 'training1 bla bla bla',
+            location: 'jakarta',
+            date: new Date(agenda1.date).toString(),
+            images: ['img-1.com'],
+            type: 'pelatihan',
+            sponsors: ['sponsor1.com']
+          }
+        ],
+        page: 1,
+        limit: 2,
+      });
+  });
+
+  // it('Query agenda with filter date from to', () => {
+  //   return request(app.getHttpServer())
+  //     .get('/agenda?date_from=2021-05-01&date_to=2021-05-20')
+  //     .expect(200)
+  //     .expect({
+  //       message: 'ok',
+  //       result: [
+  //         {
+  //           id: 'agenda-1',
+  //           title: 'training-1',
+  //           description: 'training1 bla bla bla',
+  //           location: 'jakarta',
+  //           date: new Date(agenda1.date).toString(),
+  //           images: ['img-1.com'],
+  //           type: 'pelatihan',
+  //           sponsors: ['sponsor1.com']
+  //         }
+  //       ],
+  //       page: 1,
+  //       limit: 1,
+  //     });
+  // });
 
   it('Query agenda without results', () => {
     return request(app.getHttpServer())
@@ -147,7 +203,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: '12 May 2021',
+            date: new Date(agenda1.date).toString(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -157,7 +213,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-3',
             description: 'training3 bla bla bla',
             location: 'bogor',
-            date: '2 May 2021',
+            date: new Date(agenda3.date).toString(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor3.com']
@@ -179,7 +235,7 @@ describe('Agenda (e2e)', () => {
           title: 'training-1',
           description: 'training1 bla bla bla',
           location: 'jakarta',
-          date: '12 May 2021',
+          date: new Date(agenda1.date).toString(),
           type: 'pelatihan',
           images: [ 'img-1.com' ],
           sponsors: [ 'sponsor1.com' ],
@@ -313,7 +369,7 @@ describe('Agenda with users (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: '12 May 2021',
+            date: new Date(agenda1.date).toString(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -323,7 +379,7 @@ describe('Agenda with users (e2e)', () => {
             title: 'training-2',
             description: 'training2 bla bla bla',
             location: 'bandung',
-            date: '12 May 2022',
+            date: new Date(agenda2.date).toString(),
             images: ['img-2.com'],
             type: 'pembinaan',
             sponsors: ['sponsor2.com']
@@ -391,19 +447,6 @@ describe('Agenda with optional login (e2e)', () => {
     type: 'pelatihan',
     sponsors: ['sponsor1.com']
   }
-  const agenda2: AgendaEntity = {
-    id: 'agenda-2',
-    title: 'training-2',
-    description: 'training2 bla bla bla',
-    location: 'bandung',
-    date: '12 May 2022',
-    images: ['img-2.com'],
-    created_at: new Date(),
-    updated_at: null,
-    is_active: true,
-    type: 'pembinaan',
-    sponsors: ['sponsor2.com']
-  }
   
   beforeEach(async () => {
     const moduleFixture = await Test.createTestingModule({
@@ -440,8 +483,8 @@ describe('Agenda with optional login (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
     await getRepository(UserEntity).insert([user1]);
-    await getRepository(AgendaEntity).insert([agenda1, agenda2])
-    user1.savedAgendas = [agenda1, agenda2]
+    await getRepository(AgendaEntity).insert([agenda1])
+    user1.savedAgendas = [agenda1]
     await getRepository(UserEntity).save([user1]);
   });
 
@@ -461,7 +504,7 @@ describe('Agenda with optional login (e2e)', () => {
           title: 'training-1',
           description: 'training1 bla bla bla',
           location: 'jakarta',
-          date: '12 May 2021',
+          date: new Date(agenda1.date).toString(),
           type: 'pelatihan',
           images: [ 'img-1.com' ],
           sponsors: [ 'sponsor1.com' ],
