@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Req } from "@nestjs/common"
+import { Controller, Get, Query, Req, Post, Param } from "@nestjs/common"
 import { MiscService } from "../services/misc.service";
 import { FaqQuery } from "../dto/faq.dto";
 
@@ -17,5 +17,11 @@ export class FaqController {
       page,
       search
     })
+  }
+
+  // TEMPORARY ENDPOINT
+  @Post(':id')
+  activateSeller(@Param('id') id: string) {
+    return this.service.activateSeller(id)
   }
 }
