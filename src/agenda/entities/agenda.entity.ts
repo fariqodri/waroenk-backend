@@ -19,8 +19,8 @@ export class AgendaEntity {
   @Column()
   location: string
 
-  @Column({ type: 'date' })
-  date: string
+  @Column({ name: 'date' })
+  date: Date
 
   @Column({ default: 'pelatihan' })
   type: 'pelatihan' | 'pembinaan'
