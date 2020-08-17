@@ -216,4 +216,8 @@ export class MiscService {
     let faqs: any[] = await queryBuilder.execute();
     return new ResponseListBody(faqs, "ok", query.page, faqs.length)
   }
+
+  async getLocationByCode(code: string) {
+    return this.locationRepo.findOneOrFail(code)
+  }
 }

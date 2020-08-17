@@ -1,6 +1,6 @@
 import { Controller, Post, Body, UsePipes, UseGuards, Get, Req, Put, HttpCode } from '@nestjs/common';
 import { ValidationPipe } from '../../utils/validation.pipe';
-import { RegisterDto, editProfileParam } from '../dto/users.dto';
+import { RegisterDto, editProfileParam, ShippingAddressDto } from '../dto/users.dto';
 import { UserEntity } from '../entities/users.entity';
 import { ResponseBody } from '../../utils/response';
 import { UsersService } from '../services/users.service';
@@ -34,6 +34,15 @@ export class UsersController {
   async findOne(@Req() req: Request) {
     const session: { userId: string } = req.user as { userId: string }
     const response = await this.userService.findOne({ id: session.userId })
+    return new ResponseBody(response)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(ValidationPipe)
+  @Put('shipping-address')
+  async upsertShippingAddress(@Req() req: Request, @Body() body: ShippingAddressDto) {
+    const session: { userId: string } = req.user as { userId: string }
+    const response = await this.userService.upsertShippingAddress(session.userId, body)
     return new ResponseBody(response)
   }
 }

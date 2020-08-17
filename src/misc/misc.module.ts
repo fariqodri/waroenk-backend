@@ -21,6 +21,7 @@ import { CategoryRepository } from '../products/repositories/category.repository
     ProductRepository,
     CategoryRepository])],
   controllers: [FaqController, LocationController, BulkUploadController],
-  providers: [MiscService]
+  providers: [MiscService],
+  exports: [MiscService]
 })
 export class MiscModule {}

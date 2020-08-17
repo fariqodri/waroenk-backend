@@ -1,28 +1,23 @@
-import { INestApplication, ExecutionContext } from "@nestjs/common";
-import { Test } from "@nestjs/testing";
-import * as request from 'supertest';
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { RedisModule } from "../src/redis/redis.module";
+import { ExecutionContext, INestApplication } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
+import { Test } from "@nestjs/testing";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import * as request from 'supertest';
+import { getConnection, getRepository } from "typeorm";
+import { AuthModule } from "../src/auth/auth.module";
 import { JwtAuthGuard } from "../src/auth/guards/jwt-auth.guard";
-import { getRepository, getConnection } from "typeorm";
-import { RedisClientProvider } from "../src/redis/redis.client.provider";
-
+import { CartEntity } from "../src/order/entities/cart.entity";
+import { OrderItem } from "../src/order/entities/order-item.entity";
+import { OrderEntity } from "../src/order/entities/order.entity";
 import { OrderModule } from "../src/order/order.module";
 import { CategoryEntity } from "../src/products/entities/category.entity";
-import { UserEntity } from "../src/users/entities/users.entity";
-import { SellerAttribute } from "../src/users/entities/seller.entity";
 import { ProductEntity } from "../src/products/entities/product.entity";
-import { AgendaEntity } from "../src/agenda/entities/agenda.entity";
-import { OrderEntity } from "../src/order/entities/order.entity";
-import { OrderItem } from "../src/order/entities/order-item.entity";
-import { CartEntity } from "../src/order/entities/cart.entity";
-import { AuthModule } from "../src/auth/auth.module";
-import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
-import { ProposalEntity } from "../src/proposal/entities/proposal.entity";
-import { ProposalData } from "../src/proposal/entities/proposal-data.entity";
-import { ChatRoomEntity } from "../src/chat/entities/chat-room.entity";
-import { ChatEntity } from "../src/chat/entities/chat.entity";
+import { RedisClientProvider } from "../src/redis/redis.client.provider";
+import { RedisModule } from "../src/redis/redis.module";
+import { SellerAttribute } from "../src/users/entities/seller.entity";
+import { UserEntity } from "../src/users/entities/users.entity";
+import { entities } from "./dependencies";
+
 
 
 const fakeRedisClientProvider = {
@@ -305,21 +300,7 @@ describe('Order e2e test', () => {
           database: ":memory:",
           dropSchema: true,
           synchronize: true,
-          entities: [
-            CategoryEntity, 
-            UserEntity, 
-            SellerAttribute, 
-            ProductEntity,
-            DiscussionEntity,
-            AgendaEntity,
-            ProposalEntity,
-            ProposalData,
-            OrderEntity,
-            OrderItem,
-            CartEntity,
-            ChatEntity,
-            ChatRoomEntity
-          ],
+          entities: entities,
         }),
         AuthModule,
         RedisModule.register({}),
