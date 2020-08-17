@@ -114,95 +114,95 @@ describe('GET Product and Categories (e2e)', () => {
     await getConnection().close();
   });
 
-  it(`should list provinces mode kode`, () => {
+  it(`should list provinces`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=province&mode=kode')
+      .get('/location?type=province')
       .expect(200)
       .expect({
         message: 'ok',
         result: [
-          { kode: '11', nama: 'Aceh' },
-          { kode: '12', nama: 'Jakarta' }
+          { kode: '11', nama: 'Aceh', full_kode: '11' },
+          { kode: '12', nama: 'Jakarta', full_kode: '12' }
         ]
       });
   });
 
-  it(`should list provinces mode nama`, () => {
+  it(`should list provinces with search`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=province&mode=nama&search=ac')
+      .get('/location?type=province&search=ac')
       .expect(200)
       .expect({
         message: 'ok',
-        result: [{ kode: '11', nama: 'Aceh' }]
+        result: [{ kode: '11', nama: 'Aceh', full_kode: '11' }]
       });
   });
 
-  it(`should list cities mode kode`, () => {
+  it(`should list cities`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=city&mode=kode&province=11')
+      .get('/location?type=city&province=11')
       .expect(200)
       .expect({
         message: 'ok',
         result: [
-          { kode: '11', nama: 'Kabupaten Aceh 1' },
-          { kode: '12', nama: 'Kabupaten Aceh 2' }
+          { kode: '11', nama: 'Kabupaten Aceh 1', full_kode: '11.11' },
+          { kode: '12', nama: 'Kabupaten Aceh 2', full_kode: '11.12' }
         ]
       });
   });
 
-  it(`should list cities mode nama`, () => {
+  it(`should list cities with search`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=city&mode=nama&search=1')
+      .get('/location?type=city&search=1')
       .expect(200)
       .expect({
         message: 'ok',
-        result: [{ kode: '11', nama: 'Kabupaten Aceh 1' }]
+        result: [{ kode: '11', nama: 'Kabupaten Aceh 1', full_kode: '11.11' }]
       });
   });
 
-  it(`should list districts mode kode`, () => {
+  it(`should list districts`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=district&mode=kode&province=11&city=11')
+      .get('/location?type=district&province=11&city=11')
       .expect(200)
       .expect({
         message: 'ok',
         result: [
-          { kode: '11', nama: 'Kecamatan Aceh 1' },
-          { kode: '12', nama: 'Kecamatan Aceh 2' }
+          { kode: '11', nama: 'Kecamatan Aceh 1', full_kode: '11.11.11' },
+          { kode: '12', nama: 'Kecamatan Aceh 2', full_kode: '11.11.12' }
         ]
       });
   });
 
-  it(`should list districts mode nama`, () => {
+  it(`should list districts with search`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=district&mode=nama&search=1')
+      .get('/location?type=district&search=1')
       .expect(200)
       .expect({
         message: 'ok',
-        result: [{ kode: '11', nama: 'Kecamatan Aceh 1' }]
+        result: [{ kode: '11', nama: 'Kecamatan Aceh 1', full_kode: '11.11.11' }]
       });
   });
 
-  it(`should list sub-districts mode kode`, () => {
+  it(`should list sub-districts`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=sub-district&mode=kode&province=11&city=11&district=11')
+      .get('/location?type=sub-district&province=11&city=11&district=11')
       .expect(200)
       .expect({
         message: 'ok',
         result: [
-          { kode: '1111', nama: 'Desa Aceh 1' },
-          { kode: '1112', nama: 'Desa Aceh 2' }
+          { kode: '1111', nama: 'Desa Aceh 1', full_kode: '11.11.11.1111' },
+          { kode: '1112', nama: 'Desa Aceh 2', full_kode: '11.11.11.1112' }
         ]
       });
   });
 
-  it(`should list sub-districts mode nama`, () => {
+  it(`should list sub-districts with search`, () => {
     return request(app.getHttpServer())
-      .get('/location?type=sub-district&mode=nama&search=1')
+      .get('/location?type=sub-district&province=11&search=1')
       .expect(200)
       .expect({
         message: 'ok',
-        result: [{ kode: '1111', nama: 'Desa Aceh 1' }]
+        result: [{ kode: '1111', nama: 'Desa Aceh 1', full_kode: '11.11.11.1111' }]
       });
   });
 
