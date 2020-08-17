@@ -40,7 +40,8 @@ describe('GET Product and Categories (e2e)', () => {
     user: user,
     created_at: new Date(),
     updated_at: null,
-    is_active: true
+    is_active: true,
+    has_paid: true
   }
 
   beforeEach(async () => {
@@ -365,7 +366,8 @@ describe('GET Product and Categories (e2e) with user login', () => {
     user: user,
     created_at: new Date(),
     updated_at: null,
-    is_active: true
+    is_active: true,
+    has_paid: true
   }
   const fakeAuthService = {
     decode: (token: string) => ({ userId: 'user-1' })

@@ -59,7 +59,8 @@ describe('Shop E2E', () => {
     user: user,
     created_at: new Date(),
     updated_at: null,
-    is_active: true
+    is_active: true,
+    has_paid: true
   }
   const user2: UserEntity = {
     id: 'user-2',
@@ -85,7 +86,8 @@ describe('Shop E2E', () => {
     user: user2,
     created_at: new Date(),
     updated_at: null,
-    is_active: true
+    is_active: true,
+    has_paid: true
   }
   
   beforeEach(async () => {

@@ -68,7 +68,8 @@ export class ShopService {
       tier: 1,
       created_at: new Date(),
       updated_at: null,
-      is_active: false
+      is_active: false,
+      has_paid: false
     }
     await this.sellerRepo.insert(newSeller)
     const response = {
