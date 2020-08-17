@@ -4,9 +4,6 @@ import { UserEntity } from "./users.entity";
 
 @Entity({ name: 'shipping_address' })
 export class ShippingAddressEntity {
-  @PrimaryColumn()
-  id: string;
-
   @Column({ name: 'receiver_name' })
   receiver_name: string;
 
@@ -28,7 +25,7 @@ export class ShippingAddressEntity {
   @Column({ name: 'post_code' })
   post_code: string
 
-  @OneToOne(type => UserEntity)
+  @OneToOne(type => UserEntity, { primary: true })
   @JoinColumn()
   user: UserEntity
 }

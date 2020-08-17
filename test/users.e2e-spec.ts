@@ -15,7 +15,11 @@ import { RedisModule } from '../src/redis/redis.module';
 import { RedisClientProvider } from '../src/redis/redis.client.provider';
 import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
 import { JwtModule } from '@nestjs/jwt';
-import { entities, fakeJwtAuthGuardFactory, fakeRedisClientProvider } from './dependencies';
+import {
+  entities,
+  fakeJwtAuthGuardFactory,
+  fakeRedisClientProvider,
+} from './dependencies';
 import { LocationEntity } from '../src/misc/entities/location.entity';
 import { ShippingAddressEntity } from '../src/users/entities/shipping-address.entity';
 
@@ -220,7 +224,7 @@ describe("User's Shipping Address", () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-  }
+  };
 
   beforeEach(async () => {
     const moduleFixture = await Test.createTestingModule({
@@ -234,37 +238,37 @@ describe("User's Shipping Address", () => {
           entities: entities,
         }),
         AuthModule,
-        RedisModule.register({})
+        RedisModule.register({}),
       ],
     })
       .overrideGuard(JwtAuthGuard)
       .useValue(fakeJwtAuthGuard)
       .overrideProvider(RedisClientProvider)
       .useValue(fakeRedisClientProvider)
-      .compile()
-    
-    app = moduleFixture.createNestApplication()
-    await app.init()
-    await getRepository(UserEntity).insert(user)
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+    await getRepository(UserEntity).insert(user);
     await getRepository(LocationEntity).insert([
       {
         kode: '31.11',
-        nama: 'Jakarta Selatan'
+        nama: 'Jakarta Selatan',
       },
       {
         kode: '31.11.11',
-        nama: 'Tebet'
+        nama: 'Tebet',
       },
       {
         kode: '31.11.11.11',
-        nama: 'Tebet Timur'
-      }
-    ])
+        nama: 'Tebet Timur',
+      },
+    ]);
   });
 
   afterEach(async () => {
-    await getConnection().close()
-  })
+    await getConnection().close();
+  });
 
   it('should create shipping address with full body', async () => {
     const requestBody = {
@@ -274,48 +278,55 @@ describe("User's Shipping Address", () => {
       city_code: '31.11',
       kecamatan_code: '31.11.11',
       kelurahan_code: '31.11.11.11',
-      post_code: '13520'
-    }
+      post_code: '13520',
+    };
     const resp = await request(app.getHttpServer())
       .put('/users/shipping-address')
       .send(requestBody)
       .expect(200)
-    const body = resp.body
-    const { result } = body
-    const { id, receiver_name, receiver_phone, street, city, kecamatan, kelurahan } = result
-    expect(id).toBeDefined()
-    expect(receiver_name).toEqual(requestBody.receiver_name)
-    expect(receiver_phone).toEqual(requestBody.receiver_phone)
-    expect(street).toEqual(requestBody.street)
-    expect(city).toEqual({
-      kode: '31.11',
-      nama: 'Jakarta Selatan'
-    })
-    expect(kecamatan).toEqual({
-      kode: '31.11.11',
-      nama: 'Tebet'
-    })
-    expect(kelurahan).toEqual({
-      kode: '31.11.11.11',
-      nama: 'Tebet Timur'
-    })
-    const address = await getRepository(ShippingAddressEntity).findOneOrFail(id, { relations: ['city', 'kecamatan', 'kelurahan'] })
-    expect(address.receiver_name).toEqual(requestBody.receiver_name)
-    expect(address.receiver_phone).toEqual(requestBody.receiver_phone)
-    expect(address.street).toEqual(requestBody.street)
+      .expect({
+        message: 'ok',
+        result: {
+          receiver_name: requestBody.receiver_name,
+          receiver_phone: requestBody.receiver_phone,
+          street: requestBody.street,
+          city: {
+            kode: '31.11',
+            nama: 'Jakarta Selatan',
+          },
+          kecamatan: {
+            kode: '31.11.11',
+            nama: 'Tebet',
+          },
+          kelurahan: {
+            kode: '31.11.11.11',
+            nama: 'Tebet Timur',
+          },
+          post_code: requestBody.post_code
+        }
+      })
+    const address = await getRepository(ShippingAddressEntity).findOneOrFail({
+      where: {
+        user: user,
+      },
+      relations: ['city', 'kecamatan', 'kelurahan'],
+    });
+    expect(address.receiver_name).toEqual(requestBody.receiver_name);
+    expect(address.receiver_phone).toEqual(requestBody.receiver_phone);
+    expect(address.street).toEqual(requestBody.street);
     expect(address.city).toEqual({
       kode: '31.11',
-      nama: 'Jakarta Selatan'
-    })
+      nama: 'Jakarta Selatan',
+    });
     expect(address.kecamatan).toEqual({
       kode: '31.11.11',
-      nama: 'Tebet'
-    })
+      nama: 'Tebet',
+    });
     expect(address.kelurahan).toEqual({
       kode: '31.11.11.11',
-      nama: 'Tebet Timur'
-    })
-  })
+      nama: 'Tebet Timur',
+    });
+  });
 
   it('should create shipping address with derived body', async () => {
     const requestBody = {
@@ -323,46 +334,157 @@ describe("User's Shipping Address", () => {
       city_code: '31.11',
       kecamatan_code: '31.11.11',
       kelurahan_code: '31.11.11.11',
-      post_code: '13520'
-    }
+      post_code: '13520',
+    };
     const resp = await request(app.getHttpServer())
       .put('/users/shipping-address')
       .send(requestBody)
       .expect(200)
-    const body = resp.body
-    const { result } = body
-    const { id, receiver_name, receiver_phone, street, city, kecamatan, kelurahan } = result
-    expect(id).toBeDefined()
-    expect(receiver_name).toEqual(user.full_name)
-    expect(receiver_phone).toEqual(user.phone)
-    expect(street).toEqual(requestBody.street)
-    expect(city).toEqual({
-      kode: '31.11',
-      nama: 'Jakarta Selatan'
-    })
-    expect(kecamatan).toEqual({
-      kode: '31.11.11',
-      nama: 'Tebet'
-    })
-    expect(kelurahan).toEqual({
-      kode: '31.11.11.11',
-      nama: 'Tebet Timur'
-    })
-    const address = await getRepository(ShippingAddressEntity).findOneOrFail(id, { relations: ['city', 'kecamatan', 'kelurahan'] })
-    expect(address.receiver_name).toEqual(user.full_name)
-    expect(address.receiver_phone).toEqual(user.phone)
-    expect(address.street).toEqual(requestBody.street)
+      .expect({
+        message: 'ok',
+        result: {
+          receiver_name: user.full_name,
+          receiver_phone: user.phone,
+          street: requestBody.street,
+          city: {
+            kode: '31.11',
+            nama: 'Jakarta Selatan',
+          },
+          kecamatan: {
+            kode: '31.11.11',
+            nama: 'Tebet',
+          },
+          kelurahan: {
+            kode: '31.11.11.11',
+            nama: 'Tebet Timur',
+          },
+          post_code: requestBody.post_code
+        }
+      })
+    const address = await getRepository(ShippingAddressEntity).findOneOrFail({
+      relations: ['city', 'kecamatan', 'kelurahan'],
+      where: {
+        user: user,
+      },
+    });
+    expect(address.receiver_name).toEqual(user.full_name);
+    expect(address.receiver_phone).toEqual(user.phone);
+    expect(address.street).toEqual(requestBody.street);
     expect(address.city).toEqual({
       kode: '31.11',
-      nama: 'Jakarta Selatan'
-    })
+      nama: 'Jakarta Selatan',
+    });
     expect(address.kecamatan).toEqual({
       kode: '31.11.11',
-      nama: 'Tebet'
-    })
+      nama: 'Tebet',
+    });
     expect(address.kelurahan).toEqual({
       kode: '31.11.11.11',
-      nama: 'Tebet Timur'
-    })
+      nama: 'Tebet Timur',
+    });
+  });
+
+  it('should update existing shipping address', async () => {
+    await getRepository(ShippingAddressEntity).insert({
+      receiver_name: 'Qori',
+      receiver_phone: '0819121231',
+      street: 'Disana',
+      city: { kode: '31.11' },
+      kecamatan: { kode: '31.11.11' },
+      kelurahan: { kode: '31.11.11.11' },
+      post_code: '13520',
+      user,
+    });
+    const requestBody = {
+      street: 'Jalan Baru No. 18 RT 11 RW 8',
+      city_code: '31.11',
+      kecamatan_code: '31.11.11',
+      kelurahan_code: '31.11.11.11',
+      post_code: '14045',
+    };
+    const resp = await request(app.getHttpServer())
+      .put('/users/shipping-address')
+      .send(requestBody)
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: {
+          receiver_name: user.full_name,
+          receiver_phone: user.phone,
+          street: requestBody.street,
+          city: {
+            kode: '31.11',
+            nama: 'Jakarta Selatan',
+          },
+          kecamatan: {
+            kode: '31.11.11',
+            nama: 'Tebet',
+          },
+          kelurahan: {
+            kode: '31.11.11.11',
+            nama: 'Tebet Timur',
+          },
+          post_code: requestBody.post_code
+        }
+      })
+    const address = await getRepository(ShippingAddressEntity).findOneOrFail({
+      relations: ['city', 'kecamatan', 'kelurahan'],
+      where: {
+        user: user,
+      },
+    });
+    expect(address.post_code).toEqual(requestBody.post_code)
+    expect(address.receiver_name).toEqual(user.full_name);
+    expect(address.receiver_phone).toEqual(user.phone);
+    expect(address.street).toEqual(requestBody.street);
+    expect(address.city).toEqual({
+      kode: '31.11',
+      nama: 'Jakarta Selatan',
+    });
+    expect(address.kecamatan).toEqual({
+      kode: '31.11.11',
+      nama: 'Tebet',
+    });
+    expect(address.kelurahan).toEqual({
+      kode: '31.11.11.11',
+      nama: 'Tebet Timur',
+    });
   })
+
+  it("should get user's shipping address", async () => {
+    await getRepository(ShippingAddressEntity).insert({
+      receiver_name: 'Qori',
+      receiver_phone: '0819121231',
+      street: 'Disana',
+      city: { kode: '31.11' },
+      kecamatan: { kode: '31.11.11' },
+      kelurahan: { kode: '31.11.11.11' },
+      post_code: '13520',
+      user,
+    });
+    await request(app.getHttpServer())
+      .get('/users/shipping-address')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: {
+          receiver_name: 'Qori',
+          receiver_phone: '0819121231',
+          street: 'Disana',
+          post_code: '13520',
+          city: {
+            kode: '31.11',
+            nama: 'Jakarta Selatan',
+          },
+          kecamatan: {
+            kode: '31.11.11',
+            nama: 'Tebet',
+          },
+          kelurahan: {
+            kode: '31.11.11.11',
+            nama: 'Tebet Timur',
+          },
+        },
+      });
+  });
 });
