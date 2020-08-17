@@ -65,6 +65,7 @@ describe('Discussion (e2e)', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
+    has_paid: true
   };
   const product1 = {
     id: 'product_1',

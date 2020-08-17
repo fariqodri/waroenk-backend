@@ -71,6 +71,13 @@ export class MiscService {
   async activateSeller(id: string):Promise<ResponseBody<any>> {
     const seller = await this.sellerRepo.findOne(id)
     seller.is_active = true
+    seller.has_paid = true
+    seller.updated_at = new Date()
+    await this.sellerRepo.save(seller)
+    const user = seller.user
+    user.role = 'seller'
+    user.updated_at = new Date()
+    await this.userRepo.save(user)
     return new ResponseBody(null, "seller activated")
   }
 
@@ -114,6 +121,7 @@ export class MiscService {
         created_at: new Date(),
         updated_at: null,
         is_active: true,
+        has_paid: true
       }
       await this.sellerRepo.insert(newSeller)
     }

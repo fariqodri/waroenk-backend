@@ -51,4 +51,7 @@ export class SellerAttribute {
 
   @Column({ default: false })
   is_active: boolean
+
+  @Column({ default: false })
+  has_paid: boolean
 }

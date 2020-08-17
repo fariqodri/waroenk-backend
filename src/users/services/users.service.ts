@@ -116,7 +116,6 @@ export class UsersService {
         updated_at: null,
         is_active: true,
       };
-      // TODO insert user to DB
       await this.userRepo.insert(user);
       await this.permissionService.addMemberToRole(user.id, BUYER_ROLE_ID);
       return plainToClass(UserEntity, user);
