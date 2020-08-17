@@ -1,4 +1,4 @@
-import { Controller, Put, UseGuards, UsePipes, Body, Req, Post } from '@nestjs/common';
+import { Controller, Put, UseGuards, UsePipes, Body, Req, Post, Get, Param } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ValidationPipe } from '../utils/validation.pipe';
 import { RegisterDeviceDto, ChatDto } from './chat.dto';
@@ -27,7 +27,21 @@ export class ChatController {
   @UsePipes(ValidationPipe)
   async chat(@Body() body: ChatDto, @Req() request: Request) {
     const { userId, role } = request.user as { userId: string, role: 'seller' | 'buyer' }
-    await this.chatService.chat(body, userId, role)
-    return new ResponseBody(null)
+    const res = await this.chatService.chat(body, userId, role)
+    return new ResponseBody(res)
+  }
+
+  @Get('rooms')
+  @UseGuards(JwtAuthGuard)
+  async rooms(@Req() request: Request) {
+    const { userId } = request.user as { userId: string, role: 'seller' | 'buyer' }
+    return this.chatService.getChatRoomsByUserId(userId)
+  }
+
+  @Get('rooms/:id')
+  @UseGuards(JwtAuthGuard)
+  async chatsInRoom(@Param('id') roomId: string, @Req() request: Request) {
+    const { userId } = request.user as { userId: string, role: 'seller' | 'buyer' }
+    return this.chatService.getChatsInRoom(roomId, userId)
   }
 }
