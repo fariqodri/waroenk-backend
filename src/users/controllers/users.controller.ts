@@ -45,4 +45,12 @@ export class UsersController {
     const response = await this.userService.upsertShippingAddress(session.userId, body)
     return new ResponseBody(response)
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('shipping-address')
+  async getShippingAddress(@Req() req: Request) {
+    const session: { userId: string } = req.user as { userId: string }
+    const response = await this.userService.getShippingAddress(session.userId)
+    return new ResponseBody(response)
+  }
 }
