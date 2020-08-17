@@ -5,11 +5,13 @@ import { PermissionModule } from '../permission/permission.module';
 import { UserRepository } from './repositories/users.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SellerAttributeRepository } from './repositories/seller.repository';
+import { ShippingAddressRepository } from './repositories/shipping-address.repository';
+import { MiscModule } from '../misc/misc.module';
 
 @Module({
   providers: [UsersService],
   exports: [UsersService, TypeOrmModule.forFeature([SellerAttributeRepository])],
   controllers: [UsersController],
-  imports: [PermissionModule, TypeOrmModule.forFeature([UserRepository, SellerAttributeRepository])],
+  imports: [PermissionModule, MiscModule, TypeOrmModule.forFeature([UserRepository, SellerAttributeRepository, ShippingAddressRepository])],
 })
 export class UsersModule {}

@@ -1,15 +1,25 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { nanoid } from 'nanoid';
-import * as bcrypt from 'bcrypt'
-
-import { RegisterDto, editProfileParam } from '../dto/users.dto';
-import { UserEntity } from '../entities/users.entity';
-import { ResponseBody } from '../../utils/response';
-import { SALT_ROUNDS, BUYER_ROLE_ID } from '../../constants';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { plainToClass } from 'class-transformer';
+import { nanoid } from 'nanoid';
+import { BUYER_ROLE_ID, SALT_ROUNDS } from '../../constants';
+import { LocationEntity } from '../../misc/entities/location.entity';
+import { MiscService } from '../../misc/services/misc.service';
 import { PermissionService } from '../../permission/permission.service';
-import { UserRepository } from '../repositories/users.repository';
+import { ResponseBody } from '../../utils/response';
+import {
+  editProfileParam,
+  RegisterDto,
+  ShippingAddressDto,
+} from '../dto/users.dto';
+import { UserEntity } from '../entities/users.entity';
 import { SellerAttributeRepository } from '../repositories/seller.repository';
+import { ShippingAddressRepository } from '../repositories/shipping-address.repository';
+import { UserRepository } from '../repositories/users.repository';
 
 @Injectable()
 export class UsersService {
@@ -18,47 +28,58 @@ export class UsersService {
   constructor(
     private permissionService: PermissionService,
     private userRepo: UserRepository,
-    private sellerRepo: SellerAttributeRepository
+    private sellerRepo: SellerAttributeRepository,
+    private shippingRepo: ShippingAddressRepository,
+    private miscService: MiscService,
   ) {}
 
   async editProfile(param: editProfileParam, userId: string): Promise<any> {
-    const user = await this.userRepo.findOneOrFail(userId)
+    const user = await this.userRepo.findOneOrFail(userId);
     if (user === undefined) {
-      throw new NotFoundException(new ResponseBody(null, 'user not found'))
+      throw new NotFoundException(new ResponseBody(null, 'user not found'));
     }
     if (param.email) {
-      user.email = param.email
+      user.email = param.email;
     }
     if (param.full_name) {
-      user.full_name = param.full_name
+      user.full_name = param.full_name;
     }
     if (param.phone) {
-      user.phone = param.phone
+      user.phone = param.phone;
     }
     if (param.password) {
       if (param.password != param.confirm_password) {
-        throw new BadRequestException(new ResponseBody(null, "confirm password unequal with password"))
+        throw new BadRequestException(
+          new ResponseBody(null, 'confirm password unequal with password'),
+        );
       }
-      const isPasswordValid = await bcrypt.compare(param.old_password, user.password)
+      const isPasswordValid = await bcrypt.compare(
+        param.old_password,
+        user.password,
+      );
       if (isPasswordValid) {
-        user.password = await bcrypt.hash(param.password, SALT_ROUNDS)
+        user.password = await bcrypt.hash(param.password, SALT_ROUNDS);
       } else {
-        throw new BadRequestException(new ResponseBody(null, 'invalid password'))
+        throw new BadRequestException(
+          new ResponseBody(null, 'invalid password'),
+        );
       }
     }
-    user.updated_at = new Date()
-    await this.userRepo.save(user)
-    return new ResponseBody(null, "profile has been updated")
+    user.updated_at = new Date();
+    await this.userRepo.save(user);
+    return new ResponseBody(null, 'profile has been updated');
   }
 
   async findUserById(userId: string): Promise<UserEntity> {
-    return this.userRepo.findOneOrFail(userId)
+    return this.userRepo.findOneOrFail(userId);
   }
 
-  async findOne(params: { id?: string, email?: string }): Promise<any> {
-    try{
-      const user = await this.userRepo.findOneOrFail({ where: params })
-      const seller = await this.sellerRepo.findOne({ where: { user: user.id }})
+  async findOne(params: { id?: string; email?: string }): Promise<any> {
+    try {
+      const user = await this.userRepo.findOneOrFail({ where: params });
+      const seller = await this.sellerRepo.findOne({
+        where: { user: user.id },
+      });
       let response = {
         id: user.id,
         full_name: user.full_name,
@@ -68,20 +89,22 @@ export class UsersService {
         created_at: user.created_at,
         updated_at: user.updated_at,
         is_active: user.is_active,
-        sellerId: seller? seller.id: null
-      }
-      return response
-    } catch(err) {
-      throw new NotFoundException(new ResponseBody(null, 'user not found'))
+        sellerId: seller ? seller.id : null,
+      };
+      return response;
+    } catch (err) {
+      throw new NotFoundException(new ResponseBody(null, 'user not found'));
     }
   }
 
   async register(body: RegisterDto): Promise<UserEntity> {
     if (body.password != body.confirm_password) {
-      throw new BadRequestException(new ResponseBody(null, "confirm password unequal with password"))
+      throw new BadRequestException(
+        new ResponseBody(null, 'confirm password unequal with password'),
+      );
     }
     try {
-      const encrypted = await bcrypt.hash(body.password, SALT_ROUNDS)
+      const encrypted = await bcrypt.hash(body.password, SALT_ROUNDS);
       const user: UserEntity = {
         id: nanoid(11),
         full_name: body.full_name,
@@ -91,29 +114,116 @@ export class UsersService {
         role: 'buyer',
         created_at: new Date(),
         updated_at: null,
-        is_active: true
-      }
+        is_active: true,
+      };
       // TODO insert user to DB
-      await this.userRepo.insert(user)
-      await this.permissionService.addMemberToRole(user.id, BUYER_ROLE_ID)
-      return plainToClass(UserEntity, user)
+      await this.userRepo.insert(user);
+      await this.permissionService.addMemberToRole(user.id, BUYER_ROLE_ID);
+      return plainToClass(UserEntity, user);
     } catch (err) {
-      const errMessage: string = err.message
-      if (errMessage.toLowerCase().includes('duplicate entry')) throw new BadRequestException(new ResponseBody(null, 'email has been taken'))
-      throw err
+      const errMessage: string = err.message;
+      if (errMessage.toLowerCase().includes('duplicate entry'))
+        throw new BadRequestException(
+          new ResponseBody(null, 'email has been taken'),
+        );
+      throw err;
     }
   }
 
   async getUserPassword(userId: string): Promise<string> {
-    const user = await this.userRepo.findOneOrFail(userId)
-    return user.password
+    const user = await this.userRepo.findOneOrFail(userId);
+    return user.password;
   }
 
-  async updateDeviceToken(userId: string, deviceToken: string): Promise<ResponseBody<{ user_id: string, device_token: string }>> {
-    await this.userRepo.update(userId, { device_token: deviceToken })
+  async updateDeviceToken(
+    userId: string,
+    deviceToken: string,
+  ): Promise<ResponseBody<{ user_id: string; device_token: string }>> {
+    await this.userRepo.update(userId, { device_token: deviceToken });
     return new ResponseBody({
       user_id: userId,
-      device_token: deviceToken
-    })
+      device_token: deviceToken,
+    });
+  }
+
+  async upsertShippingAddress(
+    userId: string,
+    shippingAddress: ShippingAddressDto,
+  ) {
+    let city: LocationEntity;
+    let kecamatan: LocationEntity;
+    let kelurahan: LocationEntity;
+    const user = await this.userRepo.findOneOrFail(userId);
+    const receiver_name = shippingAddress.receiver_name
+      ? shippingAddress.receiver_name
+      : user.full_name;
+    const receiver_phone = shippingAddress.receiver_phone
+      ? shippingAddress.receiver_phone
+      : user.phone;
+
+    try {
+      city = await this.miscService.getLocationByCode(
+        shippingAddress.city_code,
+      );
+    } catch {
+      throw new BadRequestException(
+        new ResponseBody(
+          null,
+          `city with code ${shippingAddress.city_code} not found`,
+        ),
+      );
+    }
+    try {
+      kecamatan = await this.miscService.getLocationByCode(
+        shippingAddress.kecamatan_code,
+      );
+    } catch {
+      throw new BadRequestException(
+        new ResponseBody(
+          null,
+          `city with code ${shippingAddress.kecamatan_code} not found`,
+        ),
+      );
+    }
+    try {
+      kelurahan = await this.miscService.getLocationByCode(
+        shippingAddress.kelurahan_code,
+      );
+    } catch {
+      throw new BadRequestException(
+        new ResponseBody(
+          null,
+          `city with code ${shippingAddress.kelurahan_code} not found`,
+        ),
+      );
+    }
+
+    const existingShippingAddress = await this.shippingRepo.findOne({
+      where: { user: { id: userId } },
+    });
+    const data = {
+      receiver_name,
+      receiver_phone,
+      street: shippingAddress.street,
+      city,
+      kecamatan,
+      kelurahan,
+      post_code: shippingAddress.post_code,
+      user,
+    };
+    if (existingShippingAddress) {
+      await this.shippingRepo.update(existingShippingAddress.id, data);
+      const { user, ...rest } = data;
+      return { id: existingShippingAddress.id, ...rest };
+    } else {
+      const id = nanoid(11);
+      const insertionData = {
+        id,
+        ...data,
+      };
+      const { user, ...rest } = insertionData;
+      await this.shippingRepo.insert(insertionData);
+      return rest;
+    }
   }
 }

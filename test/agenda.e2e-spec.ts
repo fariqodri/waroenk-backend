@@ -1,25 +1,15 @@
+import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { INestApplication, ExecutionContext } from '@nestjs/common';
-import * as request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as request from 'supertest';
 import { getConnection, getRepository } from 'typeorm';
-import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
 import { AgendaModule } from '../src/agenda/agenda.module';
-import { UserEntity } from '../src/users/entities/users.entity';
-import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
-import { ProductEntity } from '../src/products/entities/product.entity';
-import { CategoryEntity } from '../src/products/entities/category.entity';
-import { SellerAttribute } from '../src/users/entities/seller.entity';
+import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
 import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
-import { RedisClientProvider } from '../src/redis/redis.client.provider';
-import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
-import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
 import { OptionalJwtAuthGuard } from '../src/auth/guards/optional-jwt-auth.guard';
-import { OrderEntity } from '../src/order/entities/order.entity';
-import { OrderItem } from '../src/order/entities/order-item.entity';
-import { CartEntity } from '../src/order/entities/cart.entity';
-import { ChatEntity } from '../src/chat/entities/chat.entity';
-import { ChatRoomEntity } from '../src/chat/entities/chat-room.entity';
+import { RedisClientProvider } from '../src/redis/redis.client.provider';
+import { UserEntity } from '../src/users/entities/users.entity';
+import { entities } from './dependencies';
 
 describe('Agenda (e2e)', () => {
   let app: INestApplication;
@@ -73,21 +63,7 @@ describe('Agenda (e2e)', () => {
           database: ':memory:',
           dropSchema: true,
           synchronize: true,
-          entities: [
-            AgendaEntity,
-            UserEntity,
-            DiscussionEntity,
-            ProductEntity,
-            CategoryEntity,
-            SellerAttribute,
-            ProposalEntity,
-            ProposalData,
-            OrderEntity,
-            OrderItem,
-            CartEntity,
-            ChatEntity,
-            ChatRoomEntity
-          ],
+          entities: entities,
         }),
       ],
     }).compile();
@@ -322,21 +298,7 @@ describe('Agenda with users (e2e)', () => {
           database: ':memory:',
           dropSchema: true,
           synchronize: true,
-          entities: [
-            AgendaEntity,
-            UserEntity,
-            DiscussionEntity,
-            ProductEntity,
-            CategoryEntity,
-            SellerAttribute,
-            ProposalEntity,
-            ProposalData,
-            OrderEntity,
-            OrderItem,
-            CartEntity,
-            ChatEntity,
-            ChatRoomEntity
-          ],
+          entities: entities,
         }),
       ],
     })
@@ -457,21 +419,7 @@ describe('Agenda with optional login (e2e)', () => {
           database: ':memory:',
           dropSchema: true,
           synchronize: true,
-          entities: [
-            AgendaEntity,
-            UserEntity,
-            DiscussionEntity,
-            ProductEntity,
-            CategoryEntity,
-            SellerAttribute,
-            ProposalEntity,
-            ProposalData,
-            OrderEntity,
-            OrderItem,
-            CartEntity,
-            ChatEntity,
-            ChatRoomEntity
-          ],
+          entities: entities,
         }),
       ],
     })

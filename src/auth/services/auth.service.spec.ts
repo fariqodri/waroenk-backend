@@ -7,10 +7,13 @@ import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../../users/repositories/users.repository';
 import { PermissionService } from '../../permission/permission.service';
 import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
+import { ShippingAddressRepository } from '../../users/repositories/shipping-address.repository';
+import { MiscService } from '../../misc/services/misc.service';
 
 jest.mock('../../redis/redis.service')
 jest.mock('../../users/repositories/users.repository')
 jest.mock('../../users/repositories/seller.repository')
+jest.mock('../../users/repositories/shipping-address.repository')
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -32,7 +35,12 @@ describe('AuthService', () => {
         UsersService,
         PermissionService,
         UserRepository,
-        SellerAttributeRepository
+        SellerAttributeRepository,
+        ShippingAddressRepository,
+        {
+          provide: MiscService,
+          useValue: {}
+        }
       ]
     }).compile();
 

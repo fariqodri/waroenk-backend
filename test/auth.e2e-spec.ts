@@ -1,29 +1,18 @@
-import { Test } from '@nestjs/testing';
-import { INestApplication, ExecutionContext } from '@nestjs/common';
-import * as request from 'supertest';
-import * as bcrypt from 'bcrypt';
-
-import { AuthModule } from '../src/auth/auth.module'
-import { UsersModule } from '../src/users/users.module';
-import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
-import { RedisModule } from '../src/redis/redis.module';
-import { RedisClientProvider } from '../src/redis/redis.client.provider';
+import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from '../src/users/entities/users.entity';
+import * as bcrypt from 'bcrypt';
+import * as request from 'supertest';
 import { getConnection } from 'typeorm';
-import { ProductEntity } from '../src/products/entities/product.entity';
-import { SellerAttribute } from '../src/users/entities/seller.entity';
-import { CategoryEntity } from '../src/products/entities/category.entity';
-import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
-import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
-import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
-import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
-import { OrderEntity } from '../src/order/entities/order.entity';
-import { OrderItem } from '../src/order/entities/order-item.entity';
-import { CartEntity } from '../src/order/entities/cart.entity';
-import { ChatEntity } from '../src/chat/entities/chat.entity';
-import { ChatRoomEntity } from '../src/chat/entities/chat-room.entity';
+import { AuthModule } from '../src/auth/auth.module';
+import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
+import { RedisClientProvider } from '../src/redis/redis.client.provider';
+import { RedisModule } from '../src/redis/redis.module';
+import { UserEntity } from '../src/users/entities/users.entity';
+import { UsersModule } from '../src/users/users.module';
+import { entities } from './dependencies';
+
 
 describe('Login and Logout E2E Test', () => {
   let app: INestApplication;
@@ -54,21 +43,7 @@ describe('Login and Logout E2E Test', () => {
           database: ":memory:",
           dropSchema: true,
           synchronize: true,
-          entities: [
-            CategoryEntity, 
-            UserEntity,
-            SellerAttribute, 
-            ProductEntity,
-            DiscussionEntity,
-            AgendaEntity,
-            ProposalEntity,
-            ProposalData,
-            OrderEntity,
-            OrderItem,
-            CartEntity,
-            ChatEntity,
-            ChatRoomEntity
-          ]
+          entities: entities
         })
       ],
     })

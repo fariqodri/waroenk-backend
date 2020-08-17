@@ -1,24 +1,17 @@
+import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { INestApplication, ExecutionContext } from '@nestjs/common';
-import * as request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as request from 'supertest';
 import { getConnection, getRepository } from 'typeorm';
+import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
 import { DiscussionModule } from '../src/discussion/discussion.module';
 import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
-import { UserEntity } from '../src/users/entities/users.entity';
-import { ProductEntity } from '../src/products/entities/product.entity';
 import { CategoryEntity } from '../src/products/entities/category.entity';
-import { SellerAttribute } from '../src/users/entities/seller.entity';
-import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
+import { ProductEntity } from '../src/products/entities/product.entity';
 import { RedisClientProvider } from '../src/redis/redis.client.provider';
-import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
-import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
-import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
-import { OrderEntity } from '../src/order/entities/order.entity';
-import { OrderItem } from '../src/order/entities/order-item.entity';
-import { CartEntity } from '../src/order/entities/cart.entity';
-import { ChatEntity } from '../src/chat/entities/chat.entity';
-import { ChatRoomEntity } from '../src/chat/entities/chat-room.entity';
+import { SellerAttribute } from '../src/users/entities/seller.entity';
+import { UserEntity } from '../src/users/entities/users.entity';
+import { entities } from './dependencies';
 
 const fakeRedisClientProvider = {
   set: jest
@@ -139,21 +132,7 @@ describe('Discussion (e2e)', () => {
           dropSchema: true,
           synchronize: true,
           logging: ['error'],
-          entities: [
-            DiscussionEntity,
-            UserEntity,
-            ProductEntity,
-            CategoryEntity,
-            SellerAttribute,
-            AgendaEntity,
-            ProposalEntity,
-            ProposalData,
-            OrderEntity,
-            OrderItem,
-            CartEntity,
-            ChatEntity,
-            ChatRoomEntity
-          ],
+          entities: entities,
         }),
       ],
     })
