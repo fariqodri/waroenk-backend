@@ -163,23 +163,21 @@ export class MiscService {
       })
     } else if (query.type == 'city') {
       queryBuilder = queryBuilder.where('kode LIKE :regex', {
-        regex: (query.mode == 'kode')? `${query.province}.__`: `__.__`
+        regex: `${query.province}.__`
       })
       index = 1
     } else if (query.type == 'district') {
       queryBuilder = queryBuilder.where('kode LIKE :regex', {
-        regex: (query.mode == 'kode')? 
-        `${query.province}.${query.city}.__`: `__.__.__`
+        regex: `${query.province}.${query.city}.__`
       })
       index = 2
     } else if (query.type == 'sub-district') {
       queryBuilder = queryBuilder.where('kode LIKE :regex', {
-        regex: (query.mode == 'kode')? 
-        `${query.province}.${query.city}.${query.district}.%`: `__.__.__.%`
+        regex: `${query.province}.${query.city}.${query.district}.%`
       })
       index = 3
     }
-    if (query.mode == 'nama') {
+    if (query.search) {
       queryBuilder = queryBuilder.andWhere('LOWER(nama) LIKE :search', {
         search: `%${query.search.toLowerCase()}%`
       })
@@ -187,7 +185,8 @@ export class MiscService {
     let results: any[] = await queryBuilder.execute()
     results = results.map(p => ({
       ...p,
-      kode: p.kode.split('.')[index]
+      kode: p.kode.split('.')[index],
+      full_kode: p.kode
     }));
     return new ResponseBody(results)
   }

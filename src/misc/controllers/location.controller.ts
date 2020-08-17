@@ -7,7 +7,13 @@ export class LocationController {
   constructor(private service: MiscService) {}
 
   @Get()
-  getFaqs(@Query() param: LocationQuery) {
-    return this.service.listLocation(param)
+  getFaqs(@Query() {
+    type,
+    search,
+    province = '__',
+    city = '__',
+    district = '__'
+  }: LocationQuery) {
+    return this.service.listLocation({type,search,province,city,district})
   }
 }
