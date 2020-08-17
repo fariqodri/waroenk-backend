@@ -197,10 +197,6 @@ export class UsersService {
         ),
       );
     }
-
-    const existingShippingAddress = await this.shippingRepo.findOne({
-      where: { user: { id: userId } },
-    });
     const data = {
       receiver_name,
       receiver_phone,
@@ -209,21 +205,31 @@ export class UsersService {
       kecamatan,
       kelurahan,
       post_code: shippingAddress.post_code,
-      user,
-    };
-    if (existingShippingAddress) {
-      await this.shippingRepo.update(existingShippingAddress.id, data);
-      const { user, ...rest } = data;
-      return { id: existingShippingAddress.id, ...rest };
-    } else {
-      const id = nanoid(11);
-      const insertionData = {
-        id,
-        ...data,
-      };
-      const { user, ...rest } = insertionData;
-      await this.shippingRepo.insert(insertionData);
-      return rest;
+      user
     }
+    await this.shippingRepo.save(data)
+    const { user: _, ...rest } = data
+    return rest
+  }
+
+  getShippingAddress(userId: string) {
+    return this.shippingRepo.createQueryBuilder('shipping')
+      .where('userId = :userId', { userId })
+      .innerJoin('shipping.city', 'city')
+      .innerJoin('shipping.kecamatan', 'kecamatan')
+      .innerJoin('shipping.kelurahan', 'kelurahan')
+      .select([
+        'shipping.receiver_name',
+        'shipping.receiver_phone',
+        'shipping.street',
+        'city.kode',
+        'city.nama',
+        'kecamatan.kode',
+        'kecamatan.nama',
+        'kelurahan.kode',
+        'kelurahan.nama',
+        'shipping.post_code'
+      ])
+      .getOne()
   }
 }
