@@ -1,24 +1,12 @@
-import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as request from 'supertest';
 import { getConnection, getRepository } from 'typeorm';
 import { FaqEntity } from '../src/misc/entities/faq.entity';
-import { MiscModule } from '../src/misc/misc.module';
 import { LocationEntity } from '../src/misc/entities/location.entity';
-import { CategoryEntity } from '../src/products/entities/category.entity';
-import { UserEntity } from '../src/users/entities/users.entity';
-import { SellerAttribute } from '../src/users/entities/seller.entity';
-import { ProductEntity } from '../src/products/entities/product.entity';
-import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
-import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
-import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
-import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
-import { OrderEntity } from '../src/order/entities/order.entity';
-import { OrderItem } from '../src/order/entities/order-item.entity';
-import { CartEntity } from '../src/order/entities/cart.entity';
-import { ChatEntity } from '../src/chat/entities/chat.entity';
-import { ChatRoomEntity } from '../src/chat/entities/chat-room.entity';
+import { MiscModule } from '../src/misc/misc.module';
+import { entities } from './dependencies';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
@@ -32,23 +20,7 @@ describe('GET Product and Categories (e2e)', () => {
           database: ':memory:',
           dropSchema: true,
           synchronize: true,
-          entities: [
-            FaqEntity,
-            LocationEntity,
-            CategoryEntity, 
-            UserEntity, 
-            SellerAttribute, 
-            ProductEntity,
-            DiscussionEntity,
-            AgendaEntity,
-            ProposalEntity,
-            ProposalData,
-            OrderEntity,
-            OrderItem,
-            CartEntity,
-            ChatEntity,
-            ChatRoomEntity
-          ],
+          entities: entities,
         }),
       ],
     }).compile();

@@ -7,10 +7,13 @@ import { UsersService } from '../../users/services/users.service';
 import { PermissionService } from '../../permission/permission.service';
 import { UserRepository } from '../../users/repositories/users.repository';
 import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
+import { ShippingAddressRepository } from '../../users/repositories/shipping-address.repository';
+import { MiscService } from '../../misc/services/misc.service';
 
 jest.mock('../../redis/redis.service')
 jest.mock('../../users/repositories/users.repository')
 jest.mock('../../users/repositories/seller.repository')
+jest.mock('../../users/repositories/shipping-address.repository')
 
 describe('Auth Controller', () => {
   let controller: AuthController;
@@ -25,7 +28,12 @@ describe('Auth Controller', () => {
         UsersService,
         PermissionService,
         UserRepository,
-        SellerAttributeRepository
+        SellerAttributeRepository,
+        ShippingAddressRepository,
+        {
+          provide: MiscService,
+          useValue: {}
+        }
       ],
       imports: [
         JwtModule.register({}),

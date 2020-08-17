@@ -1,24 +1,16 @@
+import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { INestApplication, ExecutionContext } from '@nestjs/common';
-import * as request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProductsModule } from '../src/products/products.module';
+import * as request from 'supertest';
+import { getConnection, getRepository } from 'typeorm';
+import { OptionalJwtAuthGuard } from '../src/auth/guards/optional-jwt-auth.guard';
 import { CategoryEntity } from '../src/products/entities/category.entity';
 import { ProductEntity } from '../src/products/entities/product.entity';
-import { UserEntity } from '../src/users/entities/users.entity';
-import { getConnection, getRepository } from 'typeorm';
-import { SellerAttribute } from '../src/users/entities/seller.entity';
-import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
+import { ProductsModule } from '../src/products/products.module';
 import { RedisClientProvider } from '../src/redis/redis.client.provider';
-import { OptionalJwtAuthGuard } from '../src/auth/guards/optional-jwt-auth.guard';
-import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
-import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
-import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
-import { OrderItem } from '../src/order/entities/order-item.entity';
-import { CartEntity } from '../src/order/entities/cart.entity';
-import { OrderEntity } from '../src/order/entities/order.entity';
-import { ChatEntity } from '../src/chat/entities/chat.entity';
-import { ChatRoomEntity } from '../src/chat/entities/chat-room.entity';
+import { SellerAttribute } from '../src/users/entities/seller.entity';
+import { UserEntity } from '../src/users/entities/users.entity';
+import { entities } from './dependencies';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
@@ -60,21 +52,7 @@ describe('GET Product and Categories (e2e)', () => {
           database: ':memory:',
           dropSchema: true,
           synchronize: true,
-          entities: [
-            CategoryEntity,
-            UserEntity,
-            SellerAttribute,
-            ProductEntity,
-            DiscussionEntity,
-            AgendaEntity,
-            ProposalEntity,
-            ProposalData,
-            OrderEntity,
-            OrderItem,
-            CartEntity,
-            ChatEntity,
-            ChatRoomEntity
-          ],
+          entities: entities,
         }),
       ],
     }).compile();
@@ -402,21 +380,7 @@ describe('GET Product and Categories (e2e) with user login', () => {
           database: ':memory:',
           dropSchema: true,
           synchronize: true,
-          entities: [
-            CategoryEntity,
-            UserEntity,
-            SellerAttribute,
-            ProductEntity,
-            DiscussionEntity,
-            AgendaEntity,
-            ProposalEntity,
-            ProposalData,
-            OrderEntity,
-            OrderItem,
-            CartEntity,
-            ChatEntity,
-            ChatRoomEntity
-          ],
+          entities: entities,
         }),
       ],
     })

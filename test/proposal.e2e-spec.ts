@@ -1,25 +1,16 @@
+import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { INestApplication, ExecutionContext } from '@nestjs/common';
-import * as request from 'supertest';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as request from 'supertest';
 import { getConnection, getRepository } from 'typeorm';
 import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
-import { RedisClientProvider } from '../src/redis/redis.client.provider';
-import { ProposalModule } from '../src/proposal/proposal.module';
-import { UserEntity } from '../src/users/entities/users.entity';
-import { AgendaEntity } from '../src/agenda/entities/agenda.entity';
-import { DiscussionEntity } from '../src/discussion/entities/discussion.entity';
-import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
 import { ProposalData } from '../src/proposal/entities/proposal-data.entity';
 import { ProposalItem } from '../src/proposal/entities/proposal-item.entity';
-import { ProductEntity } from '../src/products/entities/product.entity';
-import { CategoryEntity } from '../src/products/entities/category.entity';
-import { SellerAttribute } from '../src/users/entities/seller.entity';
-import { OrderEntity } from '../src/order/entities/order.entity';
-import { OrderItem } from '../src/order/entities/order-item.entity';
-import { CartEntity } from '../src/order/entities/cart.entity';
-import { ChatRoomEntity } from '../src/chat/entities/chat-room.entity';
-import { ChatEntity } from '../src/chat/entities/chat.entity';
+import { ProposalEntity } from '../src/proposal/entities/proposal.entity';
+import { ProposalModule } from '../src/proposal/proposal.module';
+import { RedisClientProvider } from '../src/redis/redis.client.provider';
+import { UserEntity } from '../src/users/entities/users.entity';
+import { entities } from './dependencies';
 
 const fakeRedisClientProvider = {
   set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
@@ -100,22 +91,7 @@ describe('Proposals (e2e)', () => {
           database: ':memory:',
           dropSchema: true,
           synchronize: true,
-          entities: [
-            AgendaEntity,
-            UserEntity,
-            DiscussionEntity,
-            ProposalEntity,
-            ProposalData,
-            ProposalItem,
-            ProductEntity,
-            CategoryEntity,
-            SellerAttribute,
-            OrderEntity,
-            OrderItem,
-            CartEntity,
-            ChatEntity,
-            ChatRoomEntity
-          ],
+          entities: entities,
         }),
       ],
     })

@@ -39,3 +39,26 @@ export class editProfileParam {
   @jf.string().optional().min(8)
   confirm_password: string
 }
+
+export class ShippingAddressDto {
+  @jf.string().optional()
+  receiver_name: string;
+
+  @jf.string().regex(/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/).optional()
+  receiver_phone: string;
+
+  @jf.string().required()
+  street: string
+
+  @jf.string().regex(/^[0-9]{1,}\.[0-9]{1,}$/).required()
+  city_code: string
+
+  @jf.string().regex(/^[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/).required()
+  kecamatan_code: string
+
+  @jf.string().regex(/^[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/).required()
+  kelurahan_code: string
+
+  @jf.string().required()
+  post_code: string
+}

@@ -25,7 +25,7 @@ backend-end-to-end-test:
   before_script:
     - npm install
   script:
-    - npm run test:e2e -- --forceExit
+    - npm run test:e2e
 
 backend-docker-build:
   stage: docker-build

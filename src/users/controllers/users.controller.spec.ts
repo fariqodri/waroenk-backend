@@ -6,9 +6,12 @@ import { BadRequestException } from '@nestjs/common';
 import { PermissionModule } from '../../permission/permission.module';
 import { UserRepository } from '../repositories/users.repository';
 import { SellerAttributeRepository } from '../repositories/seller.repository';
+import { ShippingAddressRepository } from '../repositories/shipping-address.repository';
+import { MiscService } from '../../misc/services/misc.service';
 
 jest.mock('../repositories/users.repository')
 jest.mock('../repositories/seller.repository')
+jest.mock('../repositories/shipping-address.repository')
 
 describe('Users Controller', () => {
   let controller: UsersController;
@@ -17,9 +20,12 @@ describe('Users Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [UsersService, UserRepository, SellerAttributeRepository],
+      providers: [UsersService, UserRepository, SellerAttributeRepository, ShippingAddressRepository, MiscService],
       imports: [PermissionModule]
-    }).compile();
+    })
+      .overrideProvider(MiscService)
+      .useValue({})
+      .compile();
 
     controller = module.get<UsersController>(UsersController);
     service = module.get(UsersService)

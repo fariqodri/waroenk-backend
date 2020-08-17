@@ -6,11 +6,13 @@ import { PermissionService } from '../../permission/permission.service';
 import { BUYER_ROLE_ID } from '../../constants';
 import { PermissionModule } from '../../permission/permission.module';
 import { UserRepository } from '../repositories/users.repository';
-import { UserEntity } from '../entities/users.entity';
 import { SellerAttributeRepository } from '../repositories/seller.repository';
+import { ShippingAddressRepository } from '../repositories/shipping-address.repository';
+import { MiscService } from '../../misc/services/misc.service';
 
 jest.mock('../repositories/users.repository')
 jest.mock('../repositories/seller.repository')
+jest.mock('../repositories/shipping-address.repository')
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -20,8 +22,11 @@ describe('UsersService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [PermissionModule],
-      providers: [UsersService, UserRepository, SellerAttributeRepository]
-    }).compile();
+      providers: [UsersService, UserRepository, SellerAttributeRepository, ShippingAddressRepository, MiscService]
+    })
+      .overrideProvider(MiscService)
+      .useValue({})
+      .compile();
 
     service = module.get<UsersService>(UsersService);
     permissionService = module.get(PermissionService)
