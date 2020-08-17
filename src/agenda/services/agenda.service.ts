@@ -128,7 +128,7 @@ export class AgendaService {
     let agendas: any[] = await queryBuilder.execute();
     agendas = agendas.map(p => ({
       ...p,
-      date: new Date(p.date).toString(),
+      date: new Date(p.date),
       images: p.images? p.images.split(','): null,
       sponsors: p.sponsors? p.sponsors.split(','): null
     }));
@@ -193,7 +193,7 @@ export class AgendaService {
     let agendas: any[] = await queryBuilder.execute();
     agendas = agendas.map(p => ({
       ...p,
-      date: new Date(p.date).toString(),
+      date: new Date(p.date),
       images: p.images? p.images.split(','): null,
       sponsors: p.sponsors? p.sponsors.split(','): null
     }));
@@ -215,7 +215,7 @@ export class AgendaService {
       title: agenda.title,
       description: agenda.description,
       location: agenda.location,
-      date: agenda.date.toString(),
+      date: agenda.date,
       type: agenda.type,
       images: agenda.images,
       sponsors: agenda.sponsors,

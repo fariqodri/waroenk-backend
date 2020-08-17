@@ -112,7 +112,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: new Date('2030-05-01 00:00:00').toString(),
+            date: new Date('2030-05-01 00:00:00').toJSON(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -135,7 +135,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-3',
             description: 'training3 bla bla bla',
             location: 'bogor',
-            date: new Date('2030-04-01 00:00:00').toString(),
+            date: new Date('2030-04-01 00:00:00').toJSON(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor3.com']
@@ -145,7 +145,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: new Date('2030-05-01 00:00:00').toString(),
+            date: new Date('2030-05-01 00:00:00').toJSON(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -168,7 +168,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: new Date('2030-05-01 00:00:00').toString(),
+            date: new Date('2030-05-01 00:00:00').toJSON(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -203,7 +203,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: new Date('2030-05-01 00:00:00').toString(),
+            date: new Date('2030-05-01 00:00:00').toJSON(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -213,7 +213,7 @@ describe('Agenda (e2e)', () => {
             title: 'training-3',
             description: 'training3 bla bla bla',
             location: 'bogor',
-            date: new Date('2030-04-01 00:00:00').toString(),
+            date: new Date('2030-04-01 00:00:00').toJSON(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor3.com']
@@ -235,7 +235,7 @@ describe('Agenda (e2e)', () => {
           title: 'training-1',
           description: 'training1 bla bla bla',
           location: 'jakarta',
-          date: agenda1.date.toString(),
+          date: agenda1.date.toJSON(),
           type: 'pelatihan',
           images: [ 'img-1.com' ],
           sponsors: [ 'sponsor1.com' ],
@@ -369,7 +369,7 @@ describe('Agenda with users (e2e)', () => {
             title: 'training-1',
             description: 'training1 bla bla bla',
             location: 'jakarta',
-            date: new Date('2050-05-01 00:00:00').toString(),
+            date: new Date('2050-05-01 00:00:00').toJSON(),
             images: ['img-1.com'],
             type: 'pelatihan',
             sponsors: ['sponsor1.com']
@@ -379,7 +379,7 @@ describe('Agenda with users (e2e)', () => {
             title: 'training-2',
             description: 'training2 bla bla bla',
             location: 'bandung',
-            date: new Date('2050-05-01 00:00:00').toString(),
+            date: new Date('2050-05-01 00:00:00').toJSON(),
             images: ['img-2.com'],
             type: 'pembinaan',
             sponsors: ['sponsor2.com']
@@ -504,7 +504,7 @@ describe('Agenda with optional login (e2e)', () => {
           title: 'training-1',
           description: 'training1 bla bla bla',
           location: 'jakarta',
-          date: agenda1.date.toString(),
+          date: agenda1.date.toJSON(),
           type: 'pelatihan',
           images: [ 'img-1.com' ],
           sponsors: [ 'sponsor1.com' ],
