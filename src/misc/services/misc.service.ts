@@ -69,12 +69,12 @@ export class MiscService {
 
   // TEMPORARY ENDPOINT
   async activateSeller(id: string):Promise<ResponseBody<any>> {
-    const seller = await this.sellerRepo.findOne(id)
+    let seller = await this.sellerRepo.findOne(id)
     seller.is_active = true
     seller.has_paid = true
     seller.updated_at = new Date()
     await this.sellerRepo.save(seller)
-    const user = seller.user
+    let user = seller.user
     user.role = 'seller'
     user.updated_at = new Date()
     await this.userRepo.save(user)
