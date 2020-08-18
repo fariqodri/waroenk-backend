@@ -15,6 +15,7 @@ import { MiscModule } from './misc/misc.module';
 import { ProposalModule } from './proposal/proposal.module';
 import { OrderModule } from './order/order.module';
 import { ChatModule } from './chat/chat.module';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { ChatModule } from './chat/chat.module';
       port: REDIS_PORT,
       password: REDIS_PASSWORD,
     }),
-    ChatModule
+    ChatModule,
+    PostModule
   ],
 })
 export class AppModule {}

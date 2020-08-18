@@ -11,3 +11,4 @@ export const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID
 export const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY
 export const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME
 export const FIREBASE_DATABASE_URL = 'https://waroenk-umkm.firebaseio.com'
+export const MINIMUM_SELLER_TIER_FOR_POSTING = 2
