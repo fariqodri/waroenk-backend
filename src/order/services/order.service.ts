@@ -260,6 +260,10 @@ export class OrderService {
         'product.images AS images'
       ]);
     let carts: any[] = await queryBuilder.execute();
+    carts = carts.map(p => ({
+      ...p,
+      discount: Number(p.discount),
+    }));
     return new ResponseListBody(carts, "ok", 1, carts.length)
   }
 }
