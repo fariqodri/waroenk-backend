@@ -87,7 +87,7 @@ export class MiscService {
 
   async parseUser(file: Buffer): Promise<ResponseBody<any[]>> {
     const stream = bufferToStream(file)
-    const entities = await this.csvParser.parse(stream, UserParsed, null, null, { strict: true, separator: ',' })
+    const entities = await this.csvParser.parse(stream, UserParsed, null, null, { strict: true, separator: ';' })
     for (let user of entities.list) {
       const encrypted = await bcrypt.hash(user.email + '_' + user.phone, SALT_ROUNDS)
       let newUser: UserEntity = {
@@ -108,7 +108,7 @@ export class MiscService {
 
   async parseSeller(file: Buffer): Promise<ResponseBody<any[]>> {
     const stream = bufferToStream(file)
-    const entities = await this.csvParser.parse(stream, SellerParsed, null, null, { strict: true, separator: ',' })
+    const entities = await this.csvParser.parse(stream, SellerParsed, null, null, { strict: true, separator: ';' })
     for (let seller of entities.list) {
       const user = await this.userRepo.findOneOrFail({ where: { email: seller.email } })
       let newSeller: SellerAttribute = {
@@ -134,7 +134,7 @@ export class MiscService {
 
   async parseProduct(file: Buffer): Promise<ResponseBody<any[]>> {
     const stream = bufferToStream(file)
-    const entities = await this.csvParser.parse(stream, ProductParsed, 3, null, { strict: true, separator: ';' })
+    const entities = await this.csvParser.parse(stream, ProductParsed, null, null, { strict: true, separator: ';' })
     for (let product of entities.list) {
       const user = await this.userRepo.findOneOrFail({ where: { email: product.email } })
       const seller = await this.sellerRepo.findOneOrFail({
