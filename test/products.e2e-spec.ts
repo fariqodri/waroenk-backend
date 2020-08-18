@@ -21,7 +21,7 @@ describe('GET Product and Categories (e2e)', () => {
     full_name: 'user 1',
     email: 'user@example.com',
     phone: '0812232112',
-    role: 'buyer',
+    role: 'seller',
     password: 'hehe1234',
     created_at: new Date(),
     updated_at: null,
