@@ -33,7 +33,8 @@ export class ShopService {
       birth_place: seller.birth_place,
       gender: seller.gender,
       image: seller.image,
-      tier: seller.tier
+      tier: seller.tier,
+      is_active: seller.is_active
     }
     return new ResponseBody(response);
   }
