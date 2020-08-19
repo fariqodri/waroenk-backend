@@ -18,10 +18,4 @@ export class FaqController {
       search
     })
   }
-
-  // TEMPORARY ENDPOINT
-  @Post(':id')
-  activateSeller(@Param('id') id: string) {
-    return this.service.activateSeller(id)
-  }
 }

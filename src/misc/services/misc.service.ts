@@ -67,24 +67,6 @@ export class MiscService {
     private categoryRepo: CategoryRepository
   ) {}
 
-  // TEMPORARY ENDPOINT
-  async activateSeller(id: string):Promise<ResponseBody<any>> {
-    let seller: SellerAttribute = await this.sellerRepo.findOne({
-      relations: ['user'],
-      where: { id: id }
-    })
-    seller.is_active = true
-    seller.has_paid = true
-    seller.updated_at = new Date()
-    await this.sellerRepo.save(seller)
-    console.log(seller)
-    let user = seller.user
-    user.role = 'seller'
-    user.updated_at = new Date()
-    await this.userRepo.save(user)
-    return new ResponseBody(null, "seller activated")
-  }
-
   async parseUser(file: Buffer): Promise<ResponseBody<any[]>> {
     const stream = bufferToStream(file)
     const entities = await this.csvParser.parse(stream, UserParsed, null, null, { strict: true, separator: ';' })

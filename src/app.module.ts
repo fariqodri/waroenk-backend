@@ -16,6 +16,7 @@ import { ProposalModule } from './proposal/proposal.module';
 import { OrderModule } from './order/order.module';
 import { ChatModule } from './chat/chat.module';
 import { PostModule } from './post/post.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { PostModule } from './post/post.module';
       password: REDIS_PASSWORD,
     }),
     ChatModule,
-    PostModule
+    PostModule,
+    AdminModule
   ],
 })
 export class AppModule {}
