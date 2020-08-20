@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ResponseListBody, ResponseBody } from '../../utils/response';
 import { FaqRepository } from '../repositories/faq.repository';
 import { FaqQuery, LocationQuery } from '../dto/misc.dto';
@@ -91,29 +91,26 @@ export class MiscService {
   async parseSeller(file: Buffer): Promise<ResponseBody<any[]>> {
     const stream = bufferToStream(file)
     const entities = await this.csvParser.parse(stream, SellerParsed, null, null, { strict: true, separator: ';' })
-    for (let seller of entities.list) {
-      const user = await this.userRepo.findOne({ where: { email: seller.email } })
-      if (user === undefined) {
-        throw new BadRequestException(new ResponseBody(null, `user with email ${seller.email} not valid`))
-      }
-      let newSeller: SellerAttribute = {
-        id: nanoid(11),
-        user: user,
-        tier: 1,
-        description: seller.description,
-        shop_name: seller.shop_name,
-        shop_address: seller.shop_address,
-        birth_date: seller.birth_date,
-        birth_place: seller.birth_place,
-        gender: seller.gender,
-        image: seller.image,
-        created_at: new Date(),
-        updated_at: null,
-        is_active: true,
-        has_paid: true
-      }
-      await this.sellerRepo.insert(newSeller)
-    }
+    // for (let seller of entities.list) {
+    //   const user = await this.userRepo.findOneOrFail({ where: { email: seller.email }})
+    //   let newSeller: SellerAttribute = {
+    //     id: nanoid(11),
+    //     user: user,
+    //     tier: 1,
+    //     description: seller.description,
+    //     shop_name: seller.shop_name,
+    //     shop_address: seller.shop_address,
+    //     birth_date: seller.birth_date,
+    //     birth_place: seller.birth_place,
+    //     gender: seller.gender,
+    //     image: seller.image,
+    //     created_at: new Date(),
+    //     updated_at: null,
+    //     is_active: true,
+    //     has_paid: true
+    //   }
+    //   await this.sellerRepo.insert(newSeller)
+    // }
     return new ResponseBody(entities.list)
   }
 
@@ -121,7 +118,7 @@ export class MiscService {
     const stream = bufferToStream(file)
     const entities = await this.csvParser.parse(stream, ProductParsed, null, null, { strict: true, separator: ';' })
     for (let product of entities.list) {
-      const user = await this.userRepo.findOneOrFail({ where: { email: product.email } })
+      const user = await this.userRepo.findOneOrFail({ where: { email: product.email }})
       const seller = await this.sellerRepo.findOneOrFail({
         relations: ['user'],
         where: { user: user.id }
