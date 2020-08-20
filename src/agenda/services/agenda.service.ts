@@ -149,9 +149,14 @@ export class AgendaService {
       });
     }
     if (query.location) {
-      queryBuilder = queryBuilder.andWhere('LOWER(agendas.location) LIKE :location', {
-        location: `%${query.location.toLowerCase()}%`,
-      });
+      const paramLocations = query.location.toLowerCase().split(',')
+      let locations: string[] = []
+      for (var index in paramLocations) {
+        locations.push("'" + paramLocations[index] + "'")
+      }
+      let locationQuery = "(" + locations.join(',') + ")"
+      queryBuilder = queryBuilder
+        .andWhere("LOWER(agendas.location) IN " + locationQuery);
     }
     if (query.type) {
       queryBuilder = queryBuilder.andWhere('LOWER(agendas.type) LIKE :type', {
