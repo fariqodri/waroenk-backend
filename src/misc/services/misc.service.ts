@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { ResponseListBody, ResponseBody } from '../../utils/response';
 import { FaqRepository } from '../repositories/faq.repository';
 import { FaqQuery, LocationQuery } from '../dto/misc.dto';
@@ -92,7 +92,10 @@ export class MiscService {
     const stream = bufferToStream(file)
     const entities = await this.csvParser.parse(stream, SellerParsed, null, null, { strict: true, separator: ';' })
     for (let seller of entities.list) {
-      const user = await this.userRepo.findOneOrFail({ where: { email: seller.email } })
+      const user = await this.userRepo.findOne({ where: { email: seller.email } })
+      if (user === undefined) {
+        throw new BadRequestException(new ResponseBody(null, `user with email ${seller.email} not valid`))
+      }
       let newSeller: SellerAttribute = {
         id: nanoid(11),
         user: user,
