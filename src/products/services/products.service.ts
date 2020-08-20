@@ -22,7 +22,7 @@ export class ProductsService {
     }
     if (param.categories) {
       const paramCategories = param.categories.split(',')
-      let categoryIds:string[] = []
+      let categoryIds: string[] = []
       for (var index in paramCategories) {
         categoryIds.push("'" + paramCategories[index] + "'")
       }
