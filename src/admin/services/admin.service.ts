@@ -4,12 +4,16 @@ import { UserRepository } from "../../users/repositories/users.repository"
 import { SellerAttributeRepository } from "../../users/repositories/seller.repository"
 import { ResponseBody } from "../../utils/response"
 import { SellerAttribute } from "../../users/entities/seller.entity"
+import { ListBuyersQuery } from "../dto/admin.dto"
+import { UserEntity } from "../../users/entities/users.entity"
+import { UsersProvider } from "../../users/providers/users.provider"
 
 @Injectable()
 export class AdminService {
   constructor(
     private userRepo: UserRepository,
-    private sellerRepo: SellerAttributeRepository
+    private sellerRepo: SellerAttributeRepository,
+    private userProvider: UsersProvider
   ) {}
 
   async activateSeller(id: string): Promise<ResponseBody<any>> {
@@ -26,5 +30,9 @@ export class AdminService {
     user.updated_at = new Date()
     await this.userRepo.save(user)
     return new ResponseBody(null, "seller activated")
+  }
+
+  async listBuyers(query: ListBuyersQuery) {
+    return this.userProvider.listBuyers(query)
   }
 }

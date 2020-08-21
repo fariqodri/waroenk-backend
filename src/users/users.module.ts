@@ -7,10 +7,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SellerAttributeRepository } from './repositories/seller.repository';
 import { ShippingAddressRepository } from './repositories/shipping-address.repository';
 import { MiscModule } from '../misc/misc.module';
+import { UsersProvider } from './providers/users.provider';
 
 @Module({
-  providers: [UsersService],
-  exports: [UsersService, TypeOrmModule.forFeature([SellerAttributeRepository])],
+  providers: [UsersService, UsersProvider],
+  exports: [UsersService, TypeOrmModule.forFeature([SellerAttributeRepository]), UsersProvider],
   controllers: [UsersController],
   imports: [PermissionModule, MiscModule, TypeOrmModule.forFeature([UserRepository, SellerAttributeRepository, ShippingAddressRepository])],
 })
