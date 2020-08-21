@@ -134,7 +134,7 @@ export class ShopService {
         "seller with userId: [" + userId + "] is inactive so it can't create product"))
     }
     const category = await this.categoryRepo.findOne(param.categoryId);
-    let discount = 0
+    let discount = 0.00
     if (param.discount) {
       discount = param.discount
     }

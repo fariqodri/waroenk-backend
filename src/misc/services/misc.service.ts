@@ -131,7 +131,7 @@ export class MiscService {
         seller: seller,
         name: product.product_name,
         price_per_quantity: product.product_price,
-        discount: 0,
+        discount: 0.00,
         description: product.product_description,
         images: product.product_images.split(','),
         available: true,

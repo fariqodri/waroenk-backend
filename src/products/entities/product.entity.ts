@@ -28,7 +28,7 @@ export class ProductEntity {
   @Column()
   price_per_quantity: number
 
-  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0})
+  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0.00 })
   discount: number
 
   @Column()
