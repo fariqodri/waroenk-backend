@@ -162,6 +162,8 @@ export class ChatService {
         'receiver.full_name',
         'chat.text',
         'chat.order.id',
+        'chat.date',
+        'chat.time'
       ])
       .getMany();
     return res.map(r => ({
