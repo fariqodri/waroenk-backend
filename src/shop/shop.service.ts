@@ -260,7 +260,7 @@ export class ShopService {
     products = products.map(p => ({
       ...p,
       images: p.images.split(','),
-      discount: Number(p.discount)
+      discount: Number(p.discount) == 0? 0.00: Number(p.discount)
     }));
     return new ResponseListBody(products, "ok", query.page, products.length)
   }

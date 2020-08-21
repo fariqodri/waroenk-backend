@@ -81,7 +81,7 @@ export class ProductsService {
     products = await queryBuilder.execute();
     products = products.map(p => ({
       ...p,
-      discount: Number(p.discount),
+      discount: Number(p.discount) == 0? 0.00: Number(p.discount),
       images: p.images.split(','),
     }));
     products.forEach(function(p) {
@@ -118,7 +118,7 @@ export class ProductsService {
           is_active: product.seller.is_active,
           tier: product.seller.tier
         },
-        discount: Number(product.discount),
+        discount: Number(product.discount) == 0? 0.00: Number(product.discount),
         description: product.description,
         images: product.images,
         category: {
