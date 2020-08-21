@@ -67,7 +67,7 @@ export class MiscService {
     private categoryRepo: CategoryRepository
   ) {}
 
-  async parseUser(file: Buffer): Promise<ResponseBody<any[]>> {
+  async parseUser(file: Buffer): Promise<ResponseListBody<any[]>> {
     const stream = bufferToStream(file)
     const entities = await this.csvParser.parse(stream, UserParsed, null, null, { strict: true, separator: ';' })
     for (let user of entities.list) {
@@ -85,10 +85,10 @@ export class MiscService {
       }
       await this.userRepo.insert(newUser)
     }
-    return new ResponseBody(entities.list)
+    return new ResponseListBody(entities.list, 'ok', 1, entities.list.length)
   }
 
-  async parseSeller(file: Buffer): Promise<ResponseBody<any[]>> {
+  async parseSeller(file: Buffer): Promise<ResponseListBody<any[]>> {
     const stream = bufferToStream(file)
     const entities = await this.csvParser.parse(stream, SellerParsed, null, null, { strict: true, separator: ';' })
     for (let seller of entities.list) {
@@ -112,10 +112,10 @@ export class MiscService {
       }
       await this.sellerRepo.insert(newSeller)
     }
-    return new ResponseBody(entities.list)
+    return new ResponseListBody(entities.list, 'ok', 1, entities.list.length)
   }
 
-  async parseProduct(file: Buffer): Promise<ResponseBody<any[]>> {
+  async parseProduct(file: Buffer): Promise<ResponseListBody<any[]>> {
     const stream = bufferToStream(file)
     const entities = await this.csvParser.parse(stream, ProductParsed, null, null, { strict: true, separator: ';' })
     for (let product of entities.list) {
@@ -142,7 +142,7 @@ export class MiscService {
       await this.productRepo.insert(newProduct)
     }
     console.log(await this.productRepo.find())
-    return new ResponseBody(entities.list)
+    return new ResponseListBody(entities.list, 'ok', 1, entities.list.length)
   }
 
   async listLocation(query: LocationQuery): Promise<ResponseBody<any[]>> {
