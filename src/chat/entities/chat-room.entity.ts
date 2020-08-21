@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany, CreateDateColumn } from "typeorm";
 import { UserEntity } from "../../users/entities/users.entity";
 import { SellerAttribute } from "../../users/entities/seller.entity";
 import { ChatEntity } from "./chat.entity";
@@ -16,4 +16,7 @@ export class ChatRoomEntity {
 
   @OneToMany(type => ChatEntity, chat => chat.room)
   chats?: ChatEntity[]
+
+  @Column({ name: 'latest_chat_at', type: 'bigint', default: 0 })
+  latest_chat_at: number
 }
