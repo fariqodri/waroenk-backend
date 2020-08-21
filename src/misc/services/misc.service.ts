@@ -93,6 +93,7 @@ export class MiscService {
     const entities = await this.csvParser.parse(stream, SellerParsed, null, null, { strict: true, separator: ';' })
     for (let seller of entities.list) {
       const user = await this.userRepo.findOneOrFail({ email: seller.email })
+      const dateParsed = seller.birth_date.split('/')
       let newSeller: SellerAttribute = {
         id: nanoid(11),
         user: user,
@@ -100,7 +101,7 @@ export class MiscService {
         description: seller.description,
         shop_name: seller.shop_name,
         shop_address: seller.shop_address,
-        birth_date: seller.birth_date,
+        birth_date: `${dateParsed[2]}-${dateParsed[1]}-${dateParsed[0]}`,
         birth_place: seller.birth_place,
         gender: seller.gender,
         image: seller.image,
