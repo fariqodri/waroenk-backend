@@ -13,6 +13,8 @@ import { ResponseBody } from '../utils/response';
 import * as serviceAccount from './service_account.json';
 import { FIREBASE_DATABASE_URL } from '../constants';
 import { ShopService } from '../shop/shop.service';
+import { Connection } from 'typeorm';
+import { ChatRoomEntity } from './entities/chat-room.entity';
 
 @Injectable()
 export class ChatService {
@@ -24,6 +26,7 @@ export class ChatService {
     private readonly chatRoomRepo: ChatRoomRepository,
     private readonly chatRepo: ChatRepository,
     private readonly shopService: ShopService,
+    private readonly connection: Connection
   ) {
     this.firebaseApp = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
@@ -64,7 +67,10 @@ export class ChatService {
           ...chat,
           room: room,
         };
-        await this.chatRepo.insert(chat);
+        await this.connection.transaction(async manager => {
+          await manager.insert(ChatEntity, chat)
+          await manager.update(ChatRoomEntity, chat_room_id, { latest_chat_at: Date.now() })
+        })
       } catch (err) {
         throw new ConflictException(
           new ResponseBody(null, 'chat room has not been created'),
@@ -72,17 +78,20 @@ export class ChatService {
       }
     } else {
       room_id = nanoid(11);
-      const room = this.chatRoomRepo.create({
-        id: room_id,
-        buyer: sender,
-        seller: receiver,
-      });
-      await this.chatRoomRepo.insert(room);
-      chat = {
-        ...chat,
-        room: room,
-      };
-      await this.chatRepo.insert(chat);
+      await this.connection.transaction(async manager => {
+        const room = manager.create(ChatRoomEntity, {
+          id: room_id,
+          buyer: sender,
+          seller: receiver,
+        })
+        await manager.insert(ChatRoomEntity, room);
+        chat = {
+          ...chat,
+          room: room,
+        };
+        await manager.insert(ChatEntity, chat);  
+        await manager.update(ChatRoomEntity, room_id, { latest_chat_at: Date.now() })
+      })
     }
 
     if (receiverDeviceToken) {
@@ -143,6 +152,7 @@ export class ChatService {
         'seller.role',
         'seller.full_name',
       ])
+      .orderBy('room.latest_chat_at', 'DESC')
       .getMany();
   }
 
@@ -152,6 +162,7 @@ export class ChatService {
       .innerJoin('chat.room', 'room')
       .innerJoin('chat.sender', 'sender')
       .innerJoin('chat.receiver', 'receiver')
+      .orderBy('chat.created_at', 'ASC')
       .where('room.id = :roomId', { roomId })
       .select([
         'chat.id',
@@ -163,7 +174,8 @@ export class ChatService {
         'chat.text',
         'chat.order.id',
         'chat.date',
-        'chat.time'
+        'chat.time',
+        'chat.read_by_receiver'
       ])
       .getMany();
     return res.map(r => ({

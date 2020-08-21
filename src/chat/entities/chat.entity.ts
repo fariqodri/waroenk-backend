@@ -1,4 +1,4 @@
-import { Entity, Column, Index, PrimaryColumn, ManyToOne } from "typeorm";
+import { Entity, Column, Index, PrimaryColumn, ManyToOne, CreateDateColumn } from "typeorm";
 import { ChatRoomEntity } from "./chat-room.entity";
 import { UserEntity } from "../../users/entities/users.entity";
 import { OrderEntity } from "../../order/entities/order.entity";
@@ -35,4 +35,10 @@ export class ChatEntity {
 
   @ManyToOne(type => UserEntity)
   receiver: UserEntity
+
+  @Column({ type: 'boolean', default: false })
+  read_by_receiver?: boolean
+
+  @CreateDateColumn({ name: 'created_at' })
+  created_at: Date
 }
