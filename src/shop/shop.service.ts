@@ -134,7 +134,7 @@ export class ShopService {
         "seller with userId: [" + userId + "] is inactive so it can't create product"))
     }
     const category = await this.categoryRepo.findOne(param.categoryId);
-    let discount = 0
+    let discount = 0.00
     if (param.discount) {
       discount = param.discount
     }
@@ -260,7 +260,7 @@ export class ShopService {
     products = products.map(p => ({
       ...p,
       images: p.images.split(','),
-      discount: Number(p.discount)
+      discount: Number(p.discount) == 0? 0.00: Number(p.discount)
     }));
     return new ResponseListBody(products, "ok", query.page, products.length)
   }
