@@ -6,6 +6,8 @@ import { DiscussionEntity } from '../entities/discussion.entity';
 import { UserRepository } from '../../users/repositories/users.repository';
 import { nanoid } from 'nanoid';
 import { ProductRepository } from '../../products/repositories/product.repository';
+import { Like } from 'typeorm';
+import { response } from 'express';
 
 @Injectable()
 export class DiscussionService {
@@ -65,9 +67,11 @@ export class DiscussionService {
     return new ResponseBody(response)
   }
 
-  async getDiscussion(productId: string, parentId?: string): Promise<ResponseBody<DiscussionResponse>> {
+  async getDiscussion(productId: string, parentId?: string): Promise<ResponseBody<any>> {
     let query = this.discussionRepo
       .createQueryBuilder('d')
+      .innerJoin('d.user', 'user')
+      .innerJoin('d.product', 'product')
       .select(`
         d.id AS id,
         d.parentId AS parentId,
@@ -76,7 +80,13 @@ export class DiscussionService {
         d.created_at AS created_at,
         d.updated_at AS updated_at
       `)
+      .addSelect([
+        'user.id AS userId',
+        'user.full_name AS userName',
+        'user.role AS userRole'
+      ])
       .where('d.productId = :productId', { productId })
+      .andWhere('d.deleted_at IS NULL')
     if (parentId && parentId !== "") {
       query = query.andWhere('d.parentId = :parentId', { parentId })
     }
