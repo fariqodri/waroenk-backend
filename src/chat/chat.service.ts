@@ -26,7 +26,7 @@ export class ChatService {
     private readonly chatRoomRepo: ChatRoomRepository,
     private readonly chatRepo: ChatRepository,
     private readonly shopService: ShopService,
-    private readonly connection: Connection
+    private readonly connection: Connection,
   ) {
     this.firebaseApp = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
@@ -68,9 +68,11 @@ export class ChatService {
           room: room,
         };
         await this.connection.transaction(async manager => {
-          await manager.insert(ChatEntity, chat)
-          await manager.update(ChatRoomEntity, chat_room_id, { latest_chat_at: Date.now() })
-        })
+          await manager.insert(ChatEntity, chat);
+          await manager.update(ChatRoomEntity, chat_room_id, {
+            latest_chat_at: Date.now(),
+          });
+        });
       } catch (err) {
         throw new ConflictException(
           new ResponseBody(null, 'chat room has not been created'),
@@ -83,15 +85,17 @@ export class ChatService {
           id: room_id,
           buyer: sender,
           seller: receiver,
-        })
+        });
         await manager.insert(ChatRoomEntity, room);
         chat = {
           ...chat,
           room: room,
         };
-        await manager.insert(ChatEntity, chat);  
-        await manager.update(ChatRoomEntity, room_id, { latest_chat_at: Date.now() })
-      })
+        await manager.insert(ChatEntity, chat);
+        await manager.update(ChatRoomEntity, room_id, {
+          latest_chat_at: Date.now(),
+        });
+      });
     }
 
     if (receiverDeviceToken) {
@@ -157,6 +161,20 @@ export class ChatService {
   }
 
   async getChatsInRoom(roomId: string, userId: string) {
+    await this.chatRepo
+      .createQueryBuilder()
+      .update()
+      .set({ read_by_receiver: true })
+      .where(
+        'roomId = :roomId AND receiverId = :receiverId AND read_by_receiver = :readByReceiver',
+        {
+          roomId,
+          receiverId: userId,
+          readByReceiver: 0,
+        },
+      )
+      .execute();
+
     const res = await this.chatRepo
       .createQueryBuilder('chat')
       .innerJoin('chat.room', 'room')
@@ -175,7 +193,7 @@ export class ChatService {
         'chat.order.id',
         'chat.date',
         'chat.time',
-        'chat.read_by_receiver'
+        'chat.read_by_receiver',
       ])
       .getMany();
     return res.map(r => ({
