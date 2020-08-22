@@ -160,6 +160,7 @@ export class OrderService {
     carts.forEach(function(cart) {
       let seller: SellerAttribute = cart.product.seller
       let cartList: CartEntity[] = sellerMap.has(seller)? sellerMap.get(seller): []
+      cartList.push(cart)
       sellerMap.set(seller, cartList)
     })
     let orders = []
@@ -242,28 +243,50 @@ export class OrderService {
     return new ResponseBody('cart item successfully edited')
   }
 
-  async listCart(userId: string): Promise<ResponseListBody<any[]>> {
-    let queryBuilder = this.cartRepo
-      .createQueryBuilder('cart')
-      .where('cart.userId = :userId', { userId: userId })
-      .andWhere('cart.is_active IS TRUE');
-    queryBuilder = queryBuilder
-      .innerJoin('cart.product', 'product')
-      .select(
-        `cart.quantity AS quantity`,
-      )
-      .addSelect([
-        'product.id AS product_id',
-        'product.name AS product_name',
-        'product.price_per_quantity AS price_per_quantity',
-        'product.discount AS discount',
-        'product.images AS images'
-      ]);
-    let carts: any[] = await queryBuilder.execute();
+  async listCart(userId: string): Promise<ResponseListBody<any>> {
+    let carts: CartEntity[] = await this.cartRepo.find({
+      relations: ['user', 'product'],
+      where: {
+        user: userId,
+        is_active: true
+      }
+    })
+    if (carts === undefined) {
+      throw new BadRequestException(new ResponseBody(null,
+        `user with userId: [${userId}] has no active carts`))
+    }
     carts = carts.map(p => ({
       ...p,
-      discount: Number(p.discount),
+      discount: Number(p.product.discount),
+      product_id: p.product.id,
+      product_name: p.product.name,
+      price_per_quantity: p.product.price_per_quantity,
+      images: p.product.images
     }));
-    return new ResponseListBody(carts, "ok", 1, carts.length)
+    let sellerMap: Map<SellerAttribute, CartEntity[]> = new Map()
+    carts.forEach(function(cart) {
+      let seller: SellerAttribute = cart.product.seller
+      delete cart.user
+      delete cart.product
+      delete cart.is_active
+      let cartList: CartEntity[] = sellerMap.has(seller)? sellerMap.get(seller): []
+      cartList.push(cart)
+      sellerMap.set(seller, cartList)
+    })
+    let response = []
+    for (let [seller, carts] of sellerMap) {
+      let products = []
+      for (let i in carts) {
+        products.push(carts[i])
+      }
+      response.push({
+        seller: {
+          sellerId: seller.id,
+          sellerName: seller.shop_name
+        },
+        products: products
+      })
+    }
+    return new ResponseListBody(response, "ok", 1, carts.length)
   }
 }
