@@ -486,20 +486,26 @@ describe('Order e2e test', () => {
         message: 'ok',
         result: [
           {
-            quantity: 2,
-            product_id: 'product_1',
-            product_name: 'KangKunG',
-            price_per_quantity: 10000,
-            discount: 0,
-            images: '1'
+            seller: { sellerId: 'seller-1', sellerName: 'Toko Sayur' },
+            products: [{
+              quantity: 2,
+              discount: 0,
+              product_id: 'product_1',
+              product_name: 'KangKunG',
+              price_per_quantity: 10000,
+              images: [ '1' ]
+            }]
           },
           {
-            quantity: 3,
-            product_id: 'product_4',
-            product_name: 'Bayamayam',
-            price_per_quantity: 6000,
-            discount: 0,
-            images: '2'
+            seller: { sellerId: 'seller-2', sellerName: 'Toko Buah' },
+            products: [{
+              quantity: 3,
+              discount: 0,
+              product_id: 'product_4',
+              product_name: 'Bayamayam',
+              price_per_quantity: 6000,
+              images: [ '2' ]
+            }]
           }
         ],
         page: 1,
