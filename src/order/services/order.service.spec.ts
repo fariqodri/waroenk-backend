@@ -5,19 +5,21 @@ import { CartRepository } from '../repositories/cart.repository';
 import { UserRepository } from '../../users/repositories/users.repository';
 import { ProductRepository } from '../../products/repositories/product.repository';
 import { OrderItemRepository } from '../repositories/order-item.repository';
-
-jest.mock('../../products/repositories/product.repository')
-jest.mock('../../users/repositories/seller.repository')
-jest.mock('../repositories/order.repository')
-jest.mock('../repositories/cart.repository')
-jest.mock('../repositories/order-item.repository')
+import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
 
 describe('OrderService', () => {
   let service: OrderService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OrderService, OrderRepository, OrderItemRepository, CartRepository, UserRepository, ProductRepository],
+      providers: [
+        OrderService, 
+        OrderRepository,
+        OrderItemRepository, 
+        CartRepository, 
+        UserRepository, 
+        ProductRepository,
+        SellerAttributeRepository],
     }).compile();
 
     service = module.get<OrderService>(OrderService);

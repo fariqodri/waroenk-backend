@@ -13,6 +13,7 @@ import { OrderItem } from '../entities/order-item.entity';
 import { OrderItemRepository } from '../repositories/order-item.repository';
 import { Cron } from '@nestjs/schedule';
 import { LessThan } from 'typeorm';
+import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
 
 @Injectable()
 export class OrderService {
@@ -22,6 +23,7 @@ export class OrderService {
     private orderItemRepo: OrderItemRepository,
     private productRepo: ProductRepository,
     private userRepo: UserRepository,
+    private sellerRepo: SellerAttributeRepository
   ) {}
 
   @Cron('* 10 * * * *', { name: 'order' })
@@ -156,15 +158,16 @@ export class OrderService {
       throw new BadRequestException(new ResponseBody(null,
         "user with userId: [" + userId + "] has no active carts"))
     }
-    let sellerMap: Map<SellerAttribute, CartEntity[]> = new Map()
+    let sellerMap: Map<string, CartEntity[]> = new Map()
     carts.forEach(function(cart) {
       let seller: SellerAttribute = cart.product.seller
-      let cartList: CartEntity[] = sellerMap.has(seller)? sellerMap.get(seller): []
+      let cartList: CartEntity[] = sellerMap.has(seller.id)? sellerMap.get(seller.id): []
       cartList.push(cart)
-      sellerMap.set(seller, cartList)
+      sellerMap.set(seller.id, cartList)
     })
     let orders = []
-    for (let [seller, carts] of sellerMap) {
+    for (let [sellerId, carts] of sellerMap) {
+      const seller = await this.sellerRepo.findOne(sellerId)
       let newOrder: OrderEntity = {
         id: nanoid(11),
         user: user,
@@ -263,22 +266,23 @@ export class OrderService {
       price_per_quantity: p.product.price_per_quantity,
       images: p.product.images
     }));
-    let sellerMap: Map<SellerAttribute, CartEntity[]> = new Map()
+    let sellerMap: Map<string, CartEntity[]> = new Map()
     carts.forEach(function(cart) {
-      let seller: SellerAttribute = cart.product.seller
+      const seller: SellerAttribute = cart.product.seller
       delete cart.user
       delete cart.product
       delete cart.is_active
-      let cartList: CartEntity[] = sellerMap.has(seller)? sellerMap.get(seller): []
+      let cartList: CartEntity[] = sellerMap.has(seller.id)? sellerMap.get(seller.id): []
       cartList.push(cart)
-      sellerMap.set(seller, cartList)
+      sellerMap.set(seller.id, cartList)
     })
     let response = []
-    for (let [seller, carts] of sellerMap) {
+    for (let [sellerId, carts] of sellerMap) {
       let products = []
       for (let i in carts) {
         products.push(carts[i])
       }
+      const seller = await this.sellerRepo.findOne(sellerId)
       response.push({
         seller: {
           sellerId: seller.id,
