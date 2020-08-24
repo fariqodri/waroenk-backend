@@ -15,6 +15,8 @@ import { ShopModule } from "../src/shop/shop.module";
 import { SellerAttribute } from "../src/users/entities/seller.entity";
 import { UserEntity } from "../src/users/entities/users.entity";
 import { entities } from "./dependencies";
+import { OrderEntity } from "../src/order/entities/order.entity";
+import { OrderItem } from "../src/order/entities/order-item.entity";
 
 
 const fakeRedisClientProvider = {
@@ -157,6 +159,85 @@ describe('Shop E2E', () => {
         updated_at: null
       },
     ])
+  })
+
+  it('should list seller order', async () => {
+    const productOrder1: ProductEntity = {
+      id: 'product_o1',
+      name: 'KangKunG',
+      price_per_quantity: 10000,
+      discount: 0,
+      description: 'kangkung',
+      images: ['1'],
+      category: vegetableCategory,
+      seller: seller,
+      created_at: new Date(),
+      updated_at: null,
+      deleted_at: null,
+      available: true,
+    }
+    const productOrder2: ProductEntity = {
+      id: 'product_o2',
+      name: 'oyong',
+      price_per_quantity: 20000,
+      discount: 0,
+      description: 'otong',
+      images: ['1'],
+      category: vegetableCategory,
+      seller: seller,
+      created_at: new Date(),
+      updated_at: null,
+      deleted_at: null,
+      available: true,
+    }
+    const order1: OrderEntity = {
+      id: 'order1',
+      user: user2,
+      seller: seller,
+      status: 'on_delivery',
+      address: 'jalan anggur',
+      recipient_name: 'joni',
+      recipient_number: '08589239129',
+      created_at: new Date(),
+      fare: 10000,
+      courier: 'jne reg',
+      notes: 'ke gang delima',
+      payment_bank: 'bca',
+      account_owner: 'joni',
+      account_number: '0125212',
+      payment_proof: 'img-proof',
+      receipt_number: 'faktur-123121',
+      updated_at: new Date(),
+      items: []
+    }
+    const order1Item1: OrderItem = {
+      order: order1,
+      product: productOrder1,
+      quantity: 2
+    }
+    const order1Item2: OrderItem = {
+      order: order1,
+      product: productOrder2,
+      quantity: 2
+    }
+    await getRepository(ProductEntity).insert([productOrder1, productOrder2])
+    await getRepository(OrderEntity).insert([order1])
+    await getRepository(OrderItem).insert([order1Item1, order1Item2])
+    return request(app.getHttpServer())
+      .get('/shop/order/list?status=on_delivery')
+      .expect(200)
+      .then(res => {
+        const body = res.body;
+        const { message, result } = body;
+        const { id, buyerId, buyerName, status, totalItem, subTotal} = result[0];
+        expect(message).toEqual('ok');
+        expect(id).toEqual(order1.id);
+        expect(status).toEqual('on_delivery');
+        expect(buyerId).toEqual(user2.id);
+        expect(buyerName).toEqual(user2.full_name);
+        expect(totalItem).toEqual(4);
+        expect(subTotal).toEqual(70000);
+      });
   })
 
   it('get shop', () => {

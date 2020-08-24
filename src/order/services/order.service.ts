@@ -5,14 +5,14 @@ import { OrderRepository } from '../repositories/order.repository';
 import { ProductRepository } from '../../products/repositories/product.repository';
 import { UserRepository } from '../../users/repositories/users.repository';
 import { CartEntity } from '../entities/cart.entity';
-import { CreateCartParam, CreateOrderParam, UpdateOrderParam } from '../dto/order.dto';
+import { CreateCartParam, CreateOrderParam, UpdateOrderParam, OrderQueryParam } from '../dto/order.dto';
 import { nanoid } from 'nanoid';
 import { SellerAttribute } from '../../users/entities/seller.entity';
 import { OrderEntity } from '../entities/order.entity';
 import { OrderItem } from '../entities/order-item.entity';
 import { OrderItemRepository } from '../repositories/order-item.repository';
 import { Cron } from '@nestjs/schedule';
-import { LessThan } from 'typeorm';
+import { LessThan, Like } from 'typeorm';
 import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
 
 @Injectable()
@@ -53,6 +53,38 @@ export class OrderService {
       order.updated_at = today
       await this.orderRepo.save(order)
     }
+  }
+
+  async listOrder(param: OrderQueryParam, userId: string): Promise<ResponseBody<any>> {
+    const skippedItems = (param.page - 1) * param.limit;
+    const orders = await this.orderRepo.find({
+      relations: ['user', 'items', 'seller'],
+      where: {
+        user: userId,
+        status: Like(param.status)
+      },
+      order: { created_at: 'DESC' },
+      skip: skippedItems,
+      take: param.limit
+    })
+    const response = orders.map(p => ({
+      ...p,
+      sellerId: p.seller.id,
+      sellerName: p.seller.shop_name,
+      totalItem: p.items.reduce(function(prev, cur) {
+        return prev + cur.quantity;
+      }, 0),
+      subTotal: p.fare + p.items.reduce(function(prev, cur) {
+        return prev + 
+          (cur.product.price_per_quantity * (1 - cur.product.discount)) * cur.quantity;
+      }, 0)
+    }));
+    response.forEach(function(p) {
+      delete p.user
+      delete p.items
+      delete p.seller
+    })
+    return new ResponseListBody(response, 'ok', param.page, orders.length)
   }
 
   findOrderById(orderId: string): Promise<OrderEntity> {

@@ -5,7 +5,7 @@ import { Roles } from '../../utils/decorators';
 import { Request } from 'express';
 import { ValidationPipe } from '../../utils/validation.pipe';
 import { OrderService } from '../services/order.service';
-import { CreateOrderParam, UpdateOrderParam } from '../dto/order.dto';
+import { CreateOrderParam, UpdateOrderParam, OrderQueryParam } from '../dto/order.dto';
 
 @Controller('order')
 export class OrderController {
@@ -48,5 +48,17 @@ export class OrderController {
   @Get(':id')
   detail(@Param('id') id: string) {
     return this.service.detailOrder(id)
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('all')
+  @Get()
+  list(@Query() {
+    limit = 10,
+    page = 1,
+    status = '%%'
+  }: OrderQueryParam, @Req() request: Request) {
+    const user: { userId } = request.user as { userId }
+    return this.service.listOrder({ limit, page, status }, user.userId)
   }
 }

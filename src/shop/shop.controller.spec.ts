@@ -5,9 +5,7 @@ import { SellerAttributeRepository } from '../users/repositories/seller.reposito
 import { UserRepository } from '../users/repositories/users.repository';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
-
-jest.mock('../users/repositories/seller.repository')
-jest.mock('../products/repositories/product.repository')
+import { OrderRepository } from '../order/repositories/order.repository';
 
 describe('Shop Controller', () => {
   let controller: ShopController;
@@ -15,7 +13,13 @@ describe('Shop Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ShopController],
-      providers: [ShopService, SellerAttributeRepository, ProductRepository, CategoryRepository, UserRepository]
+      providers: [
+        ShopService, 
+        SellerAttributeRepository,
+        ProductRepository, 
+        CategoryRepository, 
+        UserRepository,
+        OrderRepository]
     }).compile();
 
     controller = module.get<ShopController>(ShopController);

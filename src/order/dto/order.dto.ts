@@ -44,3 +44,9 @@ export class UpdateOrderParam {
   @jf.string().optional()
   receipt_number: string
 }
+
+export class OrderQueryParam {
+  status?: string
+  page: number
+  limit: number
+}
