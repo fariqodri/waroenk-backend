@@ -18,8 +18,6 @@ import { SellerAttribute } from "../src/users/entities/seller.entity";
 import { UserEntity } from "../src/users/entities/users.entity";
 import { entities } from "./dependencies";
 
-
-
 const fakeRedisClientProvider = {
   set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
   get: jest.fn().mockImplementation((key, cb) => cb(null, `{}`)),
@@ -433,6 +431,56 @@ describe('Order e2e test', () => {
         expect(receipt_number).toEqual(processedOrder.receipt_number);
         expect(updated_at).toBeDefined();
         expect(subtotal).toEqual(70000);
+      });
+  })
+
+  it('should list order', async () => {
+    const order1: OrderEntity = {
+      id: 'order1',
+      user: user1,
+      seller: seller1,
+      status: 'on_delivery',
+      address: 'jalan anggur',
+      recipient_name: 'joni',
+      recipient_number: '08589239129',
+      created_at: new Date(),
+      fare: 10000,
+      courier: 'jne reg',
+      notes: 'ke gang delima',
+      payment_bank: 'bca',
+      account_owner: 'joni',
+      account_number: '0125212',
+      payment_proof: 'img-proof',
+      receipt_number: 'faktur-123121',
+      updated_at: new Date(),
+      items: []
+    }
+    const order1Item1: OrderItem = {
+      order: order1,
+      product: product1,
+      quantity: 2
+    }
+    const order1Item2: OrderItem = {
+      order: order1,
+      product: product2,
+      quantity: 2
+    }
+    await getRepository(OrderEntity).insert([order1])
+    await getRepository(OrderItem).insert([order1Item1, order1Item2])
+    return request(app.getHttpServer())
+      .get('/order?status=on_delivery')
+      .expect(200)
+      .then(res => {
+        const body = res.body;
+        const { message, result } = body;
+        const { id, sellerId, sellerName, status, totalItem, subTotal} = result[0];
+        expect(message).toEqual('ok');
+        expect(id).toEqual(order1.id);
+        expect(status).toEqual('on_delivery');
+        expect(sellerId).toEqual(seller1.id);
+        expect(sellerName).toEqual(seller1.shop_name);
+        expect(totalItem).toEqual(4);
+        expect(subTotal).toEqual(70000);
       });
   })
 

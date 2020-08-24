@@ -8,6 +8,9 @@ import { UserRepository } from '../users/repositories/users.repository';
 import { ProductEntity } from '../products/entities/product.entity';
 import { SellerAttribute } from '../users/entities/seller.entity';
 import { nanoid } from 'nanoid';
+import { OrderQueryParam } from '../order/dto/order.dto';
+import { Like } from 'typeorm';
+import { OrderRepository } from '../order/repositories/order.repository';
 
 @Injectable()
 export class ShopService {
@@ -15,7 +18,8 @@ export class ShopService {
     private productRepo: ProductRepository,
     private sellerRepo: SellerAttributeRepository,
     private categoryRepo: CategoryRepository,
-    private userRepo: UserRepository
+    private userRepo: UserRepository,
+    private orderRepo: OrderRepository
   ) {}
 
   async getShop(id: string): Promise<ResponseBody<any>> {
@@ -268,5 +272,41 @@ export class ShopService {
   async getShopByUserId(userId: string) {
     const shop = await this.sellerRepo.findOneOrFail({ where: { user: { id: userId } } })
     return shop
+  }
+
+  async listSellerOrder(param: OrderQueryParam, userId: string): Promise<ResponseBody<any>> {
+    const seller = await this.sellerRepo.findOneOrFail({
+      relations: ['user'],
+      where: { user: userId }
+    })
+    const skippedItems = (param.page - 1) * param.limit;
+    const orders = await this.orderRepo.find({
+      relations: ['user', 'items', 'seller'],
+      where: {
+        seller: seller.id,
+        status: Like(param.status)
+      },
+      order: { created_at: 'DESC' },
+      skip: skippedItems,
+      take: param.limit
+    })
+    const response = orders.map(p => ({
+      ...p,
+      buyerId: p.user.id,
+      buyerName: p.user.full_name,
+      totalItem: p.items.reduce(function(prev, cur) {
+        return prev + cur.quantity;
+      }, 0),
+      subTotal: p.fare + p.items.reduce(function(prev, cur) {
+        return prev + 
+          (cur.product.price_per_quantity * (1 - cur.product.discount)) * cur.quantity;
+      }, 0)
+    }));
+    response.forEach(function(p) {
+      delete p.user
+      delete p.items
+      delete p.seller
+    })
+    return new ResponseListBody(response, 'ok', param.page, orders.length)
   }
 }

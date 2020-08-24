@@ -6,6 +6,7 @@ import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam }
 import { ShopService } from './shop.service';
 import { Request } from 'express';
 import { ValidationPipe } from '../utils/validation.pipe';
+import { OrderQueryParam } from '../order/dto/order.dto';
 
 @Controller('shop')
 export class ShopController {
@@ -78,5 +79,17 @@ export class ShopController {
   @Get(':id')
   async getShop(@Param('id') id: string) {
     return this.service.getShop(id) 
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('seller')
+  @Get('order/list')
+  list(@Query() {
+    limit = 10,
+    page = 1,
+    status = '%%'
+  }: OrderQueryParam, @Req() request: Request) {
+    const user: { userId } = request.user as { userId }
+    return this.service.listSellerOrder({ limit, page, status }, user.userId)
   }
 }
