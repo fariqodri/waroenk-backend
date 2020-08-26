@@ -97,7 +97,9 @@ describe('Order e2e test', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    has_paid: true
+    has_paid: true,
+    is_blocked: false,
+    activation_date: new Date()
   }
   const seller2: SellerAttribute = {
     id: 'seller-2',
@@ -113,7 +115,9 @@ describe('Order e2e test', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    has_paid: true
+    has_paid: true,
+    is_blocked: false,
+    activation_date: new Date()
   }
   const product1: ProductEntity = {
     id: 'product_1',

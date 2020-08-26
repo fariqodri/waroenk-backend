@@ -55,6 +55,12 @@ export class SellerAttribute {
   @Column({ default: false })
   has_paid: boolean
 
+  @Column({ default: false })
+  is_blocked: boolean
+
+  @Column({ default: null, nullable: true })
+  activation_date: Date
+
   @OneToMany(type => PostEntity, post => post.seller)
   posts?: PostEntity[]
 }

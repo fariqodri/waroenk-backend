@@ -1,4 +1,4 @@
-import { ExecutionContext, INestApplication } from "@nestjs/common";
+import { INestApplication } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -52,7 +52,9 @@ describe('Admin e2e', () => {
       created_at: new Date(),
       updated_at: null,
       is_active: false,
-      has_paid: false
+      has_paid: false,
+      is_blocked: false,
+      activation_date: null
     }
     const buyers: UserEntity[] = [
       user1,
