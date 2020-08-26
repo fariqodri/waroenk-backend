@@ -174,7 +174,7 @@ export class MiscService {
       })
       index = 3
     }
-    if (query.search) {
+    if (query.search !== undefined && query.search !== '') {
       queryBuilder = queryBuilder.andWhere('LOWER(nama) LIKE :search', {
         search: `%${query.search.toLowerCase()}%`
       })
@@ -192,7 +192,7 @@ export class MiscService {
     const skippedItems = (query.page - 1) * query.limit;
     let queryBuilder = await this.faqRepo
       .createQueryBuilder('faq');
-    if (query.search) {
+    if (query.search !== undefined && query.search !== '') {
       queryBuilder = queryBuilder.andWhere('LOWER(faq.title) LIKE :title', {
         title: `%${query.search.toLowerCase()}%`,
       });

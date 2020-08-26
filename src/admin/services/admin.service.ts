@@ -50,7 +50,7 @@ export class AdminService {
     } else if (param.filter == 'not_verified') {
       query = { is_active: false }
     }
-    if (param.name) {
+    if (param.name !== undefined && param.name !== '') {
       query = Object.assign({}, query, { shop_name: Like(`%${param.name}%`) })
     }
     let order = {}

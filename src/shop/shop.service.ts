@@ -26,7 +26,7 @@ export class ShopService {
     const seller = await this.sellerRepo.findOneOrFail(id);
     if (seller === undefined) {
       throw new BadRequestException(new ResponseBody(null,
-        "there is no shop with id: [" + id + "]"))
+        `there is no shop with id: [${id}]`))
     }
     const response = {
       id: id,
@@ -49,7 +49,7 @@ export class ShopService {
       .where('userId = :userId', { userId: userId }).getOne();
     if (seller != undefined) {
       throw new BadRequestException(new ResponseBody(null,
-        "there is existing shop with userId: [" + userId + "]"))
+        `there is existing shop with userId: [${userId}]`))
     }
     const user = await this.userRepo
       .createQueryBuilder()
@@ -58,7 +58,7 @@ export class ShopService {
       .andWhere("role = 'buyer'").getOne();
     if (user === undefined) {
       throw new BadRequestException(new ResponseBody(null,
-        "user with userId: [" + userId + "] is not a buyer or not active so it can't create shop"))
+        `user with userId: [${userId}] is not a buyer or not active so it can't create shop`))
     }
     const newSeller: SellerAttribute = {
       id: nanoid(11),
@@ -99,10 +99,13 @@ export class ShopService {
   async editShop(userId: string, param: ShopPostParam): Promise<ResponseBody<SellerAttribute>> {
     let seller = await this.sellerRepo
       .createQueryBuilder()
-      .where('userId = :userId', { userId: userId }).getOne();
+      .where('userId = :userId', { userId: userId })
+      .andWhere('is_blocked IS FALSE')
+      .andWhere('is_active IS TRUE')
+      .andWhere('has_paid IS TRUE').getOne();
     if (seller === undefined) {
       throw new BadRequestException(new ResponseBody(null,
-        "there is no shop with userId: [" + userId + "]"))
+        `there is no shop with userId: [${userId}] or shop not activated or blocked`))
     }
     if (param.description) {
       seller.description = param.description
@@ -134,10 +137,12 @@ export class ShopService {
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId })
-      .andWhere('is_active IS TRUE').getOne();
+      .andWhere('is_active IS TRUE')
+      .andWhere('is_blocked IS FALSE')
+      .andWhere('has_paid IS TRUE').getOne();
     if (seller === undefined) {
       throw new BadRequestException(new ResponseBody(null,
-        "seller with userId: [" + userId + "] is inactive so it can't create product"))
+        `seller with userId: [${userId}] is inactive so it can't create product`))
     }
     const category = await this.categoryRepo.findOne(param.categoryId);
     let discount = 0.00
@@ -166,10 +171,12 @@ export class ShopService {
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId })
-      .andWhere('is_active IS TRUE').getOne();
+      .andWhere('is_blocked IS FALSE')
+      .andWhere('is_active IS TRUE')
+      .andWhere('has_paid IS TRUE').getOne();
     if (seller === undefined) {
       throw new BadRequestException(new ResponseBody(null,
-        "seller with userId: [" + userId + "] is inactive so it can't edit product"))
+        `seller with userId: [${userId}] is inactive so it can't edit product`))
     }
     let product = await this.productRepo
       .createQueryBuilder()
@@ -206,7 +213,9 @@ export class ShopService {
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId })
-      .andWhere('is_active IS TRUE').getOne();
+      .andWhere('is_blocked IS FALSE')
+      .andWhere('is_active IS TRUE')
+      .andWhere('has_paid IS TRUE').getOne();
     const product = await this.productRepo
       .createQueryBuilder()
       .where('sellerId = :sellerId', { sellerId: seller.id })
