@@ -38,10 +38,43 @@ describe('Admin e2e', () => {
       updated_at: null,
       is_active: true
     }
+    const user2: UserEntity = {
+      id: 'user-2',
+      full_name: 'user 2',
+      email: 'user_2@example.com',
+      phone: '0812232112',
+      role: 'buyer',
+      password: 'hehe1234',
+      created_at: new Date(2020, 9),
+      updated_at: null,
+      is_active: true
+    }
+    const user3: UserEntity = {
+      id: 'user-3',
+      full_name: 'user 3',
+      email: 'user_3@example.com',
+      phone: '0812232112',
+      role: 'buyer',
+      password: 'hehe1234',
+      created_at: new Date(2019, 9),
+      updated_at: null,
+      is_active: false
+    }
+    const user4: UserEntity = {
+      id: 'user-4',
+      full_name: 'user 4',
+      email: 'user_4@example.com',
+      phone: '08122342112',
+      role: 'seller',
+      password: 'hehe1234',
+      created_at: new Date(2019, 8),
+      updated_at: null,
+      is_active: true
+    }
     const sellerNotActivated: SellerAttribute = {
       id: 'seller-1',
       description: 'lalala1',
-      shop_name: 'Toko Sayur',
+      shop_name: 'Toko Sayur a',
       shop_address: 'Jakarta',
       birth_date: '1999-09-21',
       birth_place: 'Jakarta',
@@ -56,30 +89,64 @@ describe('Admin e2e', () => {
       is_blocked: false,
       activation_date: null
     }
+    const seller2: SellerAttribute = {
+      id: 'seller-2',
+      description: 'lalala2',
+      shop_name: 'Toko Sayur b',
+      shop_address: 'Jakarta',
+      birth_date: '1999-09-21',
+      birth_place: 'Jakarta',
+      gender: 'Male',
+      image: "img-1.com",
+      tier: 1,
+      user: user2,
+      created_at: new Date(2020, 1),
+      updated_at: null,
+      is_active: true,
+      has_paid: true,
+      is_blocked: false,
+      activation_date: new Date()
+    }
+    const seller3: SellerAttribute = {
+      id: 'seller-3',
+      description: 'lalala3',
+      shop_name: 'Toko Sayur c',
+      shop_address: 'Jakarta',
+      birth_date: '1999-09-21',
+      birth_place: 'Jakarta',
+      gender: 'Male',
+      image: "img-1.com",
+      tier: 1,
+      user: user3,
+      created_at: new Date(2020, 2),
+      updated_at: null,
+      is_active: true,
+      has_paid: true,
+      is_blocked: false,
+      activation_date: new Date()
+    }
+    const seller4: SellerAttribute = {
+      id: 'seller-4',
+      description: 'lalala4',
+      shop_name: 'Toko Sayur d',
+      shop_address: 'Jakarta',
+      birth_date: '1999-09-21',
+      birth_place: 'Jakarta',
+      gender: 'Male',
+      image: "img-1.com",
+      tier: 2,
+      user: user4,
+      created_at: new Date(),
+      updated_at: null,
+      is_active: false,
+      has_paid: false,
+      is_blocked: true,
+      activation_date: new Date()
+    }
     const buyers: UserEntity[] = [
       user1,
-      {
-        id: 'user-2',
-        full_name: 'user 2',
-        email: 'user_2@example.com',
-        phone: '0812232112',
-        role: 'buyer',
-        password: 'hehe1234',
-        created_at: new Date(2020, 9),
-        updated_at: null,
-        is_active: true
-      },
-      {
-        id: 'user-3',
-        full_name: 'user 3',
-        email: 'user_3@example.com',
-        phone: '0812232112',
-        role: 'buyer',
-        password: 'hehe1234',
-        created_at: new Date(2019, 9),
-        updated_at: null,
-        is_active: false
-      }
+      user2,
+      user3
     ]
     
     beforeEach(async () => {
@@ -107,8 +174,8 @@ describe('Admin e2e', () => {
       app = moduleFixture.createNestApplication()
       await app.init()
   
-      await getRepository(UserEntity).insert([admin, ...buyers])
-      await getRepository(SellerAttribute).insert([sellerNotActivated])
+      await getRepository(UserEntity).insert([admin, ...buyers, user4])
+      await getRepository(SellerAttribute).insert([sellerNotActivated, seller2, seller3, seller4])
     })
 
     afterEach(async () => {
@@ -215,5 +282,55 @@ describe('Admin e2e', () => {
       const { result } = resp.body
       expect(result.length).toEqual(1)
       expect(result[0].id).toEqual('user-2')
+    })
+
+    it('should list seller', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/seller')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.length).toEqual(4)
+      expect(result[0].id).toEqual('seller-1')
+      expect(result[1].id).toEqual('seller-4')
+      expect(result[2].id).toEqual('seller-3')
+      expect(result[3].id).toEqual('seller-2')
+    })
+
+    it('should list paid seller ', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/seller?filter=paid')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.length).toEqual(2)
+      expect(result[0].id).toEqual('seller-3')
+      expect(result[1].id).toEqual('seller-2')
+    })
+
+    it('should list paid seller order by name desc', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/seller?filter=paid&sort_by=name&order=asc')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.length).toEqual(2)
+      expect(result[0].id).toEqual('seller-2')
+      expect(result[1].id).toEqual('seller-3')
+    })
+
+    it('should list blocked seller', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/seller?filter=blocked')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.length).toEqual(1)
+      expect(result[0].id).toEqual('seller-4')
+    })
+
+    it('should list seller by name', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/seller?filter=blocked&name=d')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.length).toEqual(1)
+      expect(result[0].id).toEqual('seller-4')
     })
   })

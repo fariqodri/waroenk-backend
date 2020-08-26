@@ -3,7 +3,7 @@ import { AdminService } from "../services/admin.service";
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RolePermissionGuard } from "../../auth/guards/role.permission.guard";
 import { Roles } from "../../utils/decorators";
-import { ListBuyersQuery } from "../dto/admin.dto";
+import { ListBuyersQuery, ListSellerQuery } from "../dto/admin.dto";
 import { ResponseBody } from "../../utils/response";
 
 @Controller('admin')
@@ -38,5 +38,26 @@ export class AdminController {
       name
     })
     return new ResponseBody(response)
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Get('seller')
+  async listSeller(@Query() {
+    page = 1,
+    limit = 10,
+    filter = 'none',
+    sort_by = 'created',
+    order = 'desc',
+    name
+  }: ListSellerQuery) {
+    return this.service.listSeller({
+      page,
+      limit,
+      filter,
+      sort_by,
+      order,
+      name
+    })
   }
 }
