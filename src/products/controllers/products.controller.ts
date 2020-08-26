@@ -20,7 +20,8 @@ export class ProductsController {
       sort_by,
       limit = 10,
       page = 1,
-      sort_type
+      sort_type,
+      sellerId
     }: ProductQuery) {
       return this.productsService.findAll({
         search,
@@ -30,7 +31,8 @@ export class ProductsController {
         price_from,
         price_to,
         categories,
-        sort_type
+        sort_type,
+        sellerId
       });
   }
 
