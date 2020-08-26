@@ -4,7 +4,7 @@ import { UserRepository } from "../../users/repositories/users.repository"
 import { SellerAttributeRepository } from "../../users/repositories/seller.repository"
 import { ResponseBody, ResponseListWithCountBody } from "../../utils/response"
 import { SellerAttribute } from "../../users/entities/seller.entity"
-import { ListBuyersQuery, ListSellerQuery } from "../dto/admin.dto"
+import { ListBuyersQuery, ListSellerQuery, EditSellerParam } from "../dto/admin.dto"
 import { UsersProvider } from "../../users/providers/users.provider"
 import { Like } from "typeorm"
 
@@ -70,5 +70,29 @@ export class AdminService {
       order: order
     })
     return new ResponseListWithCountBody(seller, 'ok', param.page, seller.length, count)
+  }
+
+  async editSeller(param: EditSellerParam, sellerId: string): Promise<ResponseBody<any>> {
+    let seller: SellerAttribute = await this.sellerRepo.findOneOrFail(sellerId)
+    if (param.blocked !== undefined) {
+      seller.is_blocked = param.blocked
+      if (param.blocked) {
+        seller.is_active = false
+        seller.has_paid = false
+      }
+      await this.sellerRepo.save(seller)
+      return new ResponseBody(null, 'seller has been updated')
+    }
+    if (param.active !== undefined) {
+      seller.is_active = param.active
+    }
+    if (param.paid !== undefined) {
+      seller.has_paid = param.paid
+    }
+    if (param.tier !== undefined) {
+      seller.tier = param.tier
+    }
+    await this.sellerRepo.save(seller)
+    return new ResponseBody(null, 'seller has been updated')
   }
 }

@@ -184,7 +184,7 @@ describe('Admin e2e', () => {
   
     it('activate seller', () => {
       return request(app.getHttpServer())
-        .put('/admin/seller/seller-1')
+        .put('/admin/seller/activate/seller-1')
         .expect(201)
         .then(res => {
           const body = res.body
@@ -332,5 +332,45 @@ describe('Admin e2e', () => {
       const { result } = resp.body
       expect(result.length).toEqual(1)
       expect(result[0].id).toEqual('seller-4')
+    })
+
+    it('should block seller', async () => {
+      const body = { blocked: true }
+      const resp = await request(app.getHttpServer())
+        .put('/admin/seller/seller-2')
+        .send(body)
+        .expect(201)
+      const { message } = resp.body
+      expect(message).toEqual('seller has been updated')
+      const editedSeller = await getRepository(SellerAttribute).findOne('seller-2')
+      expect(editedSeller.is_blocked).toBeTruthy()
+      expect(editedSeller.is_active).toBeFalsy()
+      expect(editedSeller.has_paid).toBeFalsy()
+    })
+
+    it('should unblock seller', async () => {
+      const body = { blocked: false }
+      const resp = await request(app.getHttpServer())
+        .put('/admin/seller/seller-4')
+        .send(body)
+        .expect(201)
+      const { message } = resp.body
+      expect(message).toEqual('seller has been updated')
+      const editedSeller = await getRepository(SellerAttribute).findOne('seller-4')
+      expect(editedSeller.is_blocked).toBeFalsy()
+    })
+
+    it('should edit seller', async () => {
+      const body = { active: true, paid: false, tier: 2 }
+      const resp = await request(app.getHttpServer())
+        .put('/admin/seller/seller-3')
+        .send(body)
+        .expect(201)
+      const { message } = resp.body
+      expect(message).toEqual('seller has been updated')
+      const editedSeller = await getRepository(SellerAttribute).findOne('seller-3')
+      expect(editedSeller.is_active).toBeTruthy()
+      expect(editedSeller.has_paid).toBeFalsy()
+      expect(editedSeller.tier).toEqual(2)
     })
   })

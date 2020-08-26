@@ -1,17 +1,8 @@
-import * as jf from 'joiful';
-
 export class EditSellerParam {
-  @jf.boolean().optional()
-  active: boolean
-  
-  @jf.boolean().optional()
-  paid: boolean
-  
-  @jf.boolean().optional()
-  blocked: boolean
-
-  @jf.number().optional()
-  tier: 1 | 2
+  active?: boolean
+  paid?: boolean
+  blocked?: boolean
+  tier?: 1 | 2
 }
 
 export class ListBuyersQuery {
