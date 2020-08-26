@@ -6,8 +6,7 @@ import { DiscussionEntity } from '../entities/discussion.entity';
 import { UserRepository } from '../../users/repositories/users.repository';
 import { nanoid } from 'nanoid';
 import { ProductRepository } from '../../products/repositories/product.repository';
-import { Like } from 'typeorm';
-import { response } from 'express';
+import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
 
 @Injectable()
 export class DiscussionService {
@@ -15,6 +14,7 @@ export class DiscussionService {
     private discussionRepo: DiscussionRepository,
     private userRepo: UserRepository,
     private productRepo: ProductRepository,
+    private sellerRepo: SellerAttributeRepository
   ) {}
 
   async createDiscussion(userId: string, param: DiscussionPostParam): Promise<ResponseBody<DiscussionResponse>> {
@@ -26,10 +26,13 @@ export class DiscussionService {
       throw new BadRequestException(new ResponseBody(null,
         "user with userId: [" + userId + "] is inactive so it can't create discussion"))
     }
-    const product = await this.productRepo
-      .createQueryBuilder()
-      .andWhere('id = :id', { id: param.productId })
-      .andWhere('deleted_at IS NULL').getOne();
+    const product = await this.productRepo.findOne({
+      relations: ['seller'],
+      where: { id: param.productId, deleted_at: null }
+    })
+    const seller = await this.sellerRepo.findOne({
+      relations: ['user'],
+      where: { id: product.seller.id }})
     if (product === undefined) {
       throw new BadRequestException(new ResponseBody(null,
          "product doesn't exist with id [" + param.productId + "]"))
@@ -62,7 +65,8 @@ export class DiscussionService {
       parentUserName: parentDiscussion? parentDiscussion.user.full_name: null,
       parentUserRole: parentDiscussion? parentDiscussion.user.role: null,
       description: param.description,
-      created_at: newDiscussion.created_at
+      created_at: newDiscussion.created_at,
+      isSellerProduct: user.id == seller.user.id
     }
     return new ResponseBody(response)
   }
@@ -90,7 +94,24 @@ export class DiscussionService {
     if (parentId && parentId !== "") {
       query = query.andWhere('d.parentId = :parentId', { parentId })
     }
-    const discussions = await query.execute()
+    let discussions = await query.execute()
+
+    discussions = discussions.map(p => ({
+      ...p,
+      isSellerProduct: false
+    }));
+
+    for (let discussion of discussions) {
+      const product = await this.productRepo.findOne({
+        relations: ['seller'],
+        where: { id: discussion.productId, deleted_at: null }
+      })
+      const seller = await this.sellerRepo.findOne({
+        relations: ['user'],
+        where: { id: product.seller.id }})
+      discussion.isSellerProduct = discussion.userId == seller.user.id
+    };
+    
     return new ResponseBody(discussions)
   }
 }

@@ -4,6 +4,7 @@ import { DiscussionService } from '../services/discussion.service';
 import { UserRepository } from '../../users/repositories/users.repository';
 import { ProductRepository } from '../../products/repositories/product.repository';
 import { DiscussionRepository } from '../repositories/discussion.repository';
+import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
 
 describe('Discussion Controller', () => {
   let controller: DiscussionController;
@@ -11,7 +12,12 @@ describe('Discussion Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [DiscussionController],
-      providers: [DiscussionService, UserRepository, ProductRepository, DiscussionRepository]
+      providers: [
+        DiscussionService, 
+        UserRepository, 
+        DiscussionRepository, 
+        ProductRepository,
+        SellerAttributeRepository],
     }).compile();
 
     controller = module.get<DiscussionController>(DiscussionController);

@@ -22,4 +22,5 @@ export class DiscussionResponse {
   parentUserRole: string
   description: string
   created_at: Date
+  isSellerProduct: boolean
 }

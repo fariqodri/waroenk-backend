@@ -172,12 +172,14 @@ describe('Discussion (e2e)', () => {
           productId,
           description,
           created_at,
+          isSellerProduct
         } = result;
         expect(message).toEqual('ok');
         expect(id).toBeDefined();
         expect(productId).toEqual(reqBody.productId);
         expect(description).toEqual(reqBody.description);
         expect(created_at).toBeDefined();
+        expect(isSellerProduct).toBeTruthy();
       });
   });
 
@@ -210,13 +212,14 @@ describe('Discussion (e2e)', () => {
         expect(result[0].description).toEqual(expectedResult_0.description);
         expect(result[0].created_at).toBeDefined()
         expect(result[0].updated_at).toBeDefined()
-
+        expect(result[0].isSellerProduct).toBeTruthy()
         
         expect(result[1].id).toEqual(expectedResult_1.id);
         expect(result[1].productId).toEqual(expectedResult_1.productId);
         expect(result[1].description).toEqual(expectedResult_1.description);
         expect(result[1].created_at).toBeDefined()
         expect(result[1].updated_at).toBeDefined()
+        expect(result[1].isSellerProduct).toBeTruthy()
       });
   });
 
@@ -242,6 +245,7 @@ describe('Discussion (e2e)', () => {
         expect(result[0].description).toEqual(expectedResult_1.description);
         expect(result[0].created_at).toBeDefined()
         expect(result[0].updated_at).toBeDefined()
+        expect(result[0].isSellerProduct).toBeTruthy()
       });
   });
 
@@ -267,6 +271,7 @@ describe('Discussion (e2e)', () => {
         expect(result[0].description).toEqual(expectedResult_0.description);
         expect(result[0].created_at).toBeDefined()
         expect(result[0].updated_at).toBeDefined()
+        expect(result[0].isSellerProduct).toBeTruthy()
       });
   });
 });
