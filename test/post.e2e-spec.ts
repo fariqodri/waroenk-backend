@@ -41,7 +41,9 @@ describe('Post E2E', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    has_paid: true
+    has_paid: true,
+    is_blocked: false,
+    activation_date: new Date()
   }
 
   beforeEach(async () => {

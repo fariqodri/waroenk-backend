@@ -14,7 +14,10 @@ export class ProductsService {
     let queryBuilder = this.productRepository
       .createQueryBuilder('products')
       .andWhere('products.deleted_at IS NULL')
-      .andWhere('products.available IS TRUE');
+      .andWhere('products.available IS TRUE')
+      .andWhere('seller.is_blocked IS FALSE')
+      .andWhere('seller.is_active IS TRUE')
+      .andWhere('seller.has_paid IS TRUE');
     if (param.search) {
       queryBuilder = queryBuilder.andWhere('LOWER(products.name) LIKE :name', {
         name: `%${param.search.toLowerCase()}%`,

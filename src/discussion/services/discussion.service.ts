@@ -24,19 +24,19 @@ export class DiscussionService {
       .andWhere('is_active IS TRUE').getOne();
     if (user === undefined) {
       throw new BadRequestException(new ResponseBody(null,
-        "user with userId: [" + userId + "] is inactive so it can't create discussion"))
+        `user with userId: [${userId}] is inactive so it can't create discussion`))
     }
     const product = await this.productRepo.findOne({
       relations: ['seller'],
       where: { id: param.productId, deleted_at: null }
     })
+    if (product === undefined) {
+      throw new BadRequestException(new ResponseBody(null,
+         `product doesn't exist with id [${param.productId}]`))
+    }
     const seller = await this.sellerRepo.findOne({
       relations: ['user'],
       where: { id: product.seller.id }})
-    if (product === undefined) {
-      throw new BadRequestException(new ResponseBody(null,
-         "product doesn't exist with id [" + param.productId + "]"))
-    }
     let parentDiscussion: DiscussionEntity = null
     if (param.parentId) {
       parentDiscussion = await this.discussionRepo

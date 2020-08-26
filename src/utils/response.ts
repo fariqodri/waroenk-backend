@@ -21,3 +21,19 @@ export class ResponseListBody<T> {
     this.limit = limit
   }
 }
+
+export class ResponseListWithCountBody<T> {
+  public message: string
+  public result: T | T[]
+  public page: number
+  public limit: number
+  public total: number
+
+  constructor(result: T | T[], message: string = "ok", page: number = 0, limit: number = 0, total: number = 0) {
+    this.message = message
+    this.result = result
+    this.page = page
+    this.limit = limit
+    this.total = total
+  }
+}

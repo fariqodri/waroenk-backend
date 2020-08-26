@@ -1,3 +1,10 @@
+export class EditSellerParam {
+  active?: boolean
+  paid?: boolean
+  blocked?: boolean
+  tier?: 1 | 2
+}
+
 export class ListBuyersQuery {
   page: number;
   limit: number;
@@ -5,4 +12,13 @@ export class ListBuyersQuery {
   order: 'asc' | 'desc';
   active?: 1 | 0;
   name?: string;
+}
+
+export class ListSellerQuery {
+  page: number
+  limit: number
+  filter: 'none' | 'paid' | 'not_paid' | 'not_verified' | 'blocked'
+  sort_by: 'created' | 'name'
+  order: 'asc' | 'desc'
+  name?: string
 }
