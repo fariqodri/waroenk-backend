@@ -182,16 +182,21 @@ describe('Admin e2e', () => {
       await getConnection().close();
     });
   
-    it('activate seller', () => {
-      return request(app.getHttpServer())
-        .put('/admin/seller/activate/seller-1')
+    it('activate seller', async () => {
+      const resp = await request(app.getHttpServer())
+        .put('/admin/seller/seller-1')
+        .send({ active: true })
         .expect(201)
         .then(res => {
           const body = res.body
           const { message, result } = body
-          expect(message).toEqual('seller activated')
+          expect(message).toEqual('seller has been updated')
           expect(result).toBeNull()
         })
+        const editedSeller = await getRepository(SellerAttribute).findOne('seller-1')
+        expect(editedSeller.is_active).toBeTruthy()
+        const editedUser = await getRepository(UserEntity).findOne(user1.id)
+        expect(editedUser.role).toEqual('seller')
     })
 
     it('should list buyers sorted from oldest', async () => {

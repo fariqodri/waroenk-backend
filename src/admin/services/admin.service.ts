@@ -16,24 +16,6 @@ export class AdminService {
     private userProvider: UsersProvider
   ) {}
 
-  async activateSeller(id: string): Promise<ResponseBody<any>> {
-    let seller: SellerAttribute = await this.sellerRepo.findOne({
-      relations: ['user'],
-      where: { id: id }
-    })
-    seller.is_active = true
-    seller.has_paid = true
-    seller.updated_at = new Date()
-    seller.activation_date = new Date()
-    seller.is_blocked = false
-    await this.sellerRepo.save(seller)
-    let user = seller.user
-    user.role = 'seller'
-    user.updated_at = new Date()
-    await this.userRepo.save(user)
-    return new ResponseBody(null, "seller activated")
-  }
-
   async listBuyers(query: ListBuyersQuery) {
     return this.userProvider.listBuyers(query)
   }
@@ -73,7 +55,10 @@ export class AdminService {
   }
 
   async editSeller(param: EditSellerParam, sellerId: string): Promise<ResponseBody<any>> {
-    let seller: SellerAttribute = await this.sellerRepo.findOneOrFail(sellerId)
+    let seller: SellerAttribute = await this.sellerRepo.findOneOrFail(sellerId, {
+      relations: ['user']
+    })
+    seller.updated_at = new Date()
     if (param.blocked !== undefined) {
       seller.is_blocked = param.blocked
       if (param.blocked) {
@@ -85,6 +70,13 @@ export class AdminService {
     }
     if (param.active !== undefined) {
       seller.is_active = param.active
+      if (param.active) {
+        seller.activation_date = new Date()
+        let user = seller.user
+        user.role = 'seller'
+        user.updated_at = new Date()
+        await this.userRepo.save(user)
+      }
     }
     if (param.paid !== undefined) {
       seller.has_paid = param.paid

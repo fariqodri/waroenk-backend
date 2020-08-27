@@ -10,14 +10,6 @@ import { ResponseBody } from "../../utils/response";
 export class AdminController {
   constructor(private service: AdminService) {}
 
-  // @UseGuards(JwtAuthGuard, RolePermissionGuard)
-  // @Roles('admin')
-  @Put('seller/activate/:id')
-  @HttpCode(201)
-  activateSeller(@Param('id') id: string) {
-    return this.service.activateSeller(id)
-  }
-
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('admin')
   @Get('buyers')
