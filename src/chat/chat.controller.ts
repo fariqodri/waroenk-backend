@@ -1,4 +1,4 @@
-import { Controller, Put, UseGuards, UsePipes, Body, Req, Post, Get, Param, Query } from '@nestjs/common';
+import { Controller, Put, UseGuards, UsePipes, Body, Req, Post, Get, Param, Query, BadRequestException } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ValidationPipe } from '../utils/validation.pipe';
 import { RegisterDeviceDto, ChatDto } from './chat.dto';
@@ -28,6 +28,17 @@ export class ChatController {
   @UsePipes(ValidationPipe)
   async chat(@Body() body: ChatDto, @Req() request: Request) {
     const { userId, role } = request.user as { userId: string, role: 'seller' | 'buyer' }
+    switch (body.type) {
+      case 'text':
+        if (body.text === undefined) throw new BadRequestException(new ResponseBody(null, 'chat type is text but text is undefined'))
+        break;
+      case 'image':
+        if (body.image_url === undefined) throw new BadRequestException(new ResponseBody(null, 'chat type is image but image_url is undefined'))
+        break;
+      case 'order':
+        if (body.order_id === undefined) throw new BadRequestException(new ResponseBody(null, 'chat type is order but order_id is undefined'))
+        break;
+    }
     const res = await this.chatService.chat(body, userId, role)
     return new ResponseBody(res)
   }

@@ -258,6 +258,8 @@ export class ChatService {
         'chat.date',
         'chat.time',
         'chat.read_by_receiver',
+        'chat.type',
+        'chat.image_url'
       ])
       .getMany();
     return res.map(r => ({
@@ -287,6 +289,19 @@ export class ChatService {
         ),
       );
     }
+    await this.chatRepo
+      .createQueryBuilder()
+      .update()
+      .set({ read_by_receiver: true })
+      .where(
+        'roomId = :roomId AND receiverId = :receiverId AND read_by_receiver = :readByReceiver',
+        {
+          roomId: room.id,
+          receiverId: userId,
+          readByReceiver: 0,
+        },
+      )
+      .execute();
     
     const res = await this.chatRepo
       .createQueryBuilder('chat')
@@ -310,6 +325,8 @@ export class ChatService {
         'chat.date',
         'chat.time',
         'chat.read_by_receiver',
+        'chat.type',
+        'chat.image_url'
       ])
       .getMany();
     return res.map(r => ({
