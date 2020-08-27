@@ -22,5 +22,11 @@ export class ChatDto {
   order_id?: string
 
   @jf.string().optional()
+  image_url?: string
+
+  @jf.string().optional()
   chat_room_id?: string
+
+  @jf.string().valid(['text', 'order', 'image']).required()
+  type: 'text' | 'order' | 'image'
 }

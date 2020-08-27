@@ -41,4 +41,10 @@ export class ChatEntity {
 
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date
+
+  @Column({ default: 'text' })
+  type: 'text' | 'order' | 'image'
+
+  @Column({ nullable: true, default: null })
+  image_url?: string
 }
