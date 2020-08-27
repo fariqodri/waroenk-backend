@@ -24,10 +24,10 @@ export class ChatEntity {
   @Column({ nullable: true, type: 'text', default: null })
   text?: string
 
-  @ManyToOne(type => OrderEntity, { nullable: true, eager: true })
+  @ManyToOne(type => OrderEntity, { nullable: true, eager: true, onDelete: 'SET NULL' })
   order?: OrderEntity
 
-  @ManyToOne(type => ChatRoomEntity, room => room.chats)
+  @ManyToOne(type => ChatRoomEntity, room => room.chats, { onDelete: 'CASCADE' })
   room: ChatRoomEntity
 
   @ManyToOne(type => UserEntity)

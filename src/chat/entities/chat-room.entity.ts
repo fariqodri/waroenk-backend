@@ -1,9 +1,9 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany, CreateDateColumn } from "typeorm";
+import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany, CreateDateColumn, Unique } from "typeorm";
 import { UserEntity } from "../../users/entities/users.entity";
-import { SellerAttribute } from "../../users/entities/seller.entity";
 import { ChatEntity } from "./chat.entity";
 
 @Entity({ name: 'chat_rooms' })
+@Unique(['buyer', 'seller'])
 export class ChatRoomEntity {
   @PrimaryColumn()
   id: string
