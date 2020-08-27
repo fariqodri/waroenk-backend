@@ -1,4 +1,4 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { nanoid } from 'nanoid';
 import admin from 'firebase-admin';
 
@@ -80,22 +80,26 @@ export class ChatService {
       }
     } else {
       room_id = nanoid(11);
-      await this.connection.transaction(async manager => {
-        const room = manager.create(ChatRoomEntity, {
-          id: room_id,
-          buyer: sender,
-          seller: receiver,
+      try {
+        await this.connection.transaction(async manager => {
+          const room = manager.create(ChatRoomEntity, {
+            id: room_id,
+            buyer: sender,
+            seller: receiver,
+          });
+          await manager.insert(ChatRoomEntity, room);
+          chat = {
+            ...chat,
+            room: room,
+          };
+          await manager.insert(ChatEntity, chat);
+          await manager.update(ChatRoomEntity, room_id, {
+            latest_chat_at: Date.now(),
+          });
         });
-        await manager.insert(ChatRoomEntity, room);
-        chat = {
-          ...chat,
-          room: room,
-        };
-        await manager.insert(ChatEntity, chat);
-        await manager.update(ChatRoomEntity, room_id, {
-          latest_chat_at: Date.now(),
-        });
-      });
+      } catch(err) {
+        throw new BadRequestException(new ResponseBody(null, `chat room already exist for buyer ${senderId} and seller ${receiver.id}`))
+      }
     }
 
     if (receiverDeviceToken) {
@@ -141,12 +145,11 @@ export class ChatService {
     };
   }
 
-  async getChatRoomsByUserId(userId: string) {
-    return this.chatRoomRepo
+  async getChatRoomsByUserId(userId: string, role: 'seller' | 'buyer', chatsWith: 'seller' | 'buyer') {
+    let query = this.chatRoomRepo
       .createQueryBuilder('room')
       .innerJoin('room.buyer', 'buyer')
       .innerJoin('room.seller', 'seller')
-      .where('buyer.id = :id OR seller.id = :id', { id: userId })
       .select([
         'room.id',
         'buyer.id',
@@ -157,7 +160,21 @@ export class ChatService {
         'seller.full_name',
       ])
       .orderBy('room.latest_chat_at', 'DESC')
-      .getMany();
+    if (role === 'seller') {
+      switch (chatsWith) {
+        case 'buyer':
+          query = query.where('buyer.role = :role AND seller.id = :id', { role: 'buyer', id: userId })
+          break;
+        case 'seller':
+          query = query.where('buyer.id = :id', { id: userId })
+          break;
+        default:
+          break;
+      }
+    } else if (role === 'buyer') {
+      query = query.where('buyer.id = :id', { id: userId })
+    }
+    return query.getMany();
   }
 
   async getChatsInRoom(roomId: string, userId: string) {
@@ -180,6 +197,7 @@ export class ChatService {
       .innerJoin('chat.room', 'room')
       .innerJoin('chat.sender', 'sender')
       .innerJoin('chat.receiver', 'receiver')
+      .leftJoin('chat.order', 'order')
       .orderBy('chat.created_at', 'ASC')
       .where('room.id = :roomId', { roomId })
       .select([
@@ -190,7 +208,56 @@ export class ChatService {
         'receiver.id',
         'receiver.full_name',
         'chat.text',
-        'chat.order.id',
+        'order.id',
+        'order.status',
+        'order.fare',
+        'chat.date',
+        'chat.time',
+        'chat.read_by_receiver',
+      ])
+      .getMany();
+    return res.map(r => ({
+      ...r,
+      sent_by_me: r.sender.id === userId,
+    }));
+  }
+
+  async getChatsInRoomWithSellerId(userId: string, sellerId: string) {
+    let room: ChatRoomEntity
+    try {
+      room = await this.chatRoomRepo.findOneOrFail({
+        where: {
+          buyer: {
+            id: userId
+          },
+          seller: {
+            id: sellerId
+          }
+        } 
+      })
+    } catch {
+      throw new NotFoundException(new ResponseBody(null, `chat room with buyer ${userId} and seller ${sellerId} not found`))
+    }
+    
+    const res = await this.chatRepo
+      .createQueryBuilder('chat')
+      .innerJoin('chat.room', 'room')
+      .innerJoin('chat.sender', 'sender')
+      .innerJoin('chat.receiver', 'receiver')
+      .leftJoin('chat.order', 'order')
+      .orderBy('chat.created_at', 'ASC')
+      .where('room.id = :roomId', { roomId: room.id })
+      .select([
+        'chat.id',
+        'room.id',
+        'sender.id',
+        'sender.full_name',
+        'receiver.id',
+        'receiver.full_name',
+        'chat.text',
+        'order.id',
+        'order.status',
+        'order.fare',
         'chat.date',
         'chat.time',
         'chat.read_by_receiver',

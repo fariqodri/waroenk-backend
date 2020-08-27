@@ -1,4 +1,4 @@
-import { Controller, Put, UseGuards, UsePipes, Body, Req, Post, Get, Param } from '@nestjs/common';
+import { Controller, Put, UseGuards, UsePipes, Body, Req, Post, Get, Param, Query } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ValidationPipe } from '../utils/validation.pipe';
 import { RegisterDeviceDto, ChatDto } from './chat.dto';
@@ -33,9 +33,16 @@ export class ChatController {
 
   @Get('rooms')
   @UseGuards(JwtAuthGuard)
-  async rooms(@Req() request: Request) {
-    const { userId } = request.user as { userId: string, role: 'seller' | 'buyer' }
-    return this.chatService.getChatRoomsByUserId(userId)
+  async rooms(@Req() request: Request, @Query('with') chatsWith: 'seller' | 'buyer') {
+    const { userId, role } = request.user as { userId: string, role: 'seller' | 'buyer' }
+    return this.chatService.getChatRoomsByUserId(userId, role, chatsWith)
+  }
+
+  @Get('rooms/seller/:sellerId')
+  @UseGuards(JwtAuthGuard)
+  async getRoomWithSeller(@Req() request: Request, @Param('sellerId') sellerId: string) {
+    const { userId, role } = request.user as { userId: string, role: 'seller' | 'buyer' }
+    return this.chatService.getChatsInRoomWithSellerId(userId, sellerId)
   }
 
   @Get('rooms/:id')
