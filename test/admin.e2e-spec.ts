@@ -181,18 +181,6 @@ describe('Admin e2e', () => {
     afterEach(async () => {
       await getConnection().close();
     });
-  
-    it('activate seller', () => {
-      return request(app.getHttpServer())
-        .put('/admin/seller/activate/seller-1')
-        .expect(201)
-        .then(res => {
-          const body = res.body
-          const { message, result } = body
-          expect(message).toEqual('seller activated')
-          expect(result).toBeNull()
-        })
-    })
 
     it('should list buyers sorted from oldest', async () => {
       const resp = await request(app.getHttpServer())
@@ -361,7 +349,7 @@ describe('Admin e2e', () => {
     })
 
     it('should edit seller', async () => {
-      const body = { active: true, paid: false, tier: 2 }
+      const body = { active: false, paid: false, tier: 2 }
       const resp = await request(app.getHttpServer())
         .put('/admin/seller/seller-3')
         .send(body)
@@ -369,8 +357,27 @@ describe('Admin e2e', () => {
       const { message } = resp.body
       expect(message).toEqual('seller has been updated')
       const editedSeller = await getRepository(SellerAttribute).findOne('seller-3')
-      expect(editedSeller.is_active).toBeTruthy()
+      expect(editedSeller.is_active).toBeFalsy()
       expect(editedSeller.has_paid).toBeFalsy()
       expect(editedSeller.tier).toEqual(2)
+      const editedUser = await getRepository(UserEntity).findOne(user3.id)
+        expect(editedUser.role).toEqual('buyer')
+    })
+
+    it('activate seller', async () => {
+      const resp = await request(app.getHttpServer())
+        .put('/admin/seller/seller-1')
+        .send({ active: true })
+        .expect(201)
+        .then(res => {
+          const body = res.body
+          const { message, result } = body
+          expect(message).toEqual('seller has been updated')
+          expect(result).toBeNull()
+        })
+        const editedSeller = await getRepository(SellerAttribute).findOne('seller-1')
+        expect(editedSeller.is_active).toBeTruthy()
+        const editedUser = await getRepository(UserEntity).findOne(user1.id)
+        expect(editedUser.role).toEqual('seller')
     })
   })
