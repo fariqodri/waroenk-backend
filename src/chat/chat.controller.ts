@@ -17,9 +17,10 @@ export class ChatController {
   @Put('devices')
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
-  registerDeviceToken(@Body() body: RegisterDeviceDto, @Req() request: Request) {
+  async registerDeviceToken(@Body() body: RegisterDeviceDto, @Req() request: Request) {
     const { userId } = request.user as { userId: string }
-    return this.usersService.updateDeviceToken(userId, body.device_token)
+    const res = await this.usersService.updateDeviceToken(userId, body.device_token)
+    return new ResponseBody(res)
   }
 
   @Put()
@@ -35,20 +36,23 @@ export class ChatController {
   @UseGuards(JwtAuthGuard)
   async rooms(@Req() request: Request, @Query('with') chatsWith: 'seller' | 'buyer') {
     const { userId, role } = request.user as { userId: string, role: 'seller' | 'buyer' }
-    return this.chatService.getChatRoomsByUserId(userId, role, chatsWith)
+    const res = await this.chatService.getChatRoomsByUserId(userId, role, chatsWith)
+    return new ResponseBody(res)
   }
 
   @Get('rooms/seller/:sellerId')
   @UseGuards(JwtAuthGuard)
   async getRoomWithSeller(@Req() request: Request, @Param('sellerId') sellerId: string) {
     const { userId, role } = request.user as { userId: string, role: 'seller' | 'buyer' }
-    return this.chatService.getChatsInRoomWithSellerId(userId, sellerId)
+    const res = await this.chatService.getChatsInRoomWithSellerId(userId, sellerId)
+    return new ResponseBody(res)
   }
 
   @Get('rooms/:id')
   @UseGuards(JwtAuthGuard)
   async chatsInRoom(@Param('id') roomId: string, @Req() request: Request) {
     const { userId } = request.user as { userId: string, role: 'seller' | 'buyer' }
-    return this.chatService.getChatsInRoom(roomId, userId)
+    const res = await this.chatService.getChatsInRoom(roomId, userId)
+    return new ResponseBody(res)
   }
 }
