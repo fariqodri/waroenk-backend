@@ -42,6 +42,7 @@ export class AdminService {
       order = { shop_name: param.order.toUpperCase() }
     }
     const seller = await this.sellerRepo.find({
+      relations: ['user'],
       where: query,
       skip: skippedItems,
       take: param.limit,
@@ -50,6 +51,13 @@ export class AdminService {
     const count = await this.sellerRepo.count({
       where: query,
       order: order
+    })
+    let response = seller.map(p => ({
+      ...p,
+      userId: p.user.id
+    }))
+    response.forEach(function(p) {
+      delete p.user
     })
     return new ResponseListWithCountBody(seller, 'ok', param.page, seller.length, count)
   }
