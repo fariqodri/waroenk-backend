@@ -1,4 +1,9 @@
-import { Injectable, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { nanoid } from 'nanoid';
 import admin from 'firebase-admin';
 
@@ -97,8 +102,13 @@ export class ChatService {
             latest_chat_at: Date.now(),
           });
         });
-      } catch(err) {
-        throw new BadRequestException(new ResponseBody(null, `chat room already exist for buyer ${senderId} and seller ${receiver.id}`))
+      } catch (err) {
+        throw new BadRequestException(
+          new ResponseBody(
+            null,
+            `chat room already exist for buyer ${senderId} and seller ${receiver.id}`,
+          ),
+        );
       }
     }
 
@@ -145,7 +155,11 @@ export class ChatService {
     };
   }
 
-  async getChatRoomsByUserId(userId: string, role: 'seller' | 'buyer', chatsWith: 'seller' | 'buyer') {
+  async getChatRoomsByUserId(
+    userId: string,
+    role: 'seller' | 'buyer',
+    chatsWith: 'seller' | 'buyer',
+  ) {
     let query = this.chatRoomRepo
       .createQueryBuilder('room')
       .innerJoin('room.buyer', 'buyer')
@@ -158,23 +172,53 @@ export class ChatService {
         'seller.id',
         'seller.role',
         'seller.full_name',
+        'room.latest_chat_at'
       ])
-      .orderBy('room.latest_chat_at', 'DESC')
+      .addSelect(
+        subQuery =>
+          subQuery
+            .select('COUNT(1)')
+            .from(ChatEntity, 'chats')
+            .where(
+              'chats.roomId = room.id AND chats.read_by_receiver = 0 AND chats.receiverId = :receiverId',
+              { receiverId: userId },
+            ),
+        'unread_chats',
+      )
+      .orderBy('room.latest_chat_at', 'DESC');
     if (role === 'seller') {
       switch (chatsWith) {
         case 'buyer':
-          query = query.where('buyer.role = :role AND seller.id = :id', { role: 'buyer', id: userId })
+          query = query.where('buyer.role = :role AND seller.id = :id', {
+            role: 'buyer',
+            id: userId,
+          });
           break;
         case 'seller':
-          query = query.where('buyer.id = :id', { id: userId })
+          query = query.where('buyer.id = :id', { id: userId });
           break;
         default:
           break;
       }
     } else if (role === 'buyer') {
-      query = query.where('buyer.id = :id', { id: userId })
+      query = query.where('buyer.id = :id', { id: userId });
     }
-    return query.getMany();
+    const res = await query.getRawMany()
+    return res.map(v => ({
+      id: v.room_id,
+      buyer: {
+        id: v.buyer_id,
+        full_name: v.buyer_full_name,
+        role: v.buyer_role
+      },
+      seller: {
+        id: v.seller_id,
+        full_name: v.seller_full_name,
+        role: v.seller_role
+      },
+      unread_chats: parseInt(v.unread_chats),
+      latest_chat_at: parseInt(v.room_latest_chat_at)
+    }))
   }
 
   async getChatsInRoom(roomId: string, userId: string) {
@@ -228,15 +272,20 @@ export class ChatService {
       room = await this.chatRoomRepo.findOneOrFail({
         where: {
           buyer: {
-            id: userId
+            id: userId,
           },
           seller: {
-            id: sellerId
-          }
-        } 
-      })
+            id: sellerId,
+          },
+        },
+      });
     } catch {
-      throw new NotFoundException(new ResponseBody(null, `chat room with buyer ${userId} and seller ${sellerId} not found`))
+      throw new NotFoundException(
+        new ResponseBody(
+          null,
+          `chat room with buyer ${userId} and seller ${sellerId} not found`,
+        ),
+      );
     }
     
     const res = await this.chatRepo
