@@ -280,11 +280,6 @@ export class ShopService {
     return new ResponseListBody(products, "ok", query.page, products.length)
   }
 
-  async getShopByUserId(userId: string) {
-    const shop = await this.sellerRepo.findOneOrFail({ where: { user: { id: userId } } })
-    return shop
-  }
-
   async listSellerOrder(param: OrderQueryParam, userId: string): Promise<ResponseBody<any>> {
     const seller = await this.sellerRepo.findOneOrFail({
       relations: ['user'],
