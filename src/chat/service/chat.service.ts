@@ -146,7 +146,7 @@ export class ChatService {
     let notificationBody: string;
     let chatData: any = {
       chat_id: chat.id,
-      room: JSON.stringify(room),
+      chat_room_id: room.id,
       date: chat.date,
       time: chat.time,
       type: chat.type,
