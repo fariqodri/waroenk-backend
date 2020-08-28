@@ -13,6 +13,7 @@ export class ProductQuery {
 
 export class ProductResponse {
   id: string;
+  product_seller_user_id: string;
   name: string;
   price_per_quantity: number;
   seller: {

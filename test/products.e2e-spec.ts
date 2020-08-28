@@ -293,6 +293,7 @@ describe('GET Product and Categories (e2e)', () => {
         message: 'ok',
         result: {
           id: 'product_1',
+          product_seller_user_id: user.id,
           name: 'KangKunG',
           price_per_quantity: 10000,
           seller: {
@@ -456,6 +457,7 @@ describe('GET Product and Categories (e2e) with user login', () => {
         message: 'ok',
         result: {
           id: 'product_1',
+          product_seller_user_id: user.id,
           name: 'KangKunG',
           price_per_quantity: 10000,
           seller: {
