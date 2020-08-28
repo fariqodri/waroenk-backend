@@ -111,6 +111,7 @@ export class ProductsService {
       }
       const response: ProductResponse = {
         id: product.id,
+        product_seller_user_id: product.seller.user.id,
         name: product.name,
         price_per_quantity: product.price_per_quantity,
         seller: {
