@@ -4,6 +4,7 @@ import { ChatEntity } from "../entities/chat.entity";
 import { ShopProvider } from "../../shop/shop.provider";
 import { ResponseBody } from "../../utils/response";
 import { ChatRepository } from "../repositories/chat.repository";
+import { ChatRoomEntity } from "../entities/chat-room.entity";
 
 @Injectable()
 export class RoomService {
@@ -109,11 +110,11 @@ export class RoomService {
     }))
   }
 
-  async getChatRoomBySellerId(userId: string, sellerId: string) {
+  async getChatRoomBySellerId(userId: string, sellerId: string): Promise<ChatRoomEntity> {
     try {
       const seller = await this.shopProvider.getShopById(sellerId)
       const sellerUser = seller.user
-      const { id: roomId } = await this.chatRoomRepo.findOneOrFail({
+      return this.chatRoomRepo.findOneOrFail({
         where: {
           buyer: {
             id: userId
@@ -123,20 +124,6 @@ export class RoomService {
           }
         },
         select: ['id']
-      })
-      await this.chatRepo.update({
-        room: {
-          id: roomId
-        },
-        receiver: {
-          id: userId
-        }
-      }, {
-        read_by_receiver: true 
-      })
-      return this.chatRoomRepo.findOneOrFail(roomId, {
-        select: ['id', 'latest_chat_at'],
-        relations: ['chats']
       })
     } catch(err) {
       throw new NotFoundException(new ResponseBody(null, 'seller or chat room not found'))
