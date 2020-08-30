@@ -6,6 +6,7 @@ import { UserRepository } from '../users/repositories/users.repository';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
 import { OrderRepository } from '../order/repositories/order.repository';
+import { SellerBankRepository } from '../users/repositories/selle-bank.repository';
 
 describe('Shop Controller', () => {
   let controller: ShopController;
@@ -19,7 +20,9 @@ describe('Shop Controller', () => {
         ProductRepository, 
         CategoryRepository, 
         UserRepository,
-        OrderRepository]
+        OrderRepository,
+        SellerBankRepository
+      ]
     }).compile();
 
     controller = module.get<ShopController>(ShopController);

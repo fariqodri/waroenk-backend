@@ -3,6 +3,7 @@ import { UserEntity } from './users.entity';
 import { ProductEntity } from "../../products/entities/product.entity";
 import { OrderEntity } from "../../order/entities/order.entity";
 import { PostEntity } from "../../post/post.entity";
+import { SellerBank } from "./seller-bank.entity";
 
 @Entity({ name: "seller" })
 export class SellerAttribute {
@@ -63,4 +64,7 @@ export class SellerAttribute {
 
   @OneToMany(type => PostEntity, post => post.seller)
   posts?: PostEntity[]
+
+  @OneToMany(type => SellerBank, bank => bank.seller, { nullable: true })
+  banks?: SellerBank[]
 }

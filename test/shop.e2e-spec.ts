@@ -17,6 +17,7 @@ import { UserEntity } from "../src/users/entities/users.entity";
 import { entities } from "./dependencies";
 import { OrderEntity } from "../src/order/entities/order.entity";
 import { OrderItem } from "../src/order/entities/order-item.entity";
+import { SellerBank } from "../src/users/entities/seller-bank.entity";
 
 
 const fakeRedisClientProvider = {
@@ -163,6 +164,31 @@ describe('Shop E2E', () => {
         updated_at: null
       },
     ])
+    const bank1: SellerBank = {
+      id: 'bank-1',
+      seller: seller,
+      bank: 'Bank BCA',
+      number: '0123123012',
+      owner: 'Bung Tomo',
+      is_active: true
+    }
+    const bank2: SellerBank = {
+      id: 'bank-2',
+      seller: seller,
+      bank: 'Bank BNI',
+      number: '012333012',
+      owner: 'Bung Tomori',
+      is_active: true
+    }
+    const bank3: SellerBank = {
+      id: 'bank-3',
+      seller: seller,
+      bank: 'Bank BTPN',
+      number: '0123123011',
+      owner: 'Bung Tomoyo',
+      is_active: false
+    }
+    await getRepository(SellerBank).insert([bank1, bank2, bank3])
   })
 
   it('should list seller order', async () => {
@@ -224,6 +250,7 @@ describe('Shop E2E', () => {
       product: productOrder2,
       quantity: 2
     }
+    
     await getRepository(ProductEntity).insert([productOrder1, productOrder2])
     await getRepository(OrderEntity).insert([order1])
     await getRepository(OrderItem).insert([order1Item1, order1Item2])
@@ -242,6 +269,43 @@ describe('Shop E2E', () => {
         expect(totalItem).toEqual(4);
         expect(subTotal).toEqual(70000);
       });
+  })
+
+  it('create bank', async () => {
+    const body = { 
+      bank: 'Bank Bukopin',
+      number: '14045',
+      owner: 'Pak AMiruddin'
+    }
+    const resp = await request(app.getHttpServer())
+      .post('/shop/bank')
+      .send(body)
+      .expect(201)
+    const { message, result } = resp.body
+    expect(message).toEqual('ok')
+    expect(result.bank).toEqual(body)
+    const banks = await getRepository(SellerBank).count({ is_active: true })
+    expect(banks).toEqual(3)
+  })
+
+  it('delete bank', async () => {
+    const resp = await request(app.getHttpServer())
+      .delete('/shop/bank/bank-2')
+      .expect(200)
+    const { message, result } = resp.body
+    expect(message).toEqual('bank deleted')
+    expect(result).toEqual(null)
+    const banks = await getRepository(SellerBank).count({ is_active: true })
+    expect(banks).toEqual(1)
+  })
+
+  it('list bank', async () => {
+    const resp = await request(app.getHttpServer())
+      .get('/shop/bank/seller-1')
+      .expect(200)
+    const { message, result } = resp.body
+    expect(message).toEqual('ok')
+    expect(result.length).toEqual(2)
   })
 
   it('get shop', () => {
