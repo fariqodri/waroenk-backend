@@ -2,7 +2,7 @@ import { Controller, UseGuards, Get, Query, Req, Delete, HttpCode, Body, Post, P
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolePermissionGuard } from '../auth/guards/role.permission.guard';
 import { Roles } from '../utils/decorators';
-import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam } from './shop.dto';
+import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam, SellerBankParam } from './shop.dto';
 import { ShopService } from './shop.service';
 import { Request } from 'express';
 import { ValidationPipe } from '../utils/validation.pipe';
@@ -91,5 +91,31 @@ export class ShopController {
   }: OrderQueryParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.listSellerOrder({ limit, page, status }, user.userId)
+  }
+
+  @UsePipes(ValidationPipe)
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('seller')
+  @Post('bank')
+  @HttpCode(201)
+  async createBank(@Body() param: SellerBankParam, @Req() request: Request) {
+    const user: { userId } = request.user as { userId }
+    return this.service.createBank(user.userId, param);
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('seller')
+  @Delete('bank/:id')
+  @HttpCode(200)
+  async deleteBank(@Param('id') id: string, @Req() request: Request) {
+    const user: { userId } = request.user as { userId }
+    return this.service.deleteBank(user.userId, id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('all')
+  @Get('bank/:id')
+  async listBank(@Param('id') id: string) {
+    return this.service.listBank(id);
   }
 }

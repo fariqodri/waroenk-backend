@@ -17,6 +17,7 @@ import { LocationEntity } from '../src/misc/entities/location.entity';
 import { FaqEntity } from '../src/misc/entities/faq.entity';
 import { ProposalItem } from '../src/proposal/entities/proposal-item.entity';
 import { PostEntity } from '../src/post/post.entity';
+import { SellerBank } from '../src/users/entities/seller-bank.entity';
 
 export const entities = [
   CategoryEntity,
@@ -36,7 +37,8 @@ export const entities = [
   LocationEntity,
   FaqEntity,
   ProposalItem,
-  PostEntity
+  PostEntity,
+  SellerBank
 ];
 
 export const fakeJwtAuthGuardFactory = (session: any) => ({

@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException, Param } from '@nestjs/common';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
-import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam } from './shop.dto';
+import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam, SellerBankParam } from './shop.dto';
 import { ResponseBody, ResponseListBody } from '../utils/response';
 import { SellerAttributeRepository } from '../users/repositories/seller.repository';
 import { UserRepository } from '../users/repositories/users.repository';
@@ -11,6 +11,8 @@ import { nanoid } from 'nanoid';
 import { OrderQueryParam } from '../order/dto/order.dto';
 import { Like } from 'typeorm';
 import { OrderRepository } from '../order/repositories/order.repository';
+import { SellerBankRepository } from '../users/repositories/selle-bank.repository';
+import { SellerBank } from '../users/entities/seller-bank.entity';
 
 @Injectable()
 export class ShopService {
@@ -19,8 +21,54 @@ export class ShopService {
     private sellerRepo: SellerAttributeRepository,
     private categoryRepo: CategoryRepository,
     private userRepo: UserRepository,
-    private orderRepo: OrderRepository
+    private orderRepo: OrderRepository,
+    private sellerBankRepo: SellerBankRepository
   ) {}
+
+  async createBank(userId: string, param: SellerBankParam): Promise<ResponseBody<any>> {
+    const seller = await this.sellerRepo.findOneOrFail({
+      relations: ['user'],
+      where: { user: userId }
+    });
+    const newBank: SellerBank = {
+      id: nanoid(11),
+      seller: seller,
+      bank: param.bank,
+      number: param.number,
+      owner: param.owner,
+      is_active: true
+    }
+    await this.sellerBankRepo.insert(newBank)
+    const response = {
+      id: newBank.id,
+      sellerId: seller.id,
+      bank: param
+    }
+    return new ResponseBody(response)
+  }
+
+  async deleteBank(userId: string, id: string): Promise<ResponseBody<any>> {
+    const seller = await this.sellerRepo.findOneOrFail({
+      relations: ['user'],
+      where: { user: userId }
+    });
+    let deletedBank = await this.sellerBankRepo.findOneOrFail(id, {
+      relations: ['seller'],
+      where: { seller: seller.id, is_active: true}
+    })
+    deletedBank.is_active = false
+    await this.sellerBankRepo.save(deletedBank)
+    return new ResponseBody(null, 'bank deleted')
+  }
+
+  async listBank(sellerId: string): Promise<ResponseBody<any>> {
+    const seller = await this.sellerRepo.findOneOrFail(sellerId)
+    let banks = await this.sellerBankRepo.find({
+      relations: ['seller'],
+      where: { seller: seller.id, is_active: true}
+    })
+    return new ResponseBody(banks)
+  }
 
   async getShop(id: string): Promise<ResponseBody<any>> {
     const seller = await this.sellerRepo.findOneOrFail(id);

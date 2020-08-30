@@ -8,6 +8,17 @@ export class ShopProductQuery {
   categories?: string
 }
 
+export class SellerBankParam {
+  @jf.string().required()
+  bank: string
+
+  @jf.string().required()
+  number: string
+
+  @jf.string().required()
+  owner: string
+}
+
 export class ProductCreateParam {
   @jf.string().required()
   categoryId: string

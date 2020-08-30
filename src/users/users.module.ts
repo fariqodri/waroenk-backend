@@ -8,10 +8,11 @@ import { SellerAttributeRepository } from './repositories/seller.repository';
 import { ShippingAddressRepository } from './repositories/shipping-address.repository';
 import { MiscModule } from '../misc/misc.module';
 import { UsersProvider } from './providers/users.provider';
+import { SellerBankRepository } from './repositories/selle-bank.repository';
 
 @Module({
   providers: [UsersService, UsersProvider],
-  exports: [UsersService, TypeOrmModule.forFeature([SellerAttributeRepository]), UsersProvider],
+  exports: [UsersService, TypeOrmModule.forFeature([SellerAttributeRepository, SellerBankRepository]), UsersProvider],
   controllers: [UsersController],
   imports: [PermissionModule, MiscModule, TypeOrmModule.forFeature([UserRepository, SellerAttributeRepository, ShippingAddressRepository])],
 })
