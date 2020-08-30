@@ -538,7 +538,12 @@ describe('Order e2e test', () => {
         message: 'ok',
         result: [
           {
-            seller: { sellerId: 'seller-1', sellerName: 'Toko Sayur' },
+            seller: { 
+              id: seller1.id, 
+              name: seller1.shop_name,
+              tier: seller1.tier,
+              image: seller1.image.split(',')
+            },
             products: [{
               quantity: 2,
               discount: 0,
@@ -549,7 +554,12 @@ describe('Order e2e test', () => {
             }]
           },
           {
-            seller: { sellerId: 'seller-2', sellerName: 'Toko Buah' },
+            seller: { 
+              id: seller2.id, 
+              name: seller2.shop_name,
+              tier: seller2.tier,
+              image: seller2.image.split(',')
+            },
             products: [{
               quantity: 3,
               discount: 0,

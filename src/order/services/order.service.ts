@@ -106,6 +106,8 @@ export class OrderService {
       id: order.id,
       userId: order.user.id,
       sellerId: order.seller.id,
+      sellerName: order.seller.shop_name,
+      sellerAddress: order.seller.shop_address,
       items: order.items,
       status: order.status,
       address: order.address,
@@ -317,8 +319,10 @@ export class OrderService {
       const seller = await this.sellerRepo.findOne(sellerId)
       response.push({
         seller: {
-          sellerId: seller.id,
-          sellerName: seller.shop_name
+          id: seller.id,
+          name: seller.shop_name,
+          tier: seller.tier,
+          image: seller.image.split(',')
         },
         products: products
       })
