@@ -23,6 +23,12 @@ export class ListSellerQuery {
   name?: string
 }
 
+export class ListProposalParam {
+  page: number;
+  limit: number;
+  type?: string;
+}
+
 export class CountOrderParam {
   dayFrom: number
   monthFrom: number

@@ -42,28 +42,28 @@ describe('Proposals (e2e)', () => {
     type: 'modal',
     item: 'nama',
     created_at: new Date(),
-    deleted_at: null
+    is_active: true
   }
   const item2: ProposalItem = {
     id: 'item-2',
     type: 'modal',
     item: 'alamat',
     created_at: new Date(),
-    deleted_at: null
+    is_active: true
   }
   const proposal1: ProposalEntity = {
     id: 'pr-1',
     user: user1,
     type: 'modal',
     created_at: new Date(),
-    deleted_at: null
+    is_active: true
   }
   const proposal2: ProposalEntity = {
     id: 'pr-2',
     user: user1,
     type: 'ekspor',
     created_at: new Date(),
-    deleted_at: null
+    is_active: true
   }
   const data1: ProposalData = {
     id: 'data-1',
@@ -71,7 +71,7 @@ describe('Proposals (e2e)', () => {
     key: 'nama',
     value: 'jojon',
     created_at: new Date(),
-    deleted_at: null
+    is_active: true
   }
   const data2: ProposalData = {
     id: 'data-2',
@@ -79,7 +79,7 @@ describe('Proposals (e2e)', () => {
     key: 'alamat',
     value: 'nangor',
     created_at: new Date(),
-    deleted_at: null
+    is_active: true
   }
   
   beforeEach(async () => {

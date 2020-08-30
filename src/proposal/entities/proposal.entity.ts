@@ -9,7 +9,7 @@ export class ProposalEntity {
   id: string
 
   @OneToMany(type => ProposalData, data => data.proposal)
-  data?: ProposalEntity[]
+  data?: ProposalData[]
 
   @ManyToOne(type => UserEntity, user => user.proposals, { eager: true })
   user: UserEntity
@@ -20,6 +20,6 @@ export class ProposalEntity {
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date
 
-  @Column({ nullable: true })
-  deleted_at: Date
+  @Column({ default: true })
+  is_active: boolean
 }

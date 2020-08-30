@@ -5,9 +5,7 @@ import { AdminService } from '../services/admin.service';
 import { AdminController } from './admin.controller';
 import { UsersProvider } from '../../users/providers/users.provider';
 import { OrderRepository } from '../../order/repositories/order.repository';
-
-jest.mock('../../users/repositories/users.repository')
-jest.mock('../../users/repositories/seller.repository')
+import { ProposalRepository } from '../../proposal/repositories/proposal.repository';
 
 describe('Admin Service', () => {
   let controller: AdminController;
@@ -21,6 +19,7 @@ describe('Admin Service', () => {
         SellerAttributeRepository,
         UsersProvider,
         OrderRepository,
+        ProposalRepository
       ],
     }).compile();
 

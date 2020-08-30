@@ -19,7 +19,7 @@ export class ProposalService {
 
   async listProposalItems(type: string): Promise<ResponseListBody<any[]>> {
     let queryBuilder = this.proposalItemRepo.createQueryBuilder()
-        .where('deleted_at IS NULL')
+        .where('is_active IS TRUE')
         .andWhere('type = :type', { type: type })
     queryBuilder = queryBuilder.select(
       `id AS id,
@@ -33,7 +33,7 @@ export class ProposalService {
   async listUserProposal(param: ProposalQuery, userId: string): Promise<ResponseListBody<any[]>> {
     const skippedItems = (param.page - 1) * param.limit;
     let queryBuilder = this.proposalRepo.createQueryBuilder()
-        .where('deleted_at IS NULL')
+        .where('is_active IS TRUE')
         .andWhere('userId = :userId', { userId: userId })
     if (param.type) {
       queryBuilder = queryBuilder.andWhere(
@@ -56,14 +56,14 @@ export class ProposalService {
     let proposalData = await this.proposalDataRepo.find({
       relations: ['proposal'],
       where: {
-        deleted_at: null,
+        is_active: true,
         proposal: id
       }
     })
     proposalData.forEach(function(p) {
       delete p.created_at
       delete p.proposal
-      delete p.deleted_at
+      delete p.is_active
     })
     return new ResponseListBody(proposalData, 'ok', 1, proposalData.length)
   }
@@ -75,7 +75,7 @@ export class ProposalService {
       user: user,
       type: param.type,
       created_at: new Date(),
-      deleted_at: null
+      is_active: true
     }
     await this.proposalRepo.insert(newProposal)
     let newProposalDataList: ProposalData[] = []
@@ -86,7 +86,7 @@ export class ProposalService {
         key: pair[0],
         value: pair[1],
         created_at: new Date(),
-        deleted_at: null
+        is_active: true
       }
       newProposalDataList.push(newProposalData)
     });
