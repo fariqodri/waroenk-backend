@@ -1,14 +1,15 @@
 import { Injectable } from "@nestjs/common"
+import { format } from 'date-fns'
 
 import { UserRepository } from "../../users/repositories/users.repository"
 import { SellerAttributeRepository } from "../../users/repositories/seller.repository"
 import { ResponseBody, ResponseListWithCountBody } from "../../utils/response"
 import { SellerAttribute } from "../../users/entities/seller.entity"
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam } from "../dto/admin.dto"
+import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam } from "../dto/admin.dto"
 import { UsersProvider } from "../../users/providers/users.provider"
 import { Like, Not, Between } from "typeorm"
 import { OrderRepository } from "../../order/repositories/order.repository"
-import { format } from 'date-fns'
+import { ProposalRepository } from "../../proposal/repositories/proposal.repository"
 
 export const BetweenDate = (date1: Date, date2: Date) => 
   Between(format(date1, 'yyyy-MM-dd HH:mm:SS'), format(date2, 'yyyy-MM-dd HH:mm:SS'))
@@ -19,7 +20,8 @@ export class AdminService {
     private userRepo: UserRepository,
     private sellerRepo: SellerAttributeRepository,
     private userProvider: UsersProvider,
-    private orderRepo: OrderRepository
+    private orderRepo: OrderRepository,
+    private proposalRepo: ProposalRepository
   ) {}
 
   async countOrder(param: CountOrderParam): Promise<ResponseBody<any>> {
@@ -53,6 +55,33 @@ export class AdminService {
 
   async listBuyers(query: ListBuyersQuery) {
     return this.userProvider.listBuyers(query)
+  }
+
+  async listProposal(param: ListProposalParam): Promise<ResponseBody<any>> {
+    const skippedItems = (param.page - 1) * param.limit;
+    let query = { is_active: true }
+    if (param.type !== undefined && param.type !== '') {
+      query = Object.assign({}, query, { type: param.type })
+    }
+    const proposals = await this.proposalRepo.find({
+      relations: ['data', 'user'],
+      where: query,
+      skip: skippedItems,
+      take: param.limit,
+      order: { created_at: 'DESC' }
+    })
+    const proposalCount = await this.proposalRepo.count({ where: query })
+    let response = []
+    for (let proposal of proposals) {
+      response.push({
+        id: proposal.id,
+        data: proposal.data,
+        type: proposal.type,
+        userId: proposal.user.id,
+        userName: proposal.user.full_name
+      })
+    }
+    return new ResponseListWithCountBody(response, 'ok', param.page, proposals.length, proposalCount)
   }
 
   async listSeller(param: ListSellerQuery): Promise<ResponseBody<any>> {

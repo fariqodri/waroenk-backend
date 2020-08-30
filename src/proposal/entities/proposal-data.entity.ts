@@ -19,6 +19,6 @@ export class ProposalData {
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date
 
-  @Column({ nullable: true })
-  deleted_at: Date
+  @Column({ default: true })
+  is_active: boolean
 }

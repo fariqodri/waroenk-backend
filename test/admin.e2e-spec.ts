@@ -13,6 +13,7 @@ import { SellerAttribute } from "../src/users/entities/seller.entity";
 import { JwtAuthGuard } from "../src/auth/guards/jwt-auth.guard";
 import { RedisClientProvider } from "../src/redis/redis.client.provider";
 import { OrderEntity } from "../src/order/entities/order.entity";
+import { ProposalEntity } from "../src/proposal/entities/proposal.entity";
 
 describe('Admin e2e', () => {
     let app: INestApplication;
@@ -222,6 +223,34 @@ describe('Admin e2e', () => {
     afterEach(async () => {
       await getConnection().close();
     });
+
+    it('should list proposal', async () => {
+      const proposal1: ProposalEntity = {
+        id: 'proposal-1',
+        user: user1,
+        type: 'izin',
+        created_at: new Date(100),
+        is_active: true,
+        data: []
+      }
+      const proposal2: ProposalEntity = {
+        id: 'proposal-2',
+        user: user2,
+        type: 'izin',
+        created_at: new Date(101),
+        is_active: true,
+        data: []
+      }
+      await getRepository(ProposalEntity).insert([proposal1, proposal2])
+      const resp = await request(app.getHttpServer())
+        .get('/admin/proposal')
+        .expect(200)
+      const { result, total } = resp.body
+      expect(result.length).toEqual(2)
+      expect(total).toEqual(2)
+      expect(result[0].id).toEqual(proposal2.id)
+      expect(result[1].id).toEqual(proposal1.id)
+    })
 
     it('should count order for dashboard', async () => {
       const resp = await request(app.getHttpServer())
