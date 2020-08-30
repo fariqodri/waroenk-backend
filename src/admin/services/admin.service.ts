@@ -8,6 +8,10 @@ import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam } fr
 import { UsersProvider } from "../../users/providers/users.provider"
 import { Like, Not, Between } from "typeorm"
 import { OrderRepository } from "../../order/repositories/order.repository"
+import { format } from 'date-fns'
+
+export const BetweenDate = (date1: Date, date2: Date) => 
+  Between(format(date1, 'yyyy-MM-dd HH:mm:SS'), format(date2, 'yyyy-MM-dd HH:mm:SS'))
 
 @Injectable()
 export class AdminService {
@@ -23,7 +27,7 @@ export class AdminService {
     const dateTo = new Date(param.yearTo, param.monthTo-1, param.dayTo, 23, 59, 59, 999)
     const orderCount = await this.orderRepo.count({
       where: {
-        created_at: Between(dateFrom, dateTo)
+        created_at: BetweenDate(dateFrom, dateTo)
       }
     })
     return new ResponseBody({ count: orderCount })

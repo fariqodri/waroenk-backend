@@ -3,7 +3,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { Test } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import * as request from 'supertest';
-import { getConnection, getRepository } from "typeorm";
+import { getConnection, getRepository, Between } from "typeorm";
 import { AdminModule } from "../src/admin/admin.module";
 import { entities, fakeRedisClientProvider, fakeJwtAuthGuardFactory } from "./dependencies";
 import { AuthModule } from "../src/auth/auth.module";
