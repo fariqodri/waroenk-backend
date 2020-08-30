@@ -78,7 +78,11 @@ export class AdminController {
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('admin')
   @Get('proposal')
-  async listProposal(@Query() param: ListProposalParam) {
-    return this.service.listProposal(param)
+  async listProposal(@Query() {
+    page = 1,
+    limit = 10,
+    type
+  }: ListProposalParam) {
+    return this.service.listProposal({ page, limit, type })
   }
 }
