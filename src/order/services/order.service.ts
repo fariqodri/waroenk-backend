@@ -70,7 +70,8 @@ export class OrderService {
     const response = orders.map(p => ({
       ...p,
       sellerId: p.seller.id,
-      sellerName: p.seller.shop_name,
+      shop_name: p.seller.shop_name,
+      shop_address: p.seller.shop_address,
       totalItem: p.items.reduce(function(prev, cur) {
         return prev + cur.quantity;
       }, 0),
@@ -106,8 +107,8 @@ export class OrderService {
       id: order.id,
       userId: order.user.id,
       sellerId: order.seller.id,
-      sellerName: order.seller.shop_name,
-      sellerAddress: order.seller.shop_address,
+      shop_name: order.seller.shop_name,
+      shop_address: order.seller.shop_address,
       items: order.items,
       status: order.status,
       address: order.address,
@@ -320,9 +321,11 @@ export class OrderService {
       response.push({
         seller: {
           id: seller.id,
-          name: seller.shop_name,
+          shop_name: seller.shop_name,
           tier: seller.tier,
-          image: seller.image.split(',')
+          image: seller.image.split(','),
+          description: seller.description,
+          shop_address: seller.shop_address
         },
         products: products
       })

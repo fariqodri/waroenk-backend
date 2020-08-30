@@ -165,7 +165,9 @@ describe('GET Product and Categories (e2e)', () => {
             images: ['1'],
             category_name: vegetableCategory.name,
             category_id: vegetableCategory.id,
-            seller_name: seller.shop_name,
+            shop_name: seller.shop_name,
+            shop_address: seller.shop_address,
+            shop_description: seller.description,
             seller_id: seller.id
           }
         ],
@@ -202,7 +204,9 @@ describe('GET Product and Categories (e2e)', () => {
             images: ['1'],
             category_name: vegetableCategory.name,
             category_id: vegetableCategory.id,
-            seller_name: seller.shop_name,
+            shop_name: seller.shop_name,
+            shop_address: seller.shop_address,
+            shop_description: seller.description,
             seller_id: seller.id
           },
           {
@@ -214,7 +218,9 @@ describe('GET Product and Categories (e2e)', () => {
             images: ['1'],
             category_name: vegetableCategory.name,
             category_id: vegetableCategory.id,
-            seller_name: seller.shop_name,
+            shop_name: seller.shop_name,
+            shop_address: seller.shop_address,
+            shop_description: seller.description,
             seller_id: seller.id
           },
           {
@@ -226,7 +232,9 @@ describe('GET Product and Categories (e2e)', () => {
             images: ['1'],
             category_name: fruitsCategory.name,
             category_id: fruitsCategory.id,
-            seller_name: seller.shop_name,
+            shop_name: seller.shop_name,
+            shop_address: seller.shop_address,
+            shop_description: seller.description,
             seller_id: seller.id
           }
         ],
@@ -251,7 +259,9 @@ describe('GET Product and Categories (e2e)', () => {
             images: ['1'],
             category_name: vegetableCategory.name,
             category_id: vegetableCategory.id,
-            seller_name: seller.shop_name,
+            shop_name: seller.shop_name,
+            shop_address: seller.shop_address,
+            shop_description: seller.description,
             seller_id: seller.id
           },
         ],
@@ -276,7 +286,9 @@ describe('GET Product and Categories (e2e)', () => {
             images: ['1'],
             category_name: fruitsCategory.name,
             category_id: fruitsCategory.id,
-            seller_name: seller.shop_name,
+            shop_name: seller.shop_name,
+            shop_address: seller.shop_address,
+            shop_description: seller.description,
             seller_id: seller.id
           }
         ],
@@ -298,8 +310,9 @@ describe('GET Product and Categories (e2e)', () => {
           price_per_quantity: 10000,
           seller: {
             id: seller.id,
-            name: seller.shop_name,
-            address: seller.shop_address,
+            shop_name: seller.shop_name,
+            shop_address: seller.shop_address,
+            description: seller.description,
             image: seller.image,
             is_active: seller.is_active,
             tier: seller.tier
@@ -462,8 +475,9 @@ describe('GET Product and Categories (e2e) with user login', () => {
           price_per_quantity: 10000,
           seller: {
             id: seller.id,
-            name: seller.shop_name,
-            address: seller.shop_address,
+            shop_name: seller.shop_name,
+            shop_address: seller.shop_address,
+            description: seller.description,
             image: seller.image,
             is_active: seller.is_active,
             tier: seller.tier

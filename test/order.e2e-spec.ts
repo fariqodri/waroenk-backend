@@ -477,12 +477,12 @@ describe('Order e2e test', () => {
       .then(res => {
         const body = res.body;
         const { message, result } = body;
-        const { id, sellerId, sellerName, status, totalItem, subTotal} = result[0];
+        const { id, sellerId, shop_name, status, totalItem, subTotal} = result[0];
         expect(message).toEqual('ok');
         expect(id).toEqual(order1.id);
         expect(status).toEqual('on_delivery');
         expect(sellerId).toEqual(seller1.id);
-        expect(sellerName).toEqual(seller1.shop_name);
+        expect(shop_name).toEqual(seller1.shop_name);
         expect(totalItem).toEqual(4);
         expect(subTotal).toEqual(70000);
       });
@@ -540,9 +540,11 @@ describe('Order e2e test', () => {
           {
             seller: { 
               id: seller1.id, 
-              name: seller1.shop_name,
+              shop_name: seller1.shop_name,
               tier: seller1.tier,
-              image: seller1.image.split(',')
+              image: seller1.image.split(','),
+              description: seller1.description,
+              shop_address: seller1.shop_address
             },
             products: [{
               quantity: 2,
@@ -556,9 +558,11 @@ describe('Order e2e test', () => {
           {
             seller: { 
               id: seller2.id, 
-              name: seller2.shop_name,
+              shop_name: seller2.shop_name,
               tier: seller2.tier,
-              image: seller2.image.split(',')
+              image: seller2.image.split(','),
+              description: seller2.description,
+              shop_address: seller2.shop_address
             },
             products: [{
               quantity: 3,
