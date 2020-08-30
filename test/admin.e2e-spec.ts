@@ -182,6 +182,16 @@ describe('Admin e2e', () => {
       await getConnection().close();
     });
 
+    it('should count user for dashboard', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/user/count')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.userCount).toEqual(3)
+      expect(result.sellerCount).toEqual(2)
+      expect(result.newSellerCount).toEqual(1)
+    })
+
     it('should list buyers sorted from oldest', async () => {
       const resp = await request(app.getHttpServer())
         .get('/admin/buyers?sort_by=created&order=asc')

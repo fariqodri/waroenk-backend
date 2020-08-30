@@ -60,4 +60,11 @@ export class AdminController {
   async editSeller(@Param() id: string, @Body() param: EditSellerParam) {
     return this.service.editSeller(param, id)
   }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Get('user/count')
+  async countUser() {
+    return this.service.countUser()
+  }
 }
