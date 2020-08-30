@@ -4,17 +4,48 @@ import { UserRepository } from "../../users/repositories/users.repository"
 import { SellerAttributeRepository } from "../../users/repositories/seller.repository"
 import { ResponseBody, ResponseListWithCountBody } from "../../utils/response"
 import { SellerAttribute } from "../../users/entities/seller.entity"
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam } from "../dto/admin.dto"
+import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam } from "../dto/admin.dto"
 import { UsersProvider } from "../../users/providers/users.provider"
-import { Like } from "typeorm"
+import { Like, Not, Between } from "typeorm"
+import { OrderRepository } from "../../order/repositories/order.repository"
 
 @Injectable()
 export class AdminService {
   constructor(
     private userRepo: UserRepository,
     private sellerRepo: SellerAttributeRepository,
-    private userProvider: UsersProvider
+    private userProvider: UsersProvider,
+    private orderRepo: OrderRepository
   ) {}
+
+  async countOrder(param: CountOrderParam): Promise<ResponseBody<any>> {
+    const dateFrom = new Date(param.yearFrom, param.monthFrom-1, param.dayFrom, 0, 0, 0)
+    const dateTo = new Date(param.yearTo, param.monthTo-1, param.dayTo, 23, 59, 59, 999)
+    const orderCount = await this.orderRepo.count({
+      where: {
+        created_at: Between(dateFrom.toISOString(), dateTo.toISOString())
+      }
+    })
+    return new ResponseBody({ count: orderCount })
+  }
+
+  async countUser(): Promise<ResponseBody<any>> {
+    const userCount = await this.userRepo.count({
+      where: {
+        is_active: true,
+        role: Not('admin')
+      }
+    })
+    const sellerCount = await this.sellerRepo.count({ is_active: true, is_blocked: false })
+    const newSellerCount = await this.sellerRepo.count({
+      is_active: false, has_paid: false, is_blocked: false })
+    const response = {
+      userCount: userCount,
+      sellerCount: sellerCount,
+      newSellerCount: newSellerCount
+    }
+    return new ResponseBody(response)
+  }
 
   async listBuyers(query: ListBuyersQuery) {
     return this.userProvider.listBuyers(query)
@@ -26,11 +57,11 @@ export class AdminService {
     if (param.filter == 'blocked') {
       query = { is_blocked: true }
     } else if (param.filter == 'paid') {
-      query = { is_active: true, has_paid: true }
+      query = { is_active: true, has_paid: true, is_blocked: false }
     } else if (param.filter == 'not_paid') {
-      query = { is_active: true, has_paid: false }
+      query = { is_active: true, has_paid: false, is_blocked: false }
     } else if (param.filter == 'not_verified') {
-      query = { is_active: false }
+      query = { is_active: false, is_blocked: false }
     }
     if (param.name !== undefined && param.name !== '') {
       query = Object.assign({}, query, { shop_name: Like(`%${param.name}%`) })
@@ -49,8 +80,7 @@ export class AdminService {
       order: order
     })
     const count = await this.sellerRepo.count({
-      where: query,
-      order: order
+      where: query
     })
     let response = seller.map(p => ({
       ...p,

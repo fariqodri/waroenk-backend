@@ -3,7 +3,7 @@ import { AdminService } from "../services/admin.service";
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RolePermissionGuard } from "../../auth/guards/role.permission.guard";
 import { Roles } from "../../utils/decorators";
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam } from "../dto/admin.dto";
+import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam } from "../dto/admin.dto";
 import { ResponseBody } from "../../utils/response";
 
 @Controller('admin')
@@ -59,5 +59,19 @@ export class AdminController {
   @HttpCode(201)
   async editSeller(@Param() id: string, @Body() param: EditSellerParam) {
     return this.service.editSeller(param, id)
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Get('user/count')
+  async countUser() {
+    return this.service.countUser()
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Get('order/count')
+  async countOrder(@Query() param: CountOrderParam) {
+    return this.service.countOrder(param)
   }
 }

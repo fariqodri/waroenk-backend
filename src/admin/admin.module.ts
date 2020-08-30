@@ -5,12 +5,14 @@ import { SellerAttributeRepository } from '../users/repositories/seller.reposito
 import { AdminService } from './services/admin.service';
 import { AdminController } from './controller/admin.controller';
 import { UsersModule } from '../users/users.module';
+import { OrderRepository } from '../order/repositories/order.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       UserRepository,
       SellerAttributeRepository,
+      OrderRepository
     ]),
     UsersModule
   ],

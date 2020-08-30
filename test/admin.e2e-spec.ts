@@ -12,6 +12,7 @@ import { UserEntity } from "../src/users/entities/users.entity";
 import { SellerAttribute } from "../src/users/entities/seller.entity";
 import { JwtAuthGuard } from "../src/auth/guards/jwt-auth.guard";
 import { RedisClientProvider } from "../src/redis/redis.client.provider";
+import { OrderEntity } from "../src/order/entities/order.entity";
 
 describe('Admin e2e', () => {
     let app: INestApplication;
@@ -148,7 +149,46 @@ describe('Admin e2e', () => {
       user2,
       user3
     ]
-    
+    const order1: OrderEntity = {
+      id: 'order-1',
+      user: user4,
+      seller: seller2,
+      status: 'new',
+      address: 'jalan anggur',
+      recipient_name: 'joni',
+      recipient_number: '08589239129',
+      created_at: new Date(2020, 4, 1, 12),
+      fare: 0,
+      courier: null,
+      notes: null,
+      payment_bank: null,
+      account_owner: null,
+      account_number: null,
+      payment_proof: null,
+      receipt_number: null,
+      updated_at: null,
+      items: []
+    }
+    const order2: OrderEntity = {
+      id: 'order-2',
+      user: user4,
+      seller: seller2,
+      status: 'new',
+      address: 'jalan anggur',
+      recipient_name: 'joni',
+      recipient_number: '08589239129',
+      created_at: new Date(2020, 4, 2, 12),
+      fare: 0,
+      courier: null,
+      notes: null,
+      payment_bank: null,
+      account_owner: null,
+      account_number: null,
+      payment_proof: null,
+      receipt_number: null,
+      updated_at: null,
+      items: []
+    }
     beforeEach(async () => {
       const moduleFixture = await Test.createTestingModule({
         imports: [
@@ -176,11 +216,30 @@ describe('Admin e2e', () => {
   
       await getRepository(UserEntity).insert([admin, ...buyers, user4])
       await getRepository(SellerAttribute).insert([sellerNotActivated, seller2, seller3, seller4])
+      await getRepository(OrderEntity).insert([order1, order2])
     })
 
     afterEach(async () => {
       await getConnection().close();
     });
+
+    it('should count order for dashboard', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/order/count?dayFrom=1&monthFrom=5&yearFrom=2020&dayTo=1&monthTo=5&yearTo=2020')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.count).toEqual(1)
+    })
+
+    it('should count user for dashboard', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/user/count')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.userCount).toEqual(3)
+      expect(result.sellerCount).toEqual(2)
+      expect(result.newSellerCount).toEqual(1)
+    })
 
     it('should list buyers sorted from oldest', async () => {
       const resp = await request(app.getHttpServer())

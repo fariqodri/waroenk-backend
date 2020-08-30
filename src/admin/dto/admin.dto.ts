@@ -22,3 +22,12 @@ export class ListSellerQuery {
   order: 'asc' | 'desc'
   name?: string
 }
+
+export class CountOrderParam {
+  dayFrom: number
+  monthFrom: number
+  yearFrom: number
+  dayTo: number
+  monthTo: number
+  yearTo: number
+}
