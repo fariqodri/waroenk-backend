@@ -224,7 +224,6 @@ describe('Admin e2e', () => {
     });
 
     it('should count order for dashboard', async () => {
-      console.log(order1.created_at)
       const resp = await request(app.getHttpServer())
         .get('/admin/order/count?dayFrom=1&monthFrom=5&yearFrom=2020&dayTo=1&monthTo=5&yearTo=2020')
         .expect(200)
