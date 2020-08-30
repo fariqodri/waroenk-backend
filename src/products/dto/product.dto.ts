@@ -18,8 +18,9 @@ export class ProductResponse {
   price_per_quantity: number;
   seller: {
     id: string;
-    name: string;
-    address: string;
+    shop_name: string;
+    shop_address: string;
+    description: string;
     image: string;
     is_active: boolean;
     tier: number;

@@ -78,7 +78,9 @@ export class ProductsService {
       .addSelect([
         'categories.name AS category_name',
         'categories.id AS category_id',
-        'seller.shop_name AS seller_name',
+        'seller.shop_name AS shop_name',
+        'seller.shop_address AS shop_address',
+        'seller.description AS shop_description',
         'seller.id AS seller_id'
       ]);
     products = await queryBuilder.execute();
@@ -116,8 +118,9 @@ export class ProductsService {
         price_per_quantity: product.price_per_quantity,
         seller: {
           id: product.seller.id,
-          name: product.seller.shop_name,
-          address: product.seller.shop_address,
+          shop_name: product.seller.shop_name,
+          shop_address: product.seller.shop_address,
+          description: product.seller.description,
           image: product.seller.image,
           is_active: product.seller.is_active,
           tier: product.seller.tier
