@@ -4,17 +4,30 @@ import { UserRepository } from "../../users/repositories/users.repository"
 import { SellerAttributeRepository } from "../../users/repositories/seller.repository"
 import { ResponseBody, ResponseListWithCountBody } from "../../utils/response"
 import { SellerAttribute } from "../../users/entities/seller.entity"
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam } from "../dto/admin.dto"
+import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam } from "../dto/admin.dto"
 import { UsersProvider } from "../../users/providers/users.provider"
-import { Like, Not } from "typeorm"
+import { Like, Not, Between } from "typeorm"
+import { OrderRepository } from "../../order/repositories/order.repository"
 
 @Injectable()
 export class AdminService {
   constructor(
     private userRepo: UserRepository,
     private sellerRepo: SellerAttributeRepository,
-    private userProvider: UsersProvider
+    private userProvider: UsersProvider,
+    private orderRepo: OrderRepository
   ) {}
+
+  async countOrder(param: CountOrderParam): Promise<ResponseBody<any>> {
+    const dateFrom = new Date(param.yearFrom, param.monthFrom-1, param.dayFrom, 0, 0, 0)
+    const dateTo = new Date(param.yearTo, param.monthTo-1, param.dayTo, 23, 59, 59, 999)
+    const orderCount = await this.orderRepo.count({
+      where: {
+        created_at: Between(dateFrom.toISOString(), dateTo.toISOString())
+      }
+    })
+    return new ResponseBody({ count: orderCount })
+  }
 
   async countUser(): Promise<ResponseBody<any>> {
     const userCount = await this.userRepo.count({

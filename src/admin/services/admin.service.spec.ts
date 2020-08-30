@@ -3,6 +3,7 @@ import { UserRepository } from '../../users/repositories/users.repository';
 import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
 import { AdminService } from './admin.service';
 import { UsersProvider } from '../../users/providers/users.provider';
+import { OrderRepository } from '../../order/repositories/order.repository';
 
 jest.mock('../../users/repositories/users.repository')
 jest.mock('../../users/repositories/seller.repository')
@@ -16,7 +17,9 @@ describe('Admin Service', () => {
         AdminService,
         UserRepository,
         SellerAttributeRepository,
-        UsersProvider],
+        UsersProvider,
+        OrderRepository,
+      ],
     }).compile();
 
     service = module.get<AdminService>(AdminService);
