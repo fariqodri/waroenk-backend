@@ -274,90 +274,117 @@ describe('Admin e2e', () => {
       const resp = await request(app.getHttpServer())
         .get('/admin/buyers?sort_by=created&order=asc')
         .expect(200)
-      const { result } = resp.body
+      const { result, page, limit, total } = resp.body
       expect(result.length).toEqual(3)
       expect(result[0].id).toEqual('user-3')
       expect(result[1].id).toEqual('user-2')
       expect(result[2].id).toEqual('user-1')
+      expect(page).toEqual(1)
+      expect(limit).toEqual(10)
+      expect(total).toEqual(3)
     })
 
     it('should list buyers sorted from newest', async () => {
       const resp = await request(app.getHttpServer())
         .get('/admin/buyers?sort_by=created&order=desc')
         .expect(200)
-      const { result } = resp.body
+      const { result, page, limit, total } = resp.body
       expect(result.length).toEqual(3)
       expect(result[0].id).toEqual('user-1')
       expect(result[1].id).toEqual('user-2')
       expect(result[2].id).toEqual('user-3')
+      expect(page).toEqual(1)
+      expect(limit).toEqual(10)
+      expect(total).toEqual(3)
     })
 
     it('should list buyers sorted by full name ascending', async () => {
       const resp = await request(app.getHttpServer())
         .get('/admin/buyers?sort_by=name&order=asc')
         .expect(200)
-      const { result } = resp.body
+      const { result, page, limit, total } = resp.body
       expect(result.length).toEqual(3)
       expect(result[0].id).toEqual('user-1')
       expect(result[1].id).toEqual('user-2')
       expect(result[2].id).toEqual('user-3')
+      expect(page).toEqual(1)
+      expect(limit).toEqual(10)
+      expect(total).toEqual(3)
     })
 
     it('should list buyers sorted by full name descending', async () => {
       const resp = await request(app.getHttpServer())
         .get('/admin/buyers?sort_by=name&order=desc')
         .expect(200)
-      const { result } = resp.body
+      const { result, page, limit, total } = resp.body
       expect(result.length).toEqual(3)
       expect(result[0].id).toEqual('user-3')
       expect(result[1].id).toEqual('user-2')
       expect(result[2].id).toEqual('user-1')
+      expect(page).toEqual(1)
+      expect(limit).toEqual(10)
+      expect(total).toEqual(3)
     })
 
     it('should limit buyer', async () => {
       const resp = await request(app.getHttpServer())
         .get('/admin/buyers?limit=1')
         .expect(200)
-      const { result } = resp.body
+      const { result, page, limit, total } = resp.body
       expect(result.length).toEqual(1)
       expect(result[0].id).toEqual('user-1')
+      expect(page).toEqual(1)
+      expect(limit).toEqual(1)
+      expect(total).toEqual(3)
     })
 
     it('should paginate buyer', async () => {
       const resp = await request(app.getHttpServer())
         .get('/admin/buyers?limit=1&page=2')
         .expect(200)
-      const { result } = resp.body
+      const { result, page, limit, total } = resp.body
       expect(result.length).toEqual(1)
       expect(result[0].id).toEqual('user-2')
+      expect(page).toEqual(2)
+      expect(limit).toEqual(1)
+      expect(total).toEqual(3)
     })
 
     it('should get active buyers only', async () => {
       const resp = await request(app.getHttpServer())
         .get('/admin/buyers?active=1')
         .expect(200)
-      const { result } = resp.body
+      const { result, page, limit, total } = resp.body
       expect(result.length).toEqual(2)
       expect(result[0].id).toEqual('user-1')
       expect(result[1].id).toEqual('user-2')
+      expect(page).toEqual(1)
+      expect(limit).toEqual(10)
+      expect(total).toEqual(2)
     })
 
     it('should get inactive buyers only', async () => {
       const resp = await request(app.getHttpServer())
         .get('/admin/buyers?active=0')
         .expect(200)
-      const { result } = resp.body
+      const { result, page, limit, total } = resp.body
       expect(result.length).toEqual(1)
       expect(result[0].id).toEqual('user-3')
+      expect(page).toEqual(1)
+      expect(limit).toEqual(10)
+      expect(total).toEqual(1)
     })
 
     it('should search buyer by name', async () => {
       const resp = await request(app.getHttpServer())
         .get('/admin/buyers?name=2')
         .expect(200)
-      const { result } = resp.body
+      const { result, page, limit, total } = resp.body
       expect(result.length).toEqual(1)
       expect(result[0].id).toEqual('user-2')
+      expect(page).toEqual(1)
+      expect(limit).toEqual(10)
+      expect(total).toEqual(1)
     })
 
     it('should list seller', async () => {
