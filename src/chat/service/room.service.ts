@@ -114,7 +114,7 @@ export class RoomService {
     try {
       const seller = await this.shopProvider.getShopById(sellerId)
       const sellerUser = seller.user
-      return this.chatRoomRepo.findOneOrFail({
+      const resp = await this.chatRoomRepo.findOneOrFail({
         where: {
           buyer: {
             id: userId
@@ -125,6 +125,7 @@ export class RoomService {
         },
         select: ['id']
       })
+      return resp
     } catch(err) {
       throw new NotFoundException(new ResponseBody(null, 'seller or chat room not found'))
     }
