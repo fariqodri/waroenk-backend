@@ -4,7 +4,7 @@ import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RolePermissionGuard } from "../../auth/guards/role.permission.guard";
 import { Roles } from "../../utils/decorators";
 import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam } from "../dto/admin.dto";
-import { ResponseBody } from "../../utils/response";
+import { ResponseListWithCountBody } from "../../utils/response";
 
 @Controller('admin')
 export class AdminController {
@@ -21,7 +21,7 @@ export class AdminController {
     active,
     name
   }: ListBuyersQuery) {
-    const response = await this.service.listBuyers({
+    const { total, result } = await this.service.listBuyers({
       page,
       limit,
       sort_by,
@@ -29,7 +29,7 @@ export class AdminController {
       active,
       name
     })
-    return new ResponseBody(response)
+    return new ResponseListWithCountBody(result, 'ok', parseInt(page.toString()), parseInt(limit.toString()), total)
   }
 
   @UseGuards(JwtAuthGuard, RolePermissionGuard)

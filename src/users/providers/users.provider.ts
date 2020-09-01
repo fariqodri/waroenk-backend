@@ -9,7 +9,7 @@ export class UsersProvider {
     private readonly userRepo: UserRepository
   ) {}
 
-  async listBuyers(query: ListBuyersQuery): Promise<UserEntity[]> {
+  async listBuyers(query: ListBuyersQuery): Promise<{total: number, result: UserEntity[]}> {
     const skippedItems = (query.page - 1) * query.limit;
     let order: 'ASC' | 'DESC';
     switch (query.order) {
@@ -26,8 +26,6 @@ export class UsersProvider {
     let queryBuilder = this.userRepo
       .createQueryBuilder('user')
       .where('user.role = :role', { role: 'buyer' })
-      .offset(skippedItems)
-      .limit(query.limit)
       .orderBy(query.sort_by === 'created' ? 'user.created_at' : 'user.full_name', order)
       .select([
         'user.id',
@@ -49,6 +47,13 @@ export class UsersProvider {
         name: `%${query.name.toLowerCase()}%`,
       });
     }
-    return queryBuilder.getMany()
+    const total = await queryBuilder.getCount()
+    queryBuilder = queryBuilder
+      .offset(skippedItems)
+      .limit(query.limit)
+    return {
+      total,
+      result: await queryBuilder.getMany()
+    }
   }
 }
