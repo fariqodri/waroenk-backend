@@ -43,3 +43,23 @@ export class CountOrderParam {
   monthTo: number
   yearTo: number
 }
+
+export class CreateAgendaParam {
+  title: string
+  description: string
+  location: string
+  date: string
+  images: string[]
+  type: 'pelatihan' | 'pembinaan'
+  sponsors?: string[]
+}
+
+export class EditAgendaParam {
+  title?: string
+  description?: string
+  location?: string
+  type?: 'pelatihan' | 'pembinaan'
+  date?: string
+  images?: string[]
+  sponsors?: string[]
+}

@@ -1,9 +1,9 @@
-import { Controller, Param, Put, HttpCode, UseGuards, Query, Get, Body, Delete } from "@nestjs/common";
+import { Controller, Param, Put, HttpCode, UseGuards, Query, Get, Body, Delete, Post } from "@nestjs/common";
 import { AdminService } from "../services/admin.service";
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RolePermissionGuard } from "../../auth/guards/role.permission.guard";
 import { Roles } from "../../utils/decorators";
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam } from "../dto/admin.dto";
+import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam, CreateAgendaParam } from "../dto/admin.dto";
 import { ResponseListWithCountBody } from "../../utils/response";
 
 @Controller('admin')
@@ -102,5 +102,28 @@ export class AdminController {
   @Delete('discussion/:id')
   async deleteDiscussion(@Param() id: any) {
     return this.service.deleteDiscussion(id.id)
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Post('agenda')
+  async createAgenda(@Body() param: CreateAgendaParam) {
+    return this.service.createAgenda(param)
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Put('agenda/:id')
+  @HttpCode(201)
+  async editAgenda(@Param() id: string, @Body() param: CreateAgendaParam) {
+    return this.service.editAgenda(id, param)
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Delete('agenda/:id')
+  @HttpCode(201)
+  async deleteAgenda(@Param() id: string) {
+    return this.service.deleteAgenda(id)
   }
 }

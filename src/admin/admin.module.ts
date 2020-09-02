@@ -8,6 +8,7 @@ import { UsersModule } from '../users/users.module';
 import { OrderRepository } from '../order/repositories/order.repository';
 import { ProposalRepository } from '../proposal/repositories/proposal.repository';
 import { DiscussionRepository } from '../discussion/repositories/discussion.repository';
+import { AgendaRepository } from '../agenda/repositories/agenda.repository';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { DiscussionRepository } from '../discussion/repositories/discussion.repo
       SellerAttributeRepository,
       OrderRepository,
       ProposalRepository,
-      DiscussionRepository
+      DiscussionRepository,
+      AgendaRepository
     ]),
     UsersModule
   ],
