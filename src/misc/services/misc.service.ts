@@ -14,6 +14,7 @@ import { SALT_ROUNDS } from '../../constants';
 import { SellerAttribute } from '../../users/entities/seller.entity';
 import { ProductEntity } from '../../products/entities/product.entity';
 import { CategoryRepository } from '../../products/repositories/category.repository';
+import { FaqEntity } from '../entities/faq.entity';
 
 const { Readable } = require('stream');
 
@@ -55,6 +56,11 @@ class ProductParsed {
   product_description: string
 }
 
+class FaqParsed {
+  title: string
+  description: string
+}
+
 @Injectable()
 export class MiscService {
   constructor(
@@ -66,6 +72,22 @@ export class MiscService {
     private productRepo: ProductRepository,
     private categoryRepo: CategoryRepository
   ) {}
+
+  async parseFaq(file: Buffer): Promise<ResponseListBody<any[]>> {
+    const stream = bufferToStream(file)
+    const entities = await this.csvParser.parse(stream, FaqParsed, null, null, { strict: true, separator: ';' })
+    for (let faq of entities.list) {
+      let newFaq: FaqEntity = {
+        id: nanoid(11),
+        title: faq.title,
+        description: faq.description,
+        created_at: new Date(),
+        updated_at: null
+      }
+      await this.faqRepo.insert(newFaq)
+    }
+    return new ResponseListBody(entities.list, 'ok', 1, entities.list.length)
+  }
 
   async parseUser(file: Buffer): Promise<ResponseListBody<any[]>> {
     const stream = bufferToStream(file)
