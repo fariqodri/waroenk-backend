@@ -1,18 +1,12 @@
 import { Controller, Get, Query, Req, UseGuards, Param, Body, Post } from "@nestjs/common"
 import { AgendaService } from "../services/agenda.service"
-import { AgendaQuery, CreateAgendaParam } from "../dto/agenda.dto"
+import { AgendaQuery } from "../dto/agenda.dto"
 import { Request } from 'express';
 import { OptionalJwtAuthGuard } from "../../auth/guards/optional-jwt-auth.guard"
 
 @Controller('agenda')
 export class AgendaController {
   constructor(private service: AgendaService) {}
-
-  // TEMPORARY ENDPOINT
-  @Post()
-  createAgenda(@Body() param: CreateAgendaParam) {
-    return this.service.createAgenda(param)
-  }
 
   @Get()
   getAgendas(@Query() {

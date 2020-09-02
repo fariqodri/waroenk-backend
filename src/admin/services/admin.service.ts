@@ -5,13 +5,16 @@ import { UserRepository } from "../../users/repositories/users.repository"
 import { SellerAttributeRepository } from "../../users/repositories/seller.repository"
 import { ResponseBody, ResponseListWithCountBody } from "../../utils/response"
 import { SellerAttribute } from "../../users/entities/seller.entity"
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam } from "../dto/admin.dto"
+import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam, CreateAgendaParam, EditAgendaParam } from "../dto/admin.dto"
 import { UsersProvider } from "../../users/providers/users.provider"
 import { Like, Not, Between } from "typeorm"
 import { OrderRepository } from "../../order/repositories/order.repository"
 import { ProposalRepository } from "../../proposal/repositories/proposal.repository"
 import { DiscussionRepository } from "../../discussion/repositories/discussion.repository"
 import { DiscussionEntity } from "../../discussion/entities/discussion.entity"
+import { AgendaRepository } from "../../agenda/repositories/agenda.repository"
+import { AgendaEntity } from "../../agenda/entities/agenda.entity"
+import { nanoid } from "nanoid"
 
 export const BetweenDate = (date1: Date, date2: Date) => 
   Between(format(date1, 'yyyy-MM-dd HH:mm:SS'), format(date2, 'yyyy-MM-dd HH:mm:SS'))
@@ -25,7 +28,62 @@ export class AdminService {
     private orderRepo: OrderRepository,
     private proposalRepo: ProposalRepository,
     private discussionRepo: DiscussionRepository,
+    private agendaRepo: AgendaRepository
   ) {}
+
+  async deleteAgenda(id: string): Promise<ResponseBody<any>> {
+    let agenda = await this.agendaRepo.findOneOrFail(id)
+    agenda.updated_at = new Date()
+    agenda.is_active = false
+    await this.agendaRepo.save(agenda)
+    return new ResponseBody(null, `agenda [${agenda.id}] successfully deleted`)
+  }
+
+  async editAgenda(id: string, param: EditAgendaParam): Promise<ResponseBody<any>> {
+    let agenda = await this.agendaRepo.findOneOrFail(id)
+    agenda.updated_at = new Date()
+    if (param.title) {
+      agenda.title = param.title
+    }
+    if (param.description) {
+      agenda.description = param.description
+    }
+    if (param.date) {
+      agenda.date = new Date(param.date)
+    }
+    if (param.location) {
+      agenda.location = param.location
+    }
+    if (param.type) {
+      agenda.type = param.type
+    }
+    if (param.images) {
+      agenda.images = param.images
+    }
+    if (param.sponsors) {
+      agenda.sponsors = param.sponsors
+    }
+    await this.agendaRepo.save(agenda)
+    return new ResponseBody(agenda, `agenda [${agenda.id}] successfully edited`)
+  }
+
+  async createAgenda(param: CreateAgendaParam): Promise<ResponseBody<any>> {
+    const newAgenda: AgendaEntity = {
+      id: nanoid(11),
+      title: param.title,
+      description: param.description,
+      location: param.location,
+      date: new Date(param.date),
+      images: param.images,
+      type: param.type,
+      sponsors: param.sponsors,
+      created_at: new Date(),
+      updated_at: null,
+      is_active: true
+    }
+    await this.agendaRepo.insert(newAgenda)
+    return new ResponseBody(newAgenda, 'new agenda created')
+  }
 
   async listDiscussion(param: ListDiscussionParam): Promise<ResponseBody<any>> {
     const skippedItems = (param.page - 1) * param.limit;

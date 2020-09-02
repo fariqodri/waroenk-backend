@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { AgendaRepository } from '../repositories/agenda.repository';
-import { AgendaQuery, CreateAgendaParam } from '../dto/agenda.dto';
+import { AgendaQuery } from '../dto/agenda.dto';
 import { ResponseBody, ResponseListBody } from '../../utils/response';
 import { UserRepository } from '../../users/repositories/users.repository';
 import { AgendaEntity } from '../entities/agenda.entity';
@@ -12,25 +12,6 @@ export class AgendaService {
     private agendaRepo: AgendaRepository,
     private userRepo: UserRepository
   ) {}
-
-  // TEMPORARY ENDPOINT
-  async createAgenda(param: CreateAgendaParam): Promise<ResponseBody<any>> {
-    const newAgenda: AgendaEntity = {
-      id: nanoid(11),
-      title: param.title,
-      description: param.description,
-      location: param.location,
-      date: new Date(param.date),
-      images: param.images,
-      type: param.type,
-      sponsors: param.sponsors,
-      created_at: new Date(),
-      updated_at: null,
-      is_active: true
-    }
-    await this.agendaRepo.insert(newAgenda)
-    return new ResponseBody(null, 'new agenda created')
-  }
 
   async saveAgenda(id: string, userId: string): Promise<ResponseBody<any>> {
     const user = await this.userRepo.findOne({
@@ -97,6 +78,8 @@ export class AgendaService {
     if (query.sort_type) {
       if (query.sort_type == 'newest') {
         queryBuilder = queryBuilder.orderBy('agendas.created_at', 'DESC')
+      } else if (query.sort_type == 'oldest') {
+        queryBuilder = queryBuilder.orderBy('agendas.created_at', 'ASC')
       } else if (query.sort_type == 'closest') {
         queryBuilder = queryBuilder
           .andWhere('agendas.date >= :now', { now: new Date() })

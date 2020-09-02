@@ -6,6 +6,7 @@ import { UsersProvider } from '../../users/providers/users.provider';
 import { OrderRepository } from '../../order/repositories/order.repository';
 import { ProposalRepository } from '../../proposal/repositories/proposal.repository';
 import { DiscussionRepository } from '../../discussion/repositories/discussion.repository';
+import { AgendaRepository } from '../../agenda/repositories/agenda.repository';
 
 describe('Admin Service', () => {
   let service: AdminService;
@@ -19,7 +20,8 @@ describe('Admin Service', () => {
         UsersProvider,
         OrderRepository,
         ProposalRepository,
-        DiscussionRepository
+        DiscussionRepository,
+        AgendaRepository
       ],
     }).compile();
 

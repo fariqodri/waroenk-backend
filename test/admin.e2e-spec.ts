@@ -17,6 +17,8 @@ import { ProposalEntity } from "../src/proposal/entities/proposal.entity";
 import { CategoryEntity } from "../src/products/entities/category.entity";
 import { ProductEntity } from "../src/products/entities/product.entity";
 import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
+import { AgendaEntity } from "../src/agenda/entities/agenda.entity";
+import { description } from "@hapi/joi";
 
 describe('Admin e2e', () => {
     let app: INestApplication;
@@ -252,7 +254,20 @@ describe('Admin e2e', () => {
         updated_at: new Date(),
         deleted_at: new Date(),
       },
-    ];
+    ]
+    const agenda: AgendaEntity = {
+      id: 'agenda-1',
+      title: 'anjay',
+      description: 'a en je a ye',
+      location: 'pare',
+      date: new Date(1200),
+      images: ['anjay.com'],
+      type: 'pelatihan',
+      sponsors: ['aenjeaye.com'],
+      created_at: new Date(),
+      updated_at: null,
+      is_active: true
+    }
     beforeEach(async () => {
       const moduleFixture = await Test.createTestingModule({
         imports: [
@@ -284,11 +299,68 @@ describe('Admin e2e', () => {
       await getRepository(CategoryEntity).insert([vegetableCategory]);
       await getRepository(ProductEntity).insert([product1, product2]);
       await getRepository(DiscussionEntity).insert(discussions);
+      await getRepository(AgendaEntity).insert(agenda);
     })
 
     afterEach(async () => {
       await getConnection().close();
     });
+
+    it('should create agenda', async () => {
+      const body = {
+        title: 'asoy',
+        description: 'geboy',
+        location: 'ngebut',
+        date: new Date(1200),
+        images: ['di.com'],
+        type: 'pembinaan',
+        sponsors: ['jalan.com'],
+      }
+      const resp = await request(app.getHttpServer())
+        .post('/admin/agenda')
+        .send(body)
+        .expect(201)
+      const { message } = resp.body
+      expect(message).toEqual(`new agenda created`)
+      const newAgenda = await getRepository(AgendaEntity).findOne( {title: 'asoy'} )
+      expect(newAgenda).toBeDefined()
+    })
+
+    it('should edit agenda', async () => {
+      const body = {
+        title: 'asoy',
+        description: 'geboy',
+        location: 'ngebut',
+        date: new Date(1200),
+        images: ['di.com'],
+        type: 'pembinaan',
+        sponsors: ['jalan.com'],
+      }
+      const resp = await request(app.getHttpServer())
+        .put('/admin/agenda/agenda-1')
+        .send(body)
+        .expect(201)
+      const { message } = resp.body
+      expect(message).toEqual(`agenda [agenda-1] successfully edited`)
+      const editedAgenda = await getRepository(AgendaEntity).findOne(agenda.id)
+      expect(editedAgenda.title).toEqual(body.title)
+      expect(editedAgenda.description).toEqual(body.description)
+      expect(editedAgenda.location).toEqual(body.location)
+      expect(editedAgenda.date).toEqual(body.date)
+      expect(editedAgenda.images).toEqual(body.images)
+      expect(editedAgenda.type).toEqual(body.type)
+      expect(editedAgenda.sponsors).toEqual(body.sponsors)
+    })
+
+    it('should delete agenda', async () => {
+      const resp = await request(app.getHttpServer())
+        .delete('/admin/agenda/agenda-1')
+        .expect(201)
+      const { message } = resp.body
+      expect(message).toEqual(`agenda [agenda-1] successfully deleted`)
+      const deletedAgenda = await getRepository(AgendaEntity).findOne(agenda.id)
+      expect (deletedAgenda.is_active).toBeFalsy()
+    })
 
     it('should list discussion', async () => {
       const resp = await request(app.getHttpServer())
