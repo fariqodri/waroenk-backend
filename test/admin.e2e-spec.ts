@@ -14,6 +14,9 @@ import { JwtAuthGuard } from "../src/auth/guards/jwt-auth.guard";
 import { RedisClientProvider } from "../src/redis/redis.client.provider";
 import { OrderEntity } from "../src/order/entities/order.entity";
 import { ProposalEntity } from "../src/proposal/entities/proposal.entity";
+import { CategoryEntity } from "../src/products/entities/category.entity";
+import { ProductEntity } from "../src/products/entities/product.entity";
+import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
 
 describe('Admin e2e', () => {
     let app: INestApplication;
@@ -190,6 +193,66 @@ describe('Admin e2e', () => {
       updated_at: null,
       items: []
     }
+    const vegetableCategory = {
+      id: 'category-1',
+      name: 'Sayuran',
+      image: 's3_url_1',
+    };
+    const product1 = {
+      id: 'product_1',
+      name: 'KangKunG',
+      price_per_quantity: 10000,
+      discount: 0,
+      description: 'kangkung',
+      images: ['1'],
+      category: vegetableCategory,
+      seller: seller2,
+      created_at: '2020-06-30 19:32:30',
+      updated_at: null,
+    };
+    const product2 = {
+      id: 'product_2',
+      name: 'KangKunG',
+      price_per_quantity: 10000,
+      discount: 0,
+      description: 'kangkung',
+      images: ['1'],
+      category: vegetableCategory,
+      seller: seller2,
+      created_at: '2020-06-30 19:32:30',
+      updated_at: null,
+    };
+    const discussion1 = {
+      id: 'discussion-1',
+      user: user3,
+      product: product1,
+      description: 'discussion 1 ilmi',
+      created_at: new Date(1),
+      updated_at: null,
+      deleted_at: null,
+    };
+    const discussions = [
+      discussion1,
+      {
+        id: 'discussion-2',
+        user: user3,
+        product: product1,
+        parent: discussion1,
+        description: 'discussion 2',
+        created_at: new Date(2),
+        updated_at: null,
+        deleted_at: null,
+      },
+      {
+        id: 'discussion-3',
+        user: user3,
+        product: product2,
+        description: 'discussion 3',
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: new Date(),
+      },
+    ];
     beforeEach(async () => {
       const moduleFixture = await Test.createTestingModule({
         imports: [
@@ -218,11 +281,44 @@ describe('Admin e2e', () => {
       await getRepository(UserEntity).insert([admin, ...buyers, user4])
       await getRepository(SellerAttribute).insert([sellerNotActivated, seller2, seller3, seller4])
       await getRepository(OrderEntity).insert([order1, order2])
+      await getRepository(CategoryEntity).insert([vegetableCategory]);
+      await getRepository(ProductEntity).insert([product1, product2]);
+      await getRepository(DiscussionEntity).insert(discussions);
     })
 
     afterEach(async () => {
       await getConnection().close();
     });
+
+    it('should list discussion', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/discussion')
+        .expect(200)
+      const { result, total } = resp.body
+      expect(total).toEqual(2)
+      expect(result).toHaveLength(2)
+      expect(result[0].id).toEqual('discussion-2')
+      expect(result[1].id).toEqual('discussion-1')
+    })
+
+    it('should list discussion with search', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/discussion?search=ilmi')
+        .expect(200)
+      const { result, total } = resp.body
+      expect(total).toEqual(1)
+      expect(result).toHaveLength(1)
+      expect(result[0].id).toEqual('discussion-1')
+    })
+
+    it('should delete discussion', async () => {
+      const resp = await request(app.getHttpServer())
+        .delete('/admin/discussion/discussion-1')
+        .expect(200)
+      const { result, message } = resp.body
+      expect(result).toBeNull()
+      expect(message).toEqual('discussion deleted')
+    })
 
     it('should list proposal', async () => {
       const proposal1: ProposalEntity = {

@@ -5,11 +5,13 @@ import { UserRepository } from "../../users/repositories/users.repository"
 import { SellerAttributeRepository } from "../../users/repositories/seller.repository"
 import { ResponseBody, ResponseListWithCountBody } from "../../utils/response"
 import { SellerAttribute } from "../../users/entities/seller.entity"
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam } from "../dto/admin.dto"
+import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam } from "../dto/admin.dto"
 import { UsersProvider } from "../../users/providers/users.provider"
 import { Like, Not, Between } from "typeorm"
 import { OrderRepository } from "../../order/repositories/order.repository"
 import { ProposalRepository } from "../../proposal/repositories/proposal.repository"
+import { DiscussionRepository } from "../../discussion/repositories/discussion.repository"
+import { DiscussionEntity } from "../../discussion/entities/discussion.entity"
 
 export const BetweenDate = (date1: Date, date2: Date) => 
   Between(format(date1, 'yyyy-MM-dd HH:mm:SS'), format(date2, 'yyyy-MM-dd HH:mm:SS'))
@@ -21,8 +23,55 @@ export class AdminService {
     private sellerRepo: SellerAttributeRepository,
     private userProvider: UsersProvider,
     private orderRepo: OrderRepository,
-    private proposalRepo: ProposalRepository
+    private proposalRepo: ProposalRepository,
+    private discussionRepo: DiscussionRepository,
   ) {}
+
+  async listDiscussion(param: ListDiscussionParam): Promise<ResponseBody<any>> {
+    const skippedItems = (param.page - 1) * param.limit;
+    let query = this.discussionRepo
+      .createQueryBuilder('d')
+      .orderBy('d.created_at', 'DESC')
+      .innerJoin('d.user', 'user')
+      .innerJoin('d.product', 'product')
+      .select(`
+        d.id AS id,
+        d.parentId AS parentId,
+        d.productId AS productId,
+        d.description AS description,
+        d.created_at AS created_at
+      `)
+      .addSelect([
+        'user.id AS userId',
+        'user.full_name AS userName',
+        'product.name AS productName'
+      ])
+      .andWhere('d.deleted_at IS NULL')
+    if (param.search !== undefined && param.search !== '') {
+      query = query.andWhere('d.description LIKE :searchDescription AND d.deleted_at IS NULL', 
+        { searchDescription: `%${param.search}%` })
+      query = query.orWhere('user.full_name LIKE :searchUser AND d.deleted_at IS NULL', 
+        { searchUser: `%${param.search}%` })
+      query = query.orWhere('product.name LIKE :searchName AND d.deleted_at IS NULL', 
+        { searchName: `%${param.search}%` })
+    }
+    let count = await query.getCount()
+    query = query.offset(skippedItems).limit(param.limit)
+    let discussions = await query.execute()
+    return new ResponseListWithCountBody(discussions, 'ok', param.page, discussions.length, count)
+  }
+
+  async deleteDiscussion(id: string): Promise<ResponseBody<any>> {
+    let discussions: DiscussionEntity[] = await this.discussionRepo.createQueryBuilder('d')
+      .where('d.id = :id', { id: id })
+      .orWhere('d.parentId = :parentId', { parentId: id }).getMany();
+    for(let discussion of discussions) {
+      discussion.deleted_at = new Date()
+      discussion.updated_at = new Date()
+    }
+    await this.discussionRepo.save(discussions)
+    return new ResponseBody(null, 'discussion deleted')
+  } 
 
   async countOrder(param: CountOrderParam): Promise<ResponseBody<any>> {
     const dateFrom = new Date(param.yearFrom, param.monthFrom-1, param.dayFrom, 0, 0, 0)
