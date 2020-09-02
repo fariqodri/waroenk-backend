@@ -28,19 +28,19 @@ describe('GET Product and Categories (e2e)', () => {
     await app.init();
     await getRepository(FaqEntity).insert([
       {
-        id: 1,
+        id: '1',
         title: "cara menanam jagung",
         description: "jagung ditanam lalu dipacul",
         created_at: new Date('123')
       },
       {
-        id: 2,
+        id: '2',
         title: "cara menanam tomat",
         description: "tomat ditanam lalu dipacul",
         created_at: new Date('124')
       },
       {
-        id: 3,
+        id: '3',
         title: "survive in the jungle",
         description: "find some foods",
         created_at: new Date('125')
@@ -186,17 +186,17 @@ describe('GET Product and Categories (e2e)', () => {
         message: 'ok',
         result: [
           {
-            id: 3,
+            id: '3',
             title: 'survive in the jungle',
             description: 'find some foods'
           },
           {
-            id: 2,
+            id: '2',
             title: 'cara menanam tomat',
             description: 'tomat ditanam lalu dipacul'
           },
           {
-            id: 1,
+            id: '1',
             title: 'cara menanam jagung',
             description: 'jagung ditanam lalu dipacul'
           }
@@ -214,12 +214,12 @@ describe('GET Product and Categories (e2e)', () => {
         message: 'ok',
         result: [
           {
-            id: 2,
+            id: '2',
             title: 'cara menanam tomat',
             description: 'tomat ditanam lalu dipacul'
           },
           {
-            id: 1,
+            id: '1',
             title: 'cara menanam jagung',
             description: 'jagung ditanam lalu dipacul'
           }
