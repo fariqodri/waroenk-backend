@@ -5,6 +5,7 @@ import { AdminService } from './admin.service';
 import { UsersProvider } from '../../users/providers/users.provider';
 import { OrderRepository } from '../../order/repositories/order.repository';
 import { ProposalRepository } from '../../proposal/repositories/proposal.repository';
+import { DiscussionRepository } from '../../discussion/repositories/discussion.repository';
 
 describe('Admin Service', () => {
   let service: AdminService;
@@ -17,7 +18,8 @@ describe('Admin Service', () => {
         SellerAttributeRepository,
         UsersProvider,
         OrderRepository,
-        ProposalRepository
+        ProposalRepository,
+        DiscussionRepository
       ],
     }).compile();
 

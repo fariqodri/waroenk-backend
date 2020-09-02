@@ -7,6 +7,7 @@ import { AdminController } from './controller/admin.controller';
 import { UsersModule } from '../users/users.module';
 import { OrderRepository } from '../order/repositories/order.repository';
 import { ProposalRepository } from '../proposal/repositories/proposal.repository';
+import { DiscussionRepository } from '../discussion/repositories/discussion.repository';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { ProposalRepository } from '../proposal/repositories/proposal.repository
       UserRepository,
       SellerAttributeRepository,
       OrderRepository,
-      ProposalRepository
+      ProposalRepository,
+      DiscussionRepository
     ]),
     UsersModule
   ],

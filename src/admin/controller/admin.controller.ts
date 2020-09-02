@@ -1,9 +1,9 @@
-import { Controller, Param, Put, HttpCode, UseGuards, Query, Get, Body } from "@nestjs/common";
+import { Controller, Param, Put, HttpCode, UseGuards, Query, Get, Body, Delete } from "@nestjs/common";
 import { AdminService } from "../services/admin.service";
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RolePermissionGuard } from "../../auth/guards/role.permission.guard";
 import { Roles } from "../../utils/decorators";
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam } from "../dto/admin.dto";
+import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam } from "../dto/admin.dto";
 import { ResponseListWithCountBody } from "../../utils/response";
 
 @Controller('admin')
@@ -84,5 +84,23 @@ export class AdminController {
     type
   }: ListProposalParam) {
     return this.service.listProposal({ page, limit, type })
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Get('discussion')
+  async listDiscussion(@Query() {
+    page = 1,
+    limit = 10,
+    search
+  }: ListDiscussionParam) {
+    return this.service.listDiscussion({ page, limit, search })
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Delete('discussion/:id')
+  async deleteDiscussion(@Param() id: any) {
+    return this.service.deleteDiscussion(id.id)
   }
 }

@@ -29,6 +29,12 @@ export class ListProposalParam {
   type?: string;
 }
 
+export class ListDiscussionParam {
+  page: number;
+  limit: number;
+  search?: string;
+}
+
 export class CountOrderParam {
   dayFrom: number
   monthFrom: number
