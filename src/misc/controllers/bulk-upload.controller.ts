@@ -23,4 +23,10 @@ export class BulkUploadController {
   parseProduct(@UploadedFile() file) {
     return this.service.parseProduct(file.buffer)
   }
+
+  @Post('faq')
+  @UseInterceptors(FileInterceptor('file'))
+  parseFaq(@UploadedFile() file) {
+    return this.service.parseFaq(file.buffer)
+  }
 }
