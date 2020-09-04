@@ -83,7 +83,8 @@ describe('Post E2E', () => {
       .post('/posts')
       .send({
         title: 'title',
-        content: 'hello world'
+        content: 'hello world',
+        image: 'image-url'
       })
       .expect(201)
     const { result } = resp.body
@@ -95,6 +96,7 @@ describe('Post E2E', () => {
     const post = await getRepository(PostEntity).findOneOrFail(id)
     expect(post.title).toEqual('title')
     expect(post.content).toEqual('hello world')
+    expect(post.image).toEqual('image-url')
   })
 
   it("should fail if seller's tier is under required tier", async () => {
@@ -109,6 +111,89 @@ describe('Post E2E', () => {
       .expect({
         message: "your tier is below the required tier for creating posts",
         result: null
+      })
+  })
+
+  it('should get posts', async () => {
+    await getRepository(PostEntity).insert([
+      {
+        id: 'post-1',
+        title: 'title 1',
+        content: 'hello',
+        image: 'image-url',
+        seller: seller,
+        created_at: new Date(2020, 9)
+      },
+      {
+        id: 'post-2',
+        title: 'title 2',
+        content: 'world',
+        seller: seller,
+        created_at: new Date(2020, 3)
+      },
+    ])
+    await request(app.getHttpServer())
+      .get('/posts?page=1&limit=1')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          {
+            id: 'post-1',
+            title: 'title 1',
+            content: 'hello',
+            image: 'image-url',
+          }
+        ],
+        page: 1,
+        limit: 1,
+        total: 2
+      })
+    await request(app.getHttpServer())
+      .get('/posts?sort=oldest')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          {
+            id: 'post-2',
+            title: 'title 2',
+            content: 'world',
+            image: null
+          },
+          {
+            id: 'post-1',
+            title: 'title 1',
+            content: 'hello',
+            image: 'image-url',
+          }
+        ],
+        page: 1,
+        limit: 10,
+        total: 2
+      })
+    await request(app.getHttpServer())
+      .get('/posts?sort=latest')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [
+          {
+            id: 'post-1',
+            title: 'title 1',
+            content: 'hello',
+            image: 'image-url',
+          },
+          {
+            id: 'post-2',
+            title: 'title 2',
+            content: 'world',
+            image: null
+          }
+        ],
+        page: 1,
+        limit: 10,
+        total: 2
       })
   })
 })
