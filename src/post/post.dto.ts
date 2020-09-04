@@ -6,4 +6,13 @@ export class PostBody {
 
   @jf.string().required()
   content: string
+
+  @jf.string().optional()
+  image: string
+}
+
+export class GetPostQuery {
+  page: number
+  limit: number
+  sort: 'latest' | 'oldest'
 }
