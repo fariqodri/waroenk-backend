@@ -197,6 +197,11 @@ describe('Admin e2e', () => {
       name: 'Buah',
       image: 's3_url_1',
     }
+    const nanoCategory = {
+      id: 'category-3',
+      name: 'nano nano',
+      image: 's3_url_1',
+    }
     const seller2Category: SellerCategory = {
       id: 'seller2-category',
       seller: seller2,
@@ -317,7 +322,7 @@ describe('Admin e2e', () => {
       await getRepository(UserEntity).insert([admin, ...buyers, user4])
       await getRepository(SellerAttribute).insert([sellerNotActivated, seller2, seller3, seller4])
       await getRepository(OrderEntity).insert([order1, order2])
-      await getRepository(CategoryEntity).insert([vegetableCategory, fruitCategory]);
+      await getRepository(CategoryEntity).insert([vegetableCategory, fruitCategory, nanoCategory]);
       await getRepository(SellerCategory).insert([seller2Category, seller3Category, seller2CategoryBlocked]);
       await getRepository(ProductEntity).insert([product1, product2]);
       await getRepository(DiscussionEntity).insert(discussions);
@@ -680,11 +685,10 @@ describe('Admin e2e', () => {
       expect(result.description).toEqual(seller2.description)
       expect(result.tier).toEqual(seller2.tier)
       expect(result.is_active).toEqual(seller2.is_active)
-      expect(result.registered_category.length).toEqual(1)
-      expect(result.registered_category[0].id).toEqual(seller2Category.id)
+      expect(result.registered_category.length).toEqual(2)
     })
 
-    it('should add seller category', async () => {
+    it('should activate seller category', async () => {
       const reqBody = {
         category: fruitCategory.id,
         expiry_date: '2020-10-05',
@@ -715,6 +719,28 @@ describe('Admin e2e', () => {
       expect(message).toEqual('seller category has been updated')
       const sellerCategory = await getRepository(SellerCategory).findOne(seller2Category.id)
       expect(sellerCategory.status).toEqual(reqBody.status)
+      expect(sellerCategory.activation_date).toBeNull()
+      expect(sellerCategory.expiry_date).toBeNull()
+    })
+
+    it('should add seller category', async () => {
+      const reqBody = {
+        category: nanoCategory.id
+      }
+      const resp = await request(app.getHttpServer())
+        .post('/admin/seller-category/seller-2')
+        .send(reqBody)
+        .expect(201)
+      const { message } = resp.body
+      expect(message).toEqual('seller category has been created')
+      const sellerCategory = await getRepository(SellerCategory).findOne({
+        relations: ['seller', 'category'],
+        where: {
+          seller: seller2.id,
+          category: nanoCategory.id
+        }
+      })
+      expect(sellerCategory.status).toEqual('blocked')
       expect(sellerCategory.activation_date).toBeNull()
       expect(sellerCategory.expiry_date).toBeNull()
     })
