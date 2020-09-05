@@ -151,6 +151,7 @@ describe('Discussion (e2e)', () => {
     await getRepository(SellerAttribute).insert([seller]);
     await getRepository(CategoryEntity).insert([vegetableCategory]);
     await getRepository(ProductEntity).insert([product1, product2]);
+    await getRepository(DiscussionEntity).insert(discussions);
   });
 
   afterEach(async () => {
@@ -185,8 +186,38 @@ describe('Discussion (e2e)', () => {
       });
   });
 
+  it('should return newly created discussion with parent discussion', () => {
+    const reqBody = {
+      parentId: discussion1.id,
+      productId: 'product_1',
+      description: 'why are you gae',
+    };
+    return request(app.getHttpServer())
+      .post('/discussion')
+      .send(reqBody)
+      .expect(201)
+      .then(res => {
+        const body = res.body;
+        const { message, result } = body;
+        const {
+          id,
+          productId,
+          description,
+          created_at,
+          isSellerProduct,
+          parentId
+        } = result;
+        expect(message).toEqual('ok');
+        expect(id).toBeDefined();
+        expect(productId).toEqual(reqBody.productId);
+        expect(parentId).toEqual(reqBody.parentId);
+        expect(description).toEqual(reqBody.description);
+        expect(created_at).toBeDefined();
+        expect(isSellerProduct).toBeTruthy();
+      });
+  });
+
   it('should return list of discussions of product-1', async () => {
-    await getRepository(DiscussionEntity).insert(discussions);
     return request(app.getHttpServer())
       .get(`/discussion/product/${product1.id}`)
       .expect(200)
@@ -226,7 +257,6 @@ describe('Discussion (e2e)', () => {
   });
 
   it('should return list of discussions of product-1 with parent discussion-1', async () => {
-    await getRepository(DiscussionEntity).insert(discussions);
     return request(app.getHttpServer())
       .get(`/discussion/product/${product1.id}?parent=${discussion1.id}`)
       .expect(200)
@@ -252,7 +282,6 @@ describe('Discussion (e2e)', () => {
   });
 
   it('should return list of discussions of product-2', async () => {
-    await getRepository(DiscussionEntity).insert(discussions);
     return request(app.getHttpServer())
       .get(`/discussion/product/${product2.id}`)
       .expect(200)

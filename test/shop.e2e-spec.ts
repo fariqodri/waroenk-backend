@@ -478,6 +478,7 @@ describe('Shop E2E', () => {
             price_per_quantity: 10000,
             discount: 0,
             images: ['1'],
+            available: true,
             category_name: vegetableCategory.name,
             category_id: vegetableCategory.id
           },
@@ -500,6 +501,7 @@ describe('Shop E2E', () => {
             price_per_quantity: 10000,
             discount: 0,
             images: ['1'],
+            available: true,
             category_name: vegetableCategory.name,
             category_id: vegetableCategory.id
           },
@@ -509,6 +511,7 @@ describe('Shop E2E', () => {
             price_per_quantity: 20000,
             discount: 0,
             images: ['1'],
+            available: true,
             category_name: fruitsCategory.name,
             category_id: fruitsCategory.id
           }

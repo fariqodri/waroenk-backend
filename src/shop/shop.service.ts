@@ -313,7 +313,8 @@ export class ShopService {
         products.name AS name,
         products.discount AS discount,
         products.price_per_quantity AS price_per_quantity,
-        products.images AS images`,
+        products.images AS images,
+        products.available AS available`,
       )
       .addSelect([
         'categories.name AS category_name',
@@ -323,7 +324,8 @@ export class ShopService {
     products = products.map(p => ({
       ...p,
       images: p.images.split(','),
-      discount: Number(p.discount) == 0? 0.00: Number(p.discount)
+      discount: Number(p.discount) == 0? 0.00: Number(p.discount),
+      available: p.available? true: false
     }));
     return new ResponseListBody(products, "ok", query.page, products.length)
   }

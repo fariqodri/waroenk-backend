@@ -40,9 +40,10 @@ export class DiscussionService {
     let parentDiscussion: DiscussionEntity = null
     if (param.parentId) {
       parentDiscussion = await this.discussionRepo
-      .createQueryBuilder()
-      .where('id = :id', { id: param.parentId })
-      .andWhere('deleted_at IS NULL').getOne();
+      .createQueryBuilder('d')
+      .innerJoinAndSelect('d.user', 'user')
+      .where('d.id = :id', { id: param.parentId })
+      .andWhere('d.deleted_at IS NULL').getOne();
     }
     const newDiscussion: DiscussionEntity = {
       id: nanoid(11),
