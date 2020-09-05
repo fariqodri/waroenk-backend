@@ -4,6 +4,7 @@ import { ProductEntity } from "../../products/entities/product.entity";
 import { OrderEntity } from "../../order/entities/order.entity";
 import { PostEntity } from "../../post/post.entity";
 import { SellerBank } from "./seller-bank.entity";
+import { SellerCategory } from "src/products/entities/seller-category.entity";
 
 @Entity({ name: "seller" })
 export class SellerAttribute {
@@ -14,8 +15,8 @@ export class SellerAttribute {
   @JoinColumn()
   user: UserEntity
 
-  @OneToMany(type => ProductEntity, product => product.seller)
-  products?: ProductEntity[]
+  @OneToMany(type => SellerCategory, sellerCategory => sellerCategory.seller)
+  categories?: SellerCategory[]
 
   @OneToMany(type => OrderEntity, order => order.seller)
   orders?: OrderEntity[]
