@@ -1,20 +1,21 @@
 import { Injectable } from "@nestjs/common"
 import { format } from 'date-fns'
+import { nanoid } from "nanoid"
 
 import { UserRepository } from "../../users/repositories/users.repository"
 import { SellerAttributeRepository } from "../../users/repositories/seller.repository"
 import { ResponseBody, ResponseListWithCountBody } from "../../utils/response"
 import { SellerAttribute } from "../../users/entities/seller.entity"
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam, CreateAgendaParam, EditAgendaParam } from "../dto/admin.dto"
+import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam, CreateAgendaParam, EditAgendaParam, EditSellerCategoryParam } from "../dto/admin.dto"
 import { UsersProvider } from "../../users/providers/users.provider"
-import { Like, Not, Between } from "typeorm"
+import { Like, Not, Between, In } from "typeorm"
 import { OrderRepository } from "../../order/repositories/order.repository"
 import { ProposalRepository } from "../../proposal/repositories/proposal.repository"
 import { DiscussionRepository } from "../../discussion/repositories/discussion.repository"
 import { DiscussionEntity } from "../../discussion/entities/discussion.entity"
 import { AgendaRepository } from "../../agenda/repositories/agenda.repository"
 import { AgendaEntity } from "../../agenda/entities/agenda.entity"
-import { nanoid } from "nanoid"
+import { SellerCategoryRepository } from "../../products/repositories/seller-category.repository"
 
 export const BetweenDate = (date1: Date, date2: Date) => 
   Between(format(date1, 'yyyy-MM-dd HH:mm:SS'), format(date2, 'yyyy-MM-dd HH:mm:SS'))
@@ -28,7 +29,8 @@ export class AdminService {
     private orderRepo: OrderRepository,
     private proposalRepo: ProposalRepository,
     private discussionRepo: DiscussionRepository,
-    private agendaRepo: AgendaRepository
+    private agendaRepo: AgendaRepository,
+    private sellerCategoryRepo: SellerCategoryRepository
   ) {}
 
   async deleteAgenda(id: string): Promise<ResponseBody<any>> {
@@ -190,13 +192,59 @@ export class AdminService {
     return new ResponseListWithCountBody(response, 'ok', param.page, proposals.length, proposalCount)
   }
 
-  //detailseller
-  //editcategoruyseller
-  //rework
+  async getSeller(sellerId: string): Promise<ResponseBody<any>> {
+    const seller = await this.sellerRepo.findOneOrFail(sellerId, {
+      relations: ['user', 'categories']
+    })
+    let registered_category = []
+    for (let category of seller.categories) {
+      if (category.status != 'blocked') {
+        registered_category.push(category)
+      }
+    }
+    const response = {
+      id: seller.id,
+      email: seller.user.email,
+      gender: seller.gender,
+      birth_place: seller.birth_place,
+      birth_date: seller.birth_date,
+      activation_date: seller.activation_date,
+      shop_address: seller.shop_address,
+      description: seller.description,
+      tier: seller.tier,
+      is_active: seller.is_active,
+      registered_category: registered_category
+    }
+    return new ResponseBody(response)
+  }
+
+  async editSellerCategory(sellerId:string, param: EditSellerCategoryParam): Promise<ResponseBody<any>> {
+    let sellerCategory = await this.sellerCategoryRepo.findOneOrFail({
+      relations: ['seller', 'category'],
+      where: {
+        seller: sellerId, category: param.category
+      }
+    })
+    if (param.status == 'blocked') {
+      sellerCategory.activation_date = null
+      sellerCategory.expiry_date = null
+    } else {
+      if ((sellerCategory.status == 'paid') || (sellerCategory.status == 'proposed')) {
+        sellerCategory.activation_date = new Date()
+      }
+      sellerCategory.expiry_date = param.expiry_date? new Date(param.expiry_date): null
+    }
+    sellerCategory.status = param.status
+    await this.sellerCategoryRepo.save(sellerCategory)
+    return new ResponseBody(null, 'seller category has been updated')
+  }
+  
   async listSeller(param: ListSellerQuery): Promise<ResponseBody<any>> {
     const skippedItems = (param.page - 1) * param.limit;
     let query = {}
-    if (param.filter == 'verified') {
+    if (param.filter == 'category') {
+      return this.listSellerByCategory(param)
+    } else if (param.filter == 'verified') {
       query = { is_active: true }
     } else if (param.filter == 'not_verified') {
       query = { is_active: false }
@@ -228,6 +276,30 @@ export class AdminService {
       delete p.user
     })
     return new ResponseListWithCountBody(seller, 'ok', param.page, seller.length, count)
+  }
+
+  async listSellerByCategory(param: ListSellerQuery): Promise<ResponseBody<any>> {
+    const skippedItems = (param.page - 1) * param.limit;
+    let query = this.sellerCategoryRepo.createQueryBuilder('sc')
+      .innerJoinAndSelect('sc.seller', 'seller')
+      .innerJoinAndSelect('sc.category', 'category')
+      .where('categoryId = :category', { category: param.category })
+      .andWhere('seller.is_active IS TRUE')
+      .andWhere(`sc.status IN ('paid','not_paid')`)
+    const count = await query.getCount()
+    const categories = await query
+      .innerJoinAndSelect('seller.user', 'user')
+      .orderBy('sc.expiry_date', 'ASC')
+      .addOrderBy('sc.activation_date', 'DESC')
+      .skip(skippedItems).take(param.limit).getMany()
+    let response = categories.map(p => ({
+      ...p,
+      userId: p.seller.user.id
+    }))
+    response.forEach(function(p) {
+      delete p.seller.user
+    })
+    return new ResponseListWithCountBody(response, 'ok', param.page, response.length, count)
   }
 
   async editSeller(param: EditSellerParam, sellerId: string): Promise<ResponseBody<any>> {

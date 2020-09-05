@@ -191,13 +191,34 @@ describe('Admin e2e', () => {
       id: 'category-1',
       name: 'Sayuran',
       image: 's3_url_1',
-    };
-    const sellerCategory: SellerCategory = {
-      id: 'seller-category',
+    }
+    const fruitCategory = {
+      id: 'category-2',
+      name: 'Buah',
+      image: 's3_url_1',
+    }
+    const seller2Category: SellerCategory = {
+      id: 'seller2-category',
       seller: seller2,
       category: vegetableCategory,
-      activation_date: new Date(),
+      activation_date: new Date(1000),
+      expiry_date: new Date(1000),
+      status: 'paid'
+    }
+    const seller2CategoryBlocked: SellerCategory = {
+      id: 'seller2-category-blocked',
+      seller: seller2,
+      category: fruitCategory,
+      activation_date: null,
       expiry_date: null,
+      status: 'blocked'
+    }
+    const seller3Category: SellerCategory = {
+      id: 'seller3-category',
+      seller: seller3,
+      category: vegetableCategory,
+      activation_date: new Date(2000),
+      expiry_date: new Date(2000),
       status: 'paid'
     }
     const product1 = {
@@ -207,7 +228,7 @@ describe('Admin e2e', () => {
       discount: 0,
       description: 'kangkung',
       images: ['1'],
-      category: sellerCategory,
+      category: seller2Category,
       seller: seller2,
       created_at: '2020-06-30 19:32:30',
       updated_at: null,
@@ -219,7 +240,7 @@ describe('Admin e2e', () => {
       discount: 0,
       description: 'kangkung',
       images: ['1'],
-      category: sellerCategory,
+      category: seller2Category,
       seller: seller2,
       created_at: '2020-06-30 19:32:30',
       updated_at: null,
@@ -296,8 +317,8 @@ describe('Admin e2e', () => {
       await getRepository(UserEntity).insert([admin, ...buyers, user4])
       await getRepository(SellerAttribute).insert([sellerNotActivated, seller2, seller3, seller4])
       await getRepository(OrderEntity).insert([order1, order2])
-      await getRepository(CategoryEntity).insert([vegetableCategory]);
-      await getRepository(SellerCategory).insert(sellerCategory);
+      await getRepository(CategoryEntity).insert([vegetableCategory, fruitCategory]);
+      await getRepository(SellerCategory).insert([seller2Category, seller3Category, seller2CategoryBlocked]);
       await getRepository(ProductEntity).insert([product1, product2]);
       await getRepository(DiscussionEntity).insert(discussions);
       await getRepository(AgendaEntity).insert(agenda);
@@ -578,6 +599,16 @@ describe('Admin e2e', () => {
       expect(result[1].id).toEqual('seller-2')
     })
 
+    it('should list seller by category', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/seller?filter=category&category=category-1')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.length).toEqual(2)
+      expect(result[0].id).toEqual(seller2Category.id)
+      expect(result[1].id).toEqual(seller3Category.id)
+    })
+
     it('should list active seller order by name desc', async () => {
       const resp = await request(app.getHttpServer())
         .get('/admin/seller?filter=verified&sort_by=name&order=asc')
@@ -632,5 +663,59 @@ describe('Admin e2e', () => {
       expect(editedSeller.tier).toEqual(2)
       const editedUser = await getRepository(UserEntity).findOne(user3.id)
       expect(editedUser.role).toEqual('seller')
+    })
+
+    it('should get seller detail', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/seller/seller-2')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.id).toEqual(seller2.id)
+      expect(result.email).toEqual(seller2.user.email)
+      expect(result.gender).toEqual(seller2.gender)
+      expect(result.birth_place).toEqual(seller2.birth_place)
+      expect(result.birth_date).toEqual(seller2.birth_date)
+      expect(result.activation_date).toEqual(seller2.activation_date.toJSON())
+      expect(result.shop_address).toEqual(seller2.shop_address)
+      expect(result.description).toEqual(seller2.description)
+      expect(result.tier).toEqual(seller2.tier)
+      expect(result.is_active).toEqual(seller2.is_active)
+      expect(result.registered_category.length).toEqual(1)
+      expect(result.registered_category[0].id).toEqual(seller2Category.id)
+    })
+
+    it('should add seller category', async () => {
+      const reqBody = {
+        category: fruitCategory.id,
+        expiry_date: '2020-10-05',
+        status: 'paid'
+      }
+      const resp = await request(app.getHttpServer())
+        .put('/admin/seller-category/seller-2')
+        .send(reqBody)
+        .expect(201)
+      const { message } = resp.body
+      expect(message).toEqual('seller category has been updated')
+      const sellerCategory = await getRepository(SellerCategory).findOne(seller2CategoryBlocked.id)
+      expect(sellerCategory.status).toEqual(reqBody.status)
+      expect(sellerCategory.activation_date).toBeDefined()
+      expect(sellerCategory.expiry_date).toEqual(new Date(reqBody.expiry_date))
+    })
+
+    it('should block seller category', async () => {
+      const reqBody = {
+        category: vegetableCategory.id,
+        status: 'blocked'
+      }
+      const resp = await request(app.getHttpServer())
+        .put('/admin/seller-category/seller-2')
+        .send(reqBody)
+        .expect(201)
+      const { message } = resp.body
+      expect(message).toEqual('seller category has been updated')
+      const sellerCategory = await getRepository(SellerCategory).findOne(seller2Category.id)
+      expect(sellerCategory.status).toEqual(reqBody.status)
+      expect(sellerCategory.activation_date).toBeNull()
+      expect(sellerCategory.expiry_date).toBeNull()
     })
   })
