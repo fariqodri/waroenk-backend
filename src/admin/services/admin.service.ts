@@ -224,7 +224,7 @@ export class AdminService {
       category: category,
       activation_date: null,
       expiry_date: null,
-      status: 'blocked'
+      status: 'proposed'
     }
     await this.sellerCategoryRepo.insert(newSellerCategory)
     return new ResponseBody(null, 'seller category has been created')
