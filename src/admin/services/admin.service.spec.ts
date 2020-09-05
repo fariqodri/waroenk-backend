@@ -8,6 +8,7 @@ import { ProposalRepository } from '../../proposal/repositories/proposal.reposit
 import { DiscussionRepository } from '../../discussion/repositories/discussion.repository';
 import { AgendaRepository } from '../../agenda/repositories/agenda.repository';
 import { SellerCategoryRepository } from '../../products/repositories/seller-category.repository';
+import { CategoryRepository } from '../../products/repositories/category.repository';
 
 describe('Admin Service', () => {
   let service: AdminService;
@@ -23,7 +24,8 @@ describe('Admin Service', () => {
         ProposalRepository,
         DiscussionRepository,
         AgendaRepository,
-        SellerCategoryRepository
+        SellerCategoryRepository,
+        CategoryRepository
       ],
     }).compile();
 

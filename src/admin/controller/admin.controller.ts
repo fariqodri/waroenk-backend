@@ -72,6 +72,13 @@ export class AdminController {
 
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('admin')
+  @Post('seller-category/:id')
+  async createSellerCategory(@Param() id: string, @Body() param: EditSellerCategoryParam) {
+    return this.service.createSellerCategory(id, param)
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
   @Put('seller-category/:id')
   @HttpCode(201)
   async editSellerCategory(@Param() id: string, @Body() param: EditSellerCategoryParam) {

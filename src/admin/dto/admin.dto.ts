@@ -66,5 +66,5 @@ export class EditAgendaParam {
 export class EditSellerCategoryParam {
   category: string
   expiry_date?: string
-  status: 'paid' | 'not_paid' | 'blocked'
+  status?: 'paid' | 'not_paid' | 'blocked'
 }

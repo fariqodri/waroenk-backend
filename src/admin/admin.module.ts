@@ -10,6 +10,7 @@ import { ProposalRepository } from '../proposal/repositories/proposal.repository
 import { DiscussionRepository } from '../discussion/repositories/discussion.repository';
 import { AgendaRepository } from '../agenda/repositories/agenda.repository';
 import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
+import { CategoryRepository } from '../products/repositories/category.repository';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { SellerCategoryRepository } from '../products/repositories/seller-catego
       ProposalRepository,
       DiscussionRepository,
       AgendaRepository,
-      SellerCategoryRepository
+      SellerCategoryRepository,
+      CategoryRepository
     ]),
     UsersModule
   ],

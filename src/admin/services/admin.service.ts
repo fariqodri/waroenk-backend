@@ -16,6 +16,8 @@ import { DiscussionEntity } from "../../discussion/entities/discussion.entity"
 import { AgendaRepository } from "../../agenda/repositories/agenda.repository"
 import { AgendaEntity } from "../../agenda/entities/agenda.entity"
 import { SellerCategoryRepository } from "../../products/repositories/seller-category.repository"
+import { SellerCategory } from "../../products/entities/seller-category.entity"
+import { CategoryRepository } from "../../products/repositories/category.repository"
 
 export const BetweenDate = (date1: Date, date2: Date) => 
   Between(format(date1, 'yyyy-MM-dd HH:mm:SS'), format(date2, 'yyyy-MM-dd HH:mm:SS'))
@@ -30,7 +32,8 @@ export class AdminService {
     private proposalRepo: ProposalRepository,
     private discussionRepo: DiscussionRepository,
     private agendaRepo: AgendaRepository,
-    private sellerCategoryRepo: SellerCategoryRepository
+    private sellerCategoryRepo: SellerCategoryRepository,
+    private categoryRepo: CategoryRepository
   ) {}
 
   async deleteAgenda(id: string): Promise<ResponseBody<any>> {
@@ -196,12 +199,6 @@ export class AdminService {
     const seller = await this.sellerRepo.findOneOrFail(sellerId, {
       relations: ['user', 'categories']
     })
-    let registered_category = []
-    for (let category of seller.categories) {
-      if (category.status != 'blocked') {
-        registered_category.push(category)
-      }
-    }
     const response = {
       id: seller.id,
       email: seller.user.email,
@@ -213,9 +210,24 @@ export class AdminService {
       description: seller.description,
       tier: seller.tier,
       is_active: seller.is_active,
-      registered_category: registered_category
+      registered_category: seller.categories
     }
     return new ResponseBody(response)
+  }
+
+  async createSellerCategory(sellerId:string, param: EditSellerCategoryParam): Promise<ResponseBody<any>> {
+    const seller = await this.sellerRepo.findOneOrFail(sellerId)
+    const category = await this.categoryRepo.findOneOrFail(param.category)
+    let newSellerCategory: SellerCategory = {
+      id: nanoid(11),
+      seller: seller,
+      category: category,
+      activation_date: null,
+      expiry_date: null,
+      status: 'blocked'
+    }
+    await this.sellerCategoryRepo.insert(newSellerCategory)
+    return new ResponseBody(null, 'seller category has been created')
   }
 
   async editSellerCategory(sellerId:string, param: EditSellerCategoryParam): Promise<ResponseBody<any>> {
