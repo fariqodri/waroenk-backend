@@ -114,7 +114,7 @@ describe('Post E2E', () => {
       })
   })
 
-  it('should get posts', async () => {
+  it('should get seller\'s posts', async () => {
     await getRepository(PostEntity).insert([
       {
         id: 'post-1',
@@ -133,7 +133,7 @@ describe('Post E2E', () => {
       },
     ])
     await request(app.getHttpServer())
-      .get('/posts?page=1&limit=1')
+      .get('/posts/seller/seller-1?page=1&limit=1')
       .expect(200)
       .expect({
         message: 'ok',
@@ -150,7 +150,7 @@ describe('Post E2E', () => {
         total: 2
       })
     await request(app.getHttpServer())
-      .get('/posts?sort=oldest')
+      .get('/posts/seller/seller-1?sort=oldest')
       .expect(200)
       .expect({
         message: 'ok',
@@ -173,7 +173,7 @@ describe('Post E2E', () => {
         total: 2
       })
     await request(app.getHttpServer())
-      .get('/posts?sort=latest')
+      .get('/posts/seller/seller-1?sort=latest')
       .expect(200)
       .expect({
         message: 'ok',
@@ -194,6 +194,13 @@ describe('Post E2E', () => {
         page: 1,
         limit: 10,
         total: 2
+      })
+    await request(app.getHttpServer())
+      .get('/posts/seller/seller-2?sort=latest')
+      .expect(404)
+      .expect({
+        message: 'seller not found',
+        result: null
       })
   })
 })

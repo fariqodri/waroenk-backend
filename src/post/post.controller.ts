@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, UsePipes, Body, Req, Get, Query } from "@nestjs/common";
+import { Controller, Post, UseGuards, UsePipes, Body, Req, Get, Query, Param, Delete } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolePermissionGuard } from "../auth/guards/role.permission.guard";
 import { ValidationPipe } from "../utils/validation.pipe";
@@ -22,20 +22,17 @@ export class PostController {
     return new ResponseBody(response)
   }
 
-  @Get()
-  @UseGuards(JwtAuthGuard, RolePermissionGuard)
-  @Roles('seller')
+  @Get('seller/:sellerId')
   async getPosts(@Query() {
     page = 1,
     limit = 10,
     sort = 'latest'
-  }: GetPostQuery, @Req() req: Request) {
-    const { userId } = req.user as { userId: string }
+  }: GetPostQuery, @Req() req: Request, @Param('sellerId') sellerId: string) {
     const { result, total } = await this.service.getPosts({
       page,
       limit,
       sort
-    }, userId)
+    }, sellerId)
     return new ResponseListWithCountBody(result, 'ok', parseInt(page.toString()), parseInt(limit.toString()), total)
   }
 }

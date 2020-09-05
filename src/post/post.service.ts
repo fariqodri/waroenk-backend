@@ -1,10 +1,11 @@
-import { Injectable, NotAcceptableException } from "@nestjs/common";
+import { Injectable, NotAcceptableException, NotFoundException } from "@nestjs/common";
 import { PostRepository } from "./post.repository";
 import { nanoid } from "nanoid";
 import { MINIMUM_SELLER_TIER_FOR_POSTING } from "../constants";
 import { ResponseBody } from "../utils/response";
 import { ShopProvider } from "../shop/shop.provider";
 import { GetPostQuery } from "./post.dto";
+import { SellerAttribute } from "../users/entities/seller.entity";
 
 @Injectable()
 export class PostService {
@@ -34,8 +35,13 @@ export class PostService {
     }
   }
 
-  async getPosts({ page, limit, sort }: GetPostQuery, userId: string) {
-    const seller = await this.shopProvider.getShopByUserId(userId)
+  async getPosts({ page, limit, sort }: GetPostQuery, sellerId: string) {
+    let seller: SellerAttribute
+    try {
+      seller = await this.shopProvider.getShopById(sellerId)
+    } catch {
+      throw new NotFoundException(new ResponseBody(null, 'seller not found'))
+    }
     const skippedItems = (page - 1) * limit;
     const query = this.postRepo.createQueryBuilder('post')
       .where('post.sellerId = :sellerId', { sellerId: seller.id })
