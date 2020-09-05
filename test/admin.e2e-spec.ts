@@ -740,7 +740,7 @@ describe('Admin e2e', () => {
           category: nanoCategory.id
         }
       })
-      expect(sellerCategory.status).toEqual('blocked')
+      expect(sellerCategory.status).toEqual('proposed')
       expect(sellerCategory.activation_date).toBeNull()
       expect(sellerCategory.expiry_date).toBeNull()
     })
