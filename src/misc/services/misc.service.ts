@@ -15,6 +15,8 @@ import { SellerAttribute } from '../../users/entities/seller.entity';
 import { ProductEntity } from '../../products/entities/product.entity';
 import { CategoryRepository } from '../../products/repositories/category.repository';
 import { FaqEntity } from '../entities/faq.entity';
+import { SellerCategory } from '../../products/entities/seller-category.entity';
+import { SellerCategoryRepository } from '../../products/repositories/seller-category.repository';
 
 const { Readable } = require('stream');
 
@@ -45,6 +47,7 @@ class SellerParsed {
   birth_place: string
   gender: string
   image: string
+  categories: string
 }
 
 class ProductParsed {
@@ -70,7 +73,8 @@ export class MiscService {
     private userRepo: UserRepository,
     private sellerRepo: SellerAttributeRepository,
     private productRepo: ProductRepository,
-    private categoryRepo: CategoryRepository
+    private categoryRepo: CategoryRepository,
+    private sellerCategoryRepo: SellerCategoryRepository,
   ) {}
 
   async parseFaq(file: Buffer): Promise<ResponseListBody<any[]>> {
@@ -130,11 +134,21 @@ export class MiscService {
         created_at: new Date(),
         updated_at: null,
         is_active: true,
-        has_paid: true,
-        is_blocked: false,
         activation_date: new Date()
       }
       await this.sellerRepo.insert(newSeller)
+      const categories = await this.categoryRepo.find()
+      for (let category of categories) {
+        const newSellerCategory: SellerCategory = {
+          id: nanoid(11),
+          seller: newSeller,
+          category: category,
+          activation_date: new Date(),
+          expiry_date: null,
+          status: seller.categories.split(',').includes(category.id)? 'paid': 'blocked'
+        }
+        await this.sellerCategoryRepo.insert(newSellerCategory)
+      }
     }
     return new ResponseListBody(entities.list, 'ok', 1, entities.list.length)
   }
@@ -148,7 +162,10 @@ export class MiscService {
         relations: ['user'],
         where: { user: user.id }
       })
-      const category = await this.categoryRepo.findOneOrFail(product.category)
+      const category = await this.sellerCategoryRepo.findOneOrFail({
+        relations: ['category', 'products'],
+        where: { category: product.category, seller: seller.id }
+      });
       let newProduct: ProductEntity = {
         id: nanoid(11),
         category: category,

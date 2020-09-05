@@ -1,7 +1,5 @@
 export class EditSellerParam {
   active?: boolean
-  paid?: boolean
-  blocked?: boolean
   tier?: 1 | 2
 }
 
@@ -17,7 +15,7 @@ export class ListBuyersQuery {
 export class ListSellerQuery {
   page: number
   limit: number
-  filter: 'none' | 'paid' | 'not_paid' | 'not_verified' | 'blocked'
+  filter: 'none' | 'verified' | 'not_verified' | 'category'
   sort_by: 'created' | 'name'
   order: 'asc' | 'desc'
   name?: string

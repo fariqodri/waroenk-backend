@@ -7,12 +7,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderRepository } from '../order/repositories/order.repository';
 import { ShopProvider } from './shop.provider';
 import { SellerBankRepository } from '../users/repositories/selle-bank.repository';
+import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
 
 @Module({
   controllers: [ShopController],
   providers: [ShopService, ShopProvider],
   imports: [ProductsModule, UsersModule, TypeOrmModule.forFeature([
-    OrderRepository, SellerBankRepository
+    OrderRepository, SellerBankRepository, SellerCategoryRepository
   ])],
   exports: [ShopProvider]
 })

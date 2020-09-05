@@ -30,6 +30,14 @@ export class ShopController {
 
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('seller')
+  @Get('category')
+  getCategories(@Req() request: Request) {
+    const user: { userId } = request.user as { userId }
+    return this.service.getEligibleCategories(user.userId)
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('seller')
   @Delete('products/:id')
   @HttpCode(200)
   async deleteProduct(@Param('id') id: string, @Req() request: Request) {

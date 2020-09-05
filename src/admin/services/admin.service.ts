@@ -149,9 +149,8 @@ export class AdminService {
         role: Not('admin')
       }
     })
-    const sellerCount = await this.sellerRepo.count({ is_active: true, is_blocked: false })
-    const newSellerCount = await this.sellerRepo.count({
-      is_active: false, has_paid: false, is_blocked: false })
+    const sellerCount = await this.sellerRepo.count({ is_active: true })
+    const newSellerCount = await this.sellerRepo.count({ is_active: false })
     const response = {
       userCount: userCount,
       sellerCount: sellerCount,
@@ -191,17 +190,16 @@ export class AdminService {
     return new ResponseListWithCountBody(response, 'ok', param.page, proposals.length, proposalCount)
   }
 
+  //detailseller
+  //editcategoruyseller
+  //rework
   async listSeller(param: ListSellerQuery): Promise<ResponseBody<any>> {
     const skippedItems = (param.page - 1) * param.limit;
     let query = {}
-    if (param.filter == 'blocked') {
-      query = { is_blocked: true }
-    } else if (param.filter == 'paid') {
-      query = { is_active: true, has_paid: true, is_blocked: false }
-    } else if (param.filter == 'not_paid') {
-      query = { is_active: true, has_paid: false, is_blocked: false }
+    if (param.filter == 'verified') {
+      query = { is_active: true }
     } else if (param.filter == 'not_verified') {
-      query = { is_active: false, is_blocked: false }
+      query = { is_active: false }
     }
     if (param.name !== undefined && param.name !== '') {
       query = Object.assign({}, query, { shop_name: Like(`%${param.name}%`) })
@@ -237,15 +235,6 @@ export class AdminService {
       relations: ['user']
     })
     seller.updated_at = new Date()
-    if (param.blocked !== undefined) {
-      seller.is_blocked = param.blocked
-      if (param.blocked) {
-        seller.is_active = false
-        seller.has_paid = false
-      }
-      await this.sellerRepo.save(seller)
-      return new ResponseBody(null, 'seller has been updated')
-    }
     if (param.active !== undefined) {
       seller.is_active = param.active
       if (param.active) {
@@ -255,9 +244,6 @@ export class AdminService {
         user.updated_at = new Date()
         await this.userRepo.save(user)
       }
-    }
-    if (param.paid !== undefined) {
-      seller.has_paid = param.paid
     }
     if (param.tier !== undefined) {
       seller.tier = param.tier
