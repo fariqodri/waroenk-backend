@@ -7,6 +7,7 @@ import { ProductRepository } from '../products/repositories/product.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
 import { OrderRepository } from '../order/repositories/order.repository';
 import { SellerBankRepository } from '../users/repositories/selle-bank.repository';
+import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
 
 describe('Shop Controller', () => {
   let controller: ShopController;
@@ -21,7 +22,8 @@ describe('Shop Controller', () => {
         CategoryRepository, 
         UserRepository,
         OrderRepository,
-        SellerBankRepository
+        SellerBankRepository,
+        SellerCategoryRepository
       ]
     }).compile();
 

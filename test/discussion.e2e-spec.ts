@@ -12,6 +12,7 @@ import { RedisClientProvider } from '../src/redis/redis.client.provider';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { entities } from './dependencies';
+import { SellerCategory } from '../src/products/entities/seller-category.entity';
 
 const fakeRedisClientProvider = {
   set: jest
@@ -65,10 +66,16 @@ describe('Discussion (e2e)', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    has_paid: true,
-    is_blocked: false,
     activation_date: new Date()
   };
+  const sellerCategory: SellerCategory = {
+    id: 'seller-category',
+    seller: seller,
+    category: vegetableCategory,
+    activation_date: new Date(),
+    expiry_date: null,
+    status: 'paid'
+  }
   const product1 = {
     id: 'product_1',
     name: 'KangKunG',
@@ -76,7 +83,7 @@ describe('Discussion (e2e)', () => {
     discount: 0,
     description: 'kangkung',
     images: ['1'],
-    category: vegetableCategory,
+    category: sellerCategory,
     seller: seller,
     created_at: '2020-06-30 19:32:30',
     updated_at: null,
@@ -88,7 +95,7 @@ describe('Discussion (e2e)', () => {
     discount: 0,
     description: 'kangkung',
     images: ['1'],
-    category: vegetableCategory,
+    category: sellerCategory,
     seller: seller,
     created_at: '2020-06-30 19:32:30',
     updated_at: null,
@@ -150,6 +157,7 @@ describe('Discussion (e2e)', () => {
     await getRepository(UserEntity).insert([user]);
     await getRepository(SellerAttribute).insert([seller]);
     await getRepository(CategoryEntity).insert([vegetableCategory]);
+    await getRepository(SellerCategory).insert(sellerCategory);
     await getRepository(ProductEntity).insert([product1, product2]);
     await getRepository(DiscussionEntity).insert(discussions);
   });

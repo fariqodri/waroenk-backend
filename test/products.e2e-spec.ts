@@ -11,6 +11,7 @@ import { RedisClientProvider } from '../src/redis/redis.client.provider';
 import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { entities } from './dependencies';
+import { SellerCategory } from '../src/products/entities/seller-category.entity';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
@@ -41,9 +42,23 @@ describe('GET Product and Categories (e2e)', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    has_paid: true,
-    is_blocked: false,
     activation_date: new Date()
+  }
+  const sellerCategory1: SellerCategory = {
+    id: 'seller-category1',
+    seller: seller,
+    category: vegetableCategory,
+    activation_date: new Date(),
+    expiry_date: null,
+    status: 'paid'
+  }
+  const sellerCategory2: SellerCategory = {
+    id: 'seller-category2',
+    seller: seller,
+    category: fruitsCategory,
+    activation_date: new Date(),
+    expiry_date: null,
+    status: 'paid'
   }
 
   beforeEach(async () => {
@@ -67,9 +82,10 @@ describe('GET Product and Categories (e2e)', () => {
       .insert()
       .into(CategoryEntity)
       .values([vegetableCategory, fruitsCategory])
-      .execute();
-    await getRepository(UserEntity).insert(user);
+      .execute()
+    await getRepository(UserEntity).insert(user)
     await getRepository(SellerAttribute).insert(seller)
+    await getRepository(SellerCategory).insert([sellerCategory1, sellerCategory2])
     await getRepository(ProductEntity).insert([
       {
         id: 'product_1',
@@ -78,7 +94,7 @@ describe('GET Product and Categories (e2e)', () => {
         discount: 0.00,
         description: 'kangkung',
         images: ['1'],
-        category: vegetableCategory,
+        category: sellerCategory1,
         seller: seller,
         created_at: new Date('123')
       },
@@ -89,7 +105,7 @@ describe('GET Product and Categories (e2e)', () => {
         discount: 0.00,
         description: 'bayam',
         images: ['1'],
-        category: vegetableCategory,
+        category: sellerCategory1,
         seller: seller,
         created_at: new Date('124')
       },
@@ -100,7 +116,7 @@ describe('GET Product and Categories (e2e)', () => {
         discount: 0.00,
         description: 'jeruk',
         images: ['1'],
-        category: fruitsCategory,
+        category: sellerCategory2,
         seller: seller,
         created_at: new Date('125')
       },
@@ -357,7 +373,6 @@ describe('GET Product and Categories (e2e) with user login', () => {
     })
   }
   const vegetableCategory = { id: 'category-1', name: 'Sayuran', image: 's3_url_1' };
-  const fruitsCategory = { id: 'category-2', name: 'Buah-buahan', image: 's3_url_1' };
   const user: UserEntity = {
     id: 'user-1',
     full_name: 'user 1',
@@ -383,9 +398,29 @@ describe('GET Product and Categories (e2e) with user login', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    has_paid: true,
-    is_blocked: false,
     activation_date: new Date()
+  }
+  const sellerCategory1: SellerCategory = {
+    id: 'seller-category',
+    seller: seller,
+    category: vegetableCategory,
+    activation_date: new Date(),
+    expiry_date: null,
+    status: 'paid'
+  }
+  const product1: ProductEntity = {
+    id: 'product_1',
+    name: 'KangKunG',
+    price_per_quantity: 10000,
+    discount: 0,
+    description: 'kangkung',
+    images: ['1'],
+    category: sellerCategory1,
+    seller: seller,
+    created_at: new Date('123'),
+    available: true,
+    updated_at: null,
+    deleted_at: null
   }
   const fakeAuthService = {
     decode: (token: string) => ({ userId: 'user-1' })
@@ -412,56 +447,18 @@ describe('GET Product and Categories (e2e) with user login', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    await getConnection()
-      .createQueryBuilder()
-      .insert()
-      .into(CategoryEntity)
-      .values([vegetableCategory, fruitsCategory])
-      .execute();
+    await getRepository(CategoryEntity).insert(vegetableCategory)
     await getRepository(UserEntity).insert(user);
     await getRepository(SellerAttribute).insert(seller)
-    await getRepository(ProductEntity).insert([
-      {
-        id: 'product_1',
-        name: 'KangKunG',
-        price_per_quantity: 10000,
-        discount: 0,
-        description: 'kangkung',
-        images: ['1'],
-        category: vegetableCategory,
-        seller: seller,
-        created_at: new Date('123')
-      },
-      {
-        id: 'product_2',
-        name: 'kangkung amerika',
-        price_per_quantity: 5000,
-        discount: 0,
-        description: 'bayam',
-        images: ['1'],
-        category: vegetableCategory,
-        seller: seller,
-        created_at: new Date('124')
-      },
-      {
-        id: 'product_3',
-        name: 'Jeruk',
-        price_per_quantity: 20000,
-        discount: 0,
-        description: 'jeruk',
-        images: ['1'],
-        category: fruitsCategory,
-        seller: seller,
-        created_at: new Date('125')
-      },
-    ])
+    await getRepository(SellerCategory).insert(sellerCategory1)
+    await getRepository(ProductEntity).insert(product1)
   });
 
   afterEach(async () => {
     await getConnection().close();
   });
 
-  it('Get product by ID success with login', () => {
+  it('Get product by ID success with login', async () => {
     return request(app.getHttpServer())
       .get('/products/product_1')
       .set('Authorization', 'Bearer fake_token')

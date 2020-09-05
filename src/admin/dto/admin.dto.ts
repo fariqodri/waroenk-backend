@@ -1,7 +1,5 @@
 export class EditSellerParam {
   active?: boolean
-  paid?: boolean
-  blocked?: boolean
   tier?: 1 | 2
 }
 
@@ -17,7 +15,8 @@ export class ListBuyersQuery {
 export class ListSellerQuery {
   page: number
   limit: number
-  filter: 'none' | 'paid' | 'not_paid' | 'not_verified' | 'blocked'
+  filter: 'none' | 'verified' | 'not_verified' | 'category'
+  category?: string
   sort_by: 'created' | 'name'
   order: 'asc' | 'desc'
   name?: string
@@ -62,4 +61,10 @@ export class EditAgendaParam {
   date?: string
   images?: string[]
   sponsors?: string[]
+}
+
+export class EditSellerCategoryParam {
+  category: string
+  expiry_date?: string
+  status: 'paid' | 'not_paid' | 'blocked'
 }

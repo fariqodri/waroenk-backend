@@ -15,9 +15,8 @@ export class ProductsService {
       .createQueryBuilder('products')
       .andWhere('products.deleted_at IS NULL')
       .andWhere('products.available IS TRUE')
-      .andWhere('seller.is_blocked IS FALSE')
       .andWhere('seller.is_active IS TRUE')
-      .andWhere('seller.has_paid IS TRUE');
+      .andWhere(`seller_category.status IN ('paid', 'not_paid')`);
     if (param.search) {
       queryBuilder = queryBuilder.andWhere('LOWER(products.name) LIKE :name', {
         name: `%${param.search.toLowerCase()}%`,
@@ -30,7 +29,7 @@ export class ProductsService {
         categoryIds.push("'" + paramCategories[index] + "'")
       }
       let categoryQuery = "(" + categoryIds.join(',') + ")"
-      queryBuilder = queryBuilder.andWhere("products.categoryId IN " + categoryQuery);
+      queryBuilder = queryBuilder.andWhere("seller_category.categoryId IN " + categoryQuery);
     }
     if (param.price_from) {
       queryBuilder = queryBuilder.andWhere(
@@ -65,7 +64,8 @@ export class ProductsService {
     queryBuilder = queryBuilder
       .offset(skippedItems)
       .limit(param.limit)
-      .innerJoin('products.category', 'categories')
+      .innerJoin('products.category', 'seller_category')
+      .innerJoin('seller_category.category', 'category')
       .innerJoin('products.seller', 'seller')
       .select(
         `products.id AS id,
@@ -76,8 +76,8 @@ export class ProductsService {
         products.images AS images`,
       )
       .addSelect([
-        'categories.name AS category_name',
-        'categories.id AS category_id',
+        'category.name AS category_name',
+        'category.id AS category_id',
         'seller.shop_name AS shop_name',
         'seller.shop_address AS shop_address',
         'seller.description AS shop_description',
@@ -103,7 +103,9 @@ export class ProductsService {
           alias: 'product',
           innerJoinAndSelect: {
             seller: 'product.seller',
-            user: 'seller.user'
+            user: 'seller.user',
+            seller_category: 'product.category',
+            category: 'seller_category.category'
           }
         }
       })
@@ -129,9 +131,9 @@ export class ProductsService {
         description: product.description,
         images: product.images,
         category: {
-          id: product.category.id,
-          name: product.category.name,
-          image: product.category.image
+          id: product.category.category.id,
+          name: product.category.category.name,
+          image: product.category.category.image
         },
         is_my_product: isMyProduct
       }

@@ -18,6 +18,7 @@ import { entities } from "./dependencies";
 import { OrderEntity } from "../src/order/entities/order.entity";
 import { OrderItem } from "../src/order/entities/order-item.entity";
 import { SellerBank } from "../src/users/entities/seller-bank.entity";
+import { SellerCategory } from "../src/products/entities/seller-category.entity";
 
 
 const fakeRedisClientProvider = {
@@ -63,8 +64,6 @@ describe('Shop E2E', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    has_paid: true,
-    is_blocked: false,
     activation_date: new Date()
   }
   const user2: UserEntity = {
@@ -92,9 +91,32 @@ describe('Shop E2E', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    has_paid: true,
-    is_blocked: false,
     activation_date: new Date()
+  }
+
+  const seller1Category1: SellerCategory = {
+    id: 'seller1-category1',
+    seller: seller,
+    category: vegetableCategory,
+    activation_date: new Date(),
+    expiry_date: null,
+    status: 'paid'
+  }
+  const seller1Category2: SellerCategory = {
+    id: 'seller1-category2',
+    seller: seller,
+    category: fruitsCategory,
+    activation_date: new Date(),
+    expiry_date: null,
+    status: 'paid'
+  }
+  const seller2Category1: SellerCategory = {
+    id: 'seller2-category1',
+    seller: seller2,
+    category: vegetableCategory,
+    activation_date: new Date(),
+    expiry_date: null,
+    status: 'paid'
   }
   
   beforeEach(async () => {
@@ -126,6 +148,7 @@ describe('Shop E2E', () => {
     await getRepository(UserEntity).insert([user, user2])
     await getRepository(SellerAttribute).insert([seller, seller2])
     await getRepository(CategoryEntity).insert([vegetableCategory, fruitsCategory])
+    await getRepository(SellerCategory).insert([seller1Category1, seller1Category2, seller2Category1])
     await getRepository(ProductEntity).insert([
       {
         id: 'product_1',
@@ -134,7 +157,7 @@ describe('Shop E2E', () => {
         discount: 0,
         description: 'kangkung',
         images: ['1'],
-        category: vegetableCategory,
+        category: seller1Category1,
         seller: seller,
         created_at: '2020-06-30 19:32:30',
         updated_at: null
@@ -146,7 +169,7 @@ describe('Shop E2E', () => {
         discount: 0,
         description: 'jeruk',
         images: ['1'],
-        category: fruitsCategory,
+        category: seller1Category2,
         seller: seller,
         created_at: '2020-06-30 18:32:30',
         updated_at: null
@@ -158,7 +181,7 @@ describe('Shop E2E', () => {
         discount: 0,
         description: 'bayam',
         images: ['1'],
-        category: vegetableCategory,
+        category: seller2Category1,
         seller: seller2,
         created_at: '2020-06-30 18:32:30',
         updated_at: null
@@ -199,7 +222,7 @@ describe('Shop E2E', () => {
       discount: 0,
       description: 'kangkung',
       images: ['1'],
-      category: vegetableCategory,
+      category: seller1Category1,
       seller: seller,
       created_at: new Date(),
       updated_at: null,
@@ -213,7 +236,7 @@ describe('Shop E2E', () => {
       discount: 0,
       description: 'otong',
       images: ['1'],
-      category: vegetableCategory,
+      category: seller1Category1,
       seller: seller,
       created_at: new Date(),
       updated_at: null,
@@ -269,6 +292,15 @@ describe('Shop E2E', () => {
         expect(totalItem).toEqual(4);
         expect(subTotal).toEqual(70000);
       });
+  })
+
+  it('list eligible category', async () => {
+    const resp = await request(app.getHttpServer())
+      .get('/shop/category')
+      .expect(200)
+    const { message, result } = resp.body
+    expect(message).toEqual('ok')
+    expect(result.length).toEqual(2)
   })
 
   it('create bank', async () => {
@@ -393,7 +425,7 @@ describe('Shop E2E', () => {
         expect(updated_at).toBeNull()
         expect(deleted_at).toBeNull()
         expect(seller.id).toEqual("seller-1")
-        expect(category.id).toEqual(reqBody.categoryId)
+        expect(category.id).toEqual('seller1-category1')
         expect(available).toEqual(reqBody.available)
       })
   })
@@ -426,7 +458,7 @@ describe('Shop E2E', () => {
         expect(images).toEqual(reqBody.images)
         expect(created_at).toBeDefined()
         expect(updated_at).toBeDefined()
-        expect(category.id).toEqual(reqBody.categoryId)
+        expect(category.id).toEqual('seller1-category1')
         expect(available).toEqual(reqBody.available)
       })
   })

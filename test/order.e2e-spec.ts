@@ -17,6 +17,7 @@ import { RedisModule } from "../src/redis/redis.module";
 import { SellerAttribute } from "../src/users/entities/seller.entity";
 import { UserEntity } from "../src/users/entities/users.entity";
 import { entities } from "./dependencies";
+import { SellerCategory } from "../src/products/entities/seller-category.entity";
 
 const fakeRedisClientProvider = {
   set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
@@ -97,8 +98,6 @@ describe('Order e2e test', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    has_paid: true,
-    is_blocked: false,
     activation_date: new Date()
   }
   const seller2: SellerAttribute = {
@@ -115,9 +114,23 @@ describe('Order e2e test', () => {
     created_at: new Date(),
     updated_at: null,
     is_active: true,
-    has_paid: true,
-    is_blocked: false,
     activation_date: new Date()
+  }
+  const seller1Category: SellerCategory = {
+    id: 'seller1-category',
+    seller: seller1,
+    category: vegetableCategory,
+    activation_date: new Date(),
+    expiry_date: null,
+    status: 'paid'
+  }
+  const seller2Category: SellerCategory = {
+    id: 'seller2-category',
+    seller: seller2,
+    category: vegetableCategory,
+    activation_date: new Date(),
+    expiry_date: null,
+    status: 'paid'
   }
   const product1: ProductEntity = {
     id: 'product_1',
@@ -126,7 +139,7 @@ describe('Order e2e test', () => {
     discount: 0,
     description: 'kangkung',
     images: ['1'],
-    category: vegetableCategory,
+    category: seller1Category,
     seller: seller1,
     created_at: new Date(),
     updated_at: null,
@@ -140,7 +153,7 @@ describe('Order e2e test', () => {
     discount: 0,
     description: 'otong',
     images: ['1'],
-    category: vegetableCategory,
+    category: seller1Category,
     seller: seller1,
     created_at: new Date(),
     updated_at: null,
@@ -154,7 +167,7 @@ describe('Order e2e test', () => {
     discount: 0,
     description: 'bayam',
     images: ['1'],
-    category: vegetableCategory,
+    category: seller1Category,
     seller: seller1,
     created_at: new Date(),
     updated_at: null,
@@ -168,7 +181,7 @@ describe('Order e2e test', () => {
     discount: 0,
     description: 'bayami',
     images: ['2'],
-    category: vegetableCategory,
+    category: seller2Category,
     seller: seller2,
     created_at: new Date(),
     updated_at: null,
@@ -323,6 +336,7 @@ describe('Order e2e test', () => {
     await getRepository(UserEntity).insert([user1, user2, user3, user4])
     await getRepository(SellerAttribute).insert([seller1, seller2])
     await getRepository(CategoryEntity).insert([vegetableCategory])
+    await getRepository(SellerCategory).insert([seller1Category, seller2Category])
     await getRepository(ProductEntity).insert([product1, product2, product3, product4])
     await getRepository(CartEntity).insert([cart1, cart2, cart3, cart4, cart5])
     await getRepository(OrderEntity).insert([newOrder, waitingPaymentOrder, processedOrder, onDeliveryOrder])

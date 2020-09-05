@@ -73,4 +73,7 @@ export class ShopPostParam {
 
   @jf.string().required()
   image: string
+
+  @jf.array().optional()
+  proposed_category: string[]
 }

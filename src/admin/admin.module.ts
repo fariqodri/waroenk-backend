@@ -9,6 +9,7 @@ import { OrderRepository } from '../order/repositories/order.repository';
 import { ProposalRepository } from '../proposal/repositories/proposal.repository';
 import { DiscussionRepository } from '../discussion/repositories/discussion.repository';
 import { AgendaRepository } from '../agenda/repositories/agenda.repository';
+import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { AgendaRepository } from '../agenda/repositories/agenda.repository';
       OrderRepository,
       ProposalRepository,
       DiscussionRepository,
-      AgendaRepository
+      AgendaRepository,
+      SellerCategoryRepository
     ]),
     UsersModule
   ],

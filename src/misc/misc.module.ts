@@ -11,6 +11,7 @@ import { UserRepository } from '../users/repositories/users.repository';
 import { SellerAttributeRepository } from '../users/repositories/seller.repository';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
+import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CategoryRepository } from '../products/repositories/category.repository
       SellerAttributeRepository,
       ProductRepository,
       CategoryRepository,
+      SellerCategoryRepository,
     ]),
   ],
   controllers: [FaqController, LocationController, BulkUploadController],

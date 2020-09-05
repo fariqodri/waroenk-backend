@@ -18,7 +18,7 @@ import { CategoryEntity } from "../src/products/entities/category.entity";
 import { ProductEntity } from "../src/products/entities/product.entity";
 import { DiscussionEntity } from "../src/discussion/entities/discussion.entity";
 import { AgendaEntity } from "../src/agenda/entities/agenda.entity";
-import { description } from "@hapi/joi";
+import { SellerCategory } from "../src/products/entities/seller-category.entity";
 
 describe('Admin e2e', () => {
     let app: INestApplication;
@@ -89,11 +89,9 @@ describe('Admin e2e', () => {
       image: "img-1.com",
       tier: 1,
       user: user1,
-      created_at: new Date(),
+      created_at: new Date(2019, 12),
       updated_at: null,
       is_active: false,
-      has_paid: false,
-      is_blocked: false,
       activation_date: null
     }
     const seller2: SellerAttribute = {
@@ -110,8 +108,6 @@ describe('Admin e2e', () => {
       created_at: new Date(2020, 1),
       updated_at: null,
       is_active: true,
-      has_paid: true,
-      is_blocked: false,
       activation_date: new Date()
     }
     const seller3: SellerAttribute = {
@@ -128,8 +124,6 @@ describe('Admin e2e', () => {
       created_at: new Date(2020, 2),
       updated_at: null,
       is_active: true,
-      has_paid: true,
-      is_blocked: false,
       activation_date: new Date()
     }
     const seller4: SellerAttribute = {
@@ -143,11 +137,9 @@ describe('Admin e2e', () => {
       image: "img-1.com",
       tier: 2,
       user: user4,
-      created_at: new Date(),
+      created_at: new Date(2020, 3),
       updated_at: null,
       is_active: false,
-      has_paid: false,
-      is_blocked: true,
       activation_date: new Date()
     }
     const buyers: UserEntity[] = [
@@ -199,7 +191,36 @@ describe('Admin e2e', () => {
       id: 'category-1',
       name: 'Sayuran',
       image: 's3_url_1',
-    };
+    }
+    const fruitCategory = {
+      id: 'category-2',
+      name: 'Buah',
+      image: 's3_url_1',
+    }
+    const seller2Category: SellerCategory = {
+      id: 'seller2-category',
+      seller: seller2,
+      category: vegetableCategory,
+      activation_date: new Date(1000),
+      expiry_date: new Date(1000),
+      status: 'paid'
+    }
+    const seller2CategoryBlocked: SellerCategory = {
+      id: 'seller2-category-blocked',
+      seller: seller2,
+      category: fruitCategory,
+      activation_date: null,
+      expiry_date: null,
+      status: 'blocked'
+    }
+    const seller3Category: SellerCategory = {
+      id: 'seller3-category',
+      seller: seller3,
+      category: vegetableCategory,
+      activation_date: new Date(2000),
+      expiry_date: new Date(2000),
+      status: 'paid'
+    }
     const product1 = {
       id: 'product_1',
       name: 'KangKunG',
@@ -207,7 +228,7 @@ describe('Admin e2e', () => {
       discount: 0,
       description: 'kangkung',
       images: ['1'],
-      category: vegetableCategory,
+      category: seller2Category,
       seller: seller2,
       created_at: '2020-06-30 19:32:30',
       updated_at: null,
@@ -219,7 +240,7 @@ describe('Admin e2e', () => {
       discount: 0,
       description: 'kangkung',
       images: ['1'],
-      category: vegetableCategory,
+      category: seller2Category,
       seller: seller2,
       created_at: '2020-06-30 19:32:30',
       updated_at: null,
@@ -296,7 +317,8 @@ describe('Admin e2e', () => {
       await getRepository(UserEntity).insert([admin, ...buyers, user4])
       await getRepository(SellerAttribute).insert([sellerNotActivated, seller2, seller3, seller4])
       await getRepository(OrderEntity).insert([order1, order2])
-      await getRepository(CategoryEntity).insert([vegetableCategory]);
+      await getRepository(CategoryEntity).insert([vegetableCategory, fruitCategory]);
+      await getRepository(SellerCategory).insert([seller2Category, seller3Category, seller2CategoryBlocked]);
       await getRepository(ProductEntity).insert([product1, product2]);
       await getRepository(DiscussionEntity).insert(discussions);
       await getRepository(AgendaEntity).insert(agenda);
@@ -435,7 +457,7 @@ describe('Admin e2e', () => {
       const { result } = resp.body
       expect(result.userCount).toEqual(3)
       expect(result.sellerCount).toEqual(2)
-      expect(result.newSellerCount).toEqual(1)
+      expect(result.newSellerCount).toEqual(2)
     })
 
     it('should list buyers sorted from oldest', async () => {
@@ -561,15 +583,15 @@ describe('Admin e2e', () => {
         .expect(200)
       const { result } = resp.body
       expect(result.length).toEqual(4)
-      expect(result[0].id).toEqual('seller-1')
-      expect(result[1].id).toEqual('seller-4')
-      expect(result[2].id).toEqual('seller-3')
-      expect(result[3].id).toEqual('seller-2')
+      expect(result[0].id).toEqual('seller-4')
+      expect(result[1].id).toEqual('seller-3')
+      expect(result[2].id).toEqual('seller-2')
+      expect(result[3].id).toEqual('seller-1')
     })
 
-    it('should list paid seller ', async () => {
+    it('should list active seller ', async () => {
       const resp = await request(app.getHttpServer())
-        .get('/admin/seller?filter=paid')
+        .get('/admin/seller?filter=verified')
         .expect(200)
       const { result } = resp.body
       expect(result.length).toEqual(2)
@@ -577,9 +599,19 @@ describe('Admin e2e', () => {
       expect(result[1].id).toEqual('seller-2')
     })
 
-    it('should list paid seller order by name desc', async () => {
+    it('should list seller by category', async () => {
       const resp = await request(app.getHttpServer())
-        .get('/admin/seller?filter=paid&sort_by=name&order=asc')
+        .get('/admin/seller?filter=category&category=category-1')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.length).toEqual(2)
+      expect(result[0].id).toEqual(seller2Category.id)
+      expect(result[1].id).toEqual(seller3Category.id)
+    })
+
+    it('should list active seller order by name desc', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/seller?filter=verified&sort_by=name&order=asc')
         .expect(200)
       const { result } = resp.body
       expect(result.length).toEqual(2)
@@ -587,18 +619,19 @@ describe('Admin e2e', () => {
       expect(result[1].id).toEqual('seller-3')
     })
 
-    it('should list blocked seller', async () => {
+    it('should list not_verified seller', async () => {
       const resp = await request(app.getHttpServer())
-        .get('/admin/seller?filter=blocked')
+        .get('/admin/seller?filter=not_verified')
         .expect(200)
       const { result } = resp.body
-      expect(result.length).toEqual(1)
+      expect(result.length).toEqual(2)
       expect(result[0].id).toEqual('seller-4')
+      expect(result[1].id).toEqual('seller-1')
     })
 
     it('should list seller by name', async () => {
       const resp = await request(app.getHttpServer())
-        .get('/admin/seller?filter=blocked&name=d')
+        .get('/admin/seller?filter=not_verified&name=d')
         .expect(200)
       const { result } = resp.body
       expect(result.length).toEqual(1)
@@ -606,7 +639,7 @@ describe('Admin e2e', () => {
     })
 
     it('should block seller', async () => {
-      const body = { blocked: true }
+      const body = { active: false }
       const resp = await request(app.getHttpServer())
         .put('/admin/seller/seller-2')
         .send(body)
@@ -614,25 +647,11 @@ describe('Admin e2e', () => {
       const { message } = resp.body
       expect(message).toEqual('seller has been updated')
       const editedSeller = await getRepository(SellerAttribute).findOne('seller-2')
-      expect(editedSeller.is_blocked).toBeTruthy()
       expect(editedSeller.is_active).toBeFalsy()
-      expect(editedSeller.has_paid).toBeFalsy()
     })
 
-    it('should unblock seller', async () => {
-      const body = { blocked: false }
-      const resp = await request(app.getHttpServer())
-        .put('/admin/seller/seller-4')
-        .send(body)
-        .expect(201)
-      const { message } = resp.body
-      expect(message).toEqual('seller has been updated')
-      const editedSeller = await getRepository(SellerAttribute).findOne('seller-4')
-      expect(editedSeller.is_blocked).toBeFalsy()
-    })
-
-    it('should edit seller', async () => {
-      const body = { active: false, paid: false, tier: 2 }
+    it('should activate seller', async () => {
+      const body = { active: true, tier: 2 }
       const resp = await request(app.getHttpServer())
         .put('/admin/seller/seller-3')
         .send(body)
@@ -640,27 +659,63 @@ describe('Admin e2e', () => {
       const { message } = resp.body
       expect(message).toEqual('seller has been updated')
       const editedSeller = await getRepository(SellerAttribute).findOne('seller-3')
-      expect(editedSeller.is_active).toBeFalsy()
-      expect(editedSeller.has_paid).toBeFalsy()
+      expect(editedSeller.is_active).toBeTruthy()
       expect(editedSeller.tier).toEqual(2)
       const editedUser = await getRepository(UserEntity).findOne(user3.id)
-        expect(editedUser.role).toEqual('buyer')
+      expect(editedUser.role).toEqual('seller')
     })
 
-    it('activate seller', async () => {
+    it('should get seller detail', async () => {
       const resp = await request(app.getHttpServer())
-        .put('/admin/seller/seller-1')
-        .send({ active: true })
+        .get('/admin/seller/seller-2')
+        .expect(200)
+      const { result } = resp.body
+      expect(result.id).toEqual(seller2.id)
+      expect(result.email).toEqual(seller2.user.email)
+      expect(result.gender).toEqual(seller2.gender)
+      expect(result.birth_place).toEqual(seller2.birth_place)
+      expect(result.birth_date).toEqual(seller2.birth_date)
+      expect(result.activation_date).toEqual(seller2.activation_date.toJSON())
+      expect(result.shop_address).toEqual(seller2.shop_address)
+      expect(result.description).toEqual(seller2.description)
+      expect(result.tier).toEqual(seller2.tier)
+      expect(result.is_active).toEqual(seller2.is_active)
+      expect(result.registered_category.length).toEqual(1)
+      expect(result.registered_category[0].id).toEqual(seller2Category.id)
+    })
+
+    it('should add seller category', async () => {
+      const reqBody = {
+        category: fruitCategory.id,
+        expiry_date: '2020-10-05',
+        status: 'paid'
+      }
+      const resp = await request(app.getHttpServer())
+        .put('/admin/seller-category/seller-2')
+        .send(reqBody)
         .expect(201)
-        .then(res => {
-          const body = res.body
-          const { message, result } = body
-          expect(message).toEqual('seller has been updated')
-          expect(result).toBeNull()
-        })
-        const editedSeller = await getRepository(SellerAttribute).findOne('seller-1')
-        expect(editedSeller.is_active).toBeTruthy()
-        const editedUser = await getRepository(UserEntity).findOne(user1.id)
-        expect(editedUser.role).toEqual('seller')
+      const { message } = resp.body
+      expect(message).toEqual('seller category has been updated')
+      const sellerCategory = await getRepository(SellerCategory).findOne(seller2CategoryBlocked.id)
+      expect(sellerCategory.status).toEqual(reqBody.status)
+      expect(sellerCategory.activation_date).toBeDefined()
+      expect(sellerCategory.expiry_date).toEqual(new Date(reqBody.expiry_date))
+    })
+
+    it('should block seller category', async () => {
+      const reqBody = {
+        category: vegetableCategory.id,
+        status: 'blocked'
+      }
+      const resp = await request(app.getHttpServer())
+        .put('/admin/seller-category/seller-2')
+        .send(reqBody)
+        .expect(201)
+      const { message } = resp.body
+      expect(message).toEqual('seller category has been updated')
+      const sellerCategory = await getRepository(SellerCategory).findOne(seller2Category.id)
+      expect(sellerCategory.status).toEqual(reqBody.status)
+      expect(sellerCategory.activation_date).toBeNull()
+      expect(sellerCategory.expiry_date).toBeNull()
     })
   })

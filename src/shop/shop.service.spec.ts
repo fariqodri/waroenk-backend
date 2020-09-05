@@ -6,6 +6,7 @@ import { UserRepository } from '../users/repositories/users.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
 import { OrderRepository } from '../order/repositories/order.repository';
 import { SellerBankRepository } from '../users/repositories/selle-bank.repository';
+import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
 
 
 describe('ShopService', () => {
@@ -20,7 +21,8 @@ describe('ShopService', () => {
         CategoryRepository, 
         UserRepository,
         OrderRepository,
-        SellerBankRepository
+        SellerBankRepository,
+        SellerCategoryRepository
       ],
     }).compile();
 

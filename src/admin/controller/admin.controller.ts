@@ -3,7 +3,7 @@ import { AdminService } from "../services/admin.service";
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RolePermissionGuard } from "../../auth/guards/role.permission.guard";
 import { Roles } from "../../utils/decorators";
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam, CreateAgendaParam } from "../dto/admin.dto";
+import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam, CreateAgendaParam, EditSellerCategoryParam } from "../dto/admin.dto";
 import { ResponseListWithCountBody } from "../../utils/response";
 
 @Controller('admin')
@@ -39,6 +39,7 @@ export class AdminController {
     page = 1,
     limit = 10,
     filter = 'none',
+    category,
     sort_by = 'created',
     order = 'desc',
     name
@@ -47,6 +48,7 @@ export class AdminController {
       page,
       limit,
       filter,
+      category,
       sort_by,
       order,
       name
@@ -59,6 +61,21 @@ export class AdminController {
   @HttpCode(201)
   async editSeller(@Param() id: string, @Body() param: EditSellerParam) {
     return this.service.editSeller(param, id)
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Get('seller/:id')
+  async getSeller(@Param() id: string) {
+    return this.service.getSeller(id)
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Put('seller-category/:id')
+  @HttpCode(201)
+  async editSellerCategory(@Param() id: string, @Body() param: EditSellerCategoryParam) {
+    return this.service.editSellerCategory(id, param)
   }
 
   @UseGuards(JwtAuthGuard, RolePermissionGuard)

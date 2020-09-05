@@ -9,10 +9,12 @@ import { ProductEntity } from '../products/entities/product.entity';
 import { SellerAttribute } from '../users/entities/seller.entity';
 import { nanoid } from 'nanoid';
 import { OrderQueryParam } from '../order/dto/order.dto';
-import { Like } from 'typeorm';
+import { Like, In } from 'typeorm';
 import { OrderRepository } from '../order/repositories/order.repository';
 import { SellerBankRepository } from '../users/repositories/selle-bank.repository';
 import { SellerBank } from '../users/entities/seller-bank.entity';
+import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
+import { SellerCategory } from '../products/entities/seller-category.entity';
 
 @Injectable()
 export class ShopService {
@@ -22,7 +24,8 @@ export class ShopService {
     private categoryRepo: CategoryRepository,
     private userRepo: UserRepository,
     private orderRepo: OrderRepository,
-    private sellerBankRepo: SellerBankRepository
+    private sellerBankRepo: SellerBankRepository,
+    private sellerCategoryRepo: SellerCategoryRepository
   ) {}
 
   async createBank(userId: string, param: SellerBankParam): Promise<ResponseBody<any>> {
@@ -122,11 +125,21 @@ export class ShopService {
       created_at: new Date(),
       updated_at: null,
       activation_date: null,
-      is_active: false,
-      has_paid: false,
-      is_blocked: false
+      is_active: false
     }
     await this.sellerRepo.insert(newSeller)
+    const categories = await this.categoryRepo.find()
+    for (let category of categories) {
+      const newSellerCategory: SellerCategory = {
+        id: nanoid(11),
+        seller: newSeller,
+        category: category,
+        activation_date: null,
+        expiry_date: null,
+        status: param.proposed_category.includes(category.id)? 'proposed': 'blocked'
+      }
+      await this.sellerCategoryRepo.insert(newSellerCategory)
+    }
     const response = {
       id: newSeller.id,
       userId: user.id,
@@ -148,9 +161,7 @@ export class ShopService {
     let seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId })
-      .andWhere('is_blocked IS FALSE')
-      .andWhere('is_active IS TRUE')
-      .andWhere('has_paid IS TRUE').getOne();
+      .andWhere('is_active IS TRUE').getOne();
     if (seller === undefined) {
       throw new BadRequestException(new ResponseBody(null,
         `there is no shop with userId: [${userId}] or shop not activated or blocked`))
@@ -181,18 +192,68 @@ export class ShopService {
     return new ResponseBody(seller);
   }
 
-  async createProduct(userId: string, param: ProductCreateParam): Promise<ResponseBody<ProductEntity>> {
+  async getEligibleCategories(userId: string): Promise<ResponseBody<any>> {
     const seller = await this.sellerRepo
-      .createQueryBuilder()
-      .where('userId = :userId', { userId: userId })
-      .andWhere('is_active IS TRUE')
-      .andWhere('is_blocked IS FALSE')
-      .andWhere('has_paid IS TRUE').getOne();
+    .createQueryBuilder()
+    .where('userId = :userId', { userId: userId })
+    .andWhere('is_active IS TRUE').getOne();
     if (seller === undefined) {
       throw new BadRequestException(new ResponseBody(null,
         `seller with userId: [${userId}] is inactive so it can't create product`))
     }
-    const category = await this.categoryRepo.findOne(param.categoryId);
+    const sellerCategories = await this.sellerCategoryRepo.find({
+      relations: ['category', 'products'],
+      where: { seller: seller.id, status: In(['paid', 'not_paid']) }
+    })
+    let eligibleCategories = []
+    for (let category of sellerCategories) {
+      const productCount = await this.productRepo.count({
+        relations: ['category'],
+        where: {
+          deleted_at: null,
+          category: {
+            category: category.category.id,
+            seller: seller.id,
+          }
+        }
+      })
+      if (productCount < 5) {
+        eligibleCategories.push({
+          id: category.category.id,
+          name: category.category.name
+        })
+      }
+    }
+    return new ResponseBody(eligibleCategories)
+  }
+
+  async createProduct(userId: string, param: ProductCreateParam): Promise<ResponseBody<ProductEntity>> {
+    const seller = await this.sellerRepo
+      .createQueryBuilder()
+      .where('userId = :userId', { userId: userId })
+      .andWhere('is_active IS TRUE').getOne();
+    if (seller === undefined) {
+      throw new BadRequestException(new ResponseBody(null,
+        `seller with userId: [${userId}] is inactive so it can't create product`))
+    }
+    const category = await this.sellerCategoryRepo.findOneOrFail({
+      relations: ['category', 'products'],
+      where: { category: param.categoryId, seller: seller.id }
+    });
+    const productCount = await this.productRepo.count({
+      relations: ['category'],
+      where: {
+        deleted_at: null,
+        category: {
+          category: category.category.id,
+          seller: seller.id,
+        }
+      }
+    })
+    if (productCount >= 5) {
+      throw new BadRequestException(new ResponseBody(null,
+        `category of ${category.category.id} of user ${userId} is full `))
+    }
     let discount = 0.00
     if (param.discount) {
       discount = param.discount
@@ -219,19 +280,23 @@ export class ShopService {
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId })
-      .andWhere('is_blocked IS FALSE')
-      .andWhere('is_active IS TRUE')
-      .andWhere('has_paid IS TRUE').getOne();
+      .andWhere('is_active IS TRUE').getOne();
     if (seller === undefined) {
       throw new BadRequestException(new ResponseBody(null,
         `seller with userId: [${userId}] is inactive so it can't edit product`))
     }
-    let product = await this.productRepo
-      .createQueryBuilder()
-      .where('sellerId = :sellerId', { sellerId: seller.id })
-      .andWhere('id = :id', { id: id }).getOne();
+    let product = await this.productRepo.findOneOrFail(id, {
+      relations: ['seller', 'category'],
+      where: { seller: seller.id }
+    })
     if (param.categoryId) {
-      const category = await this.categoryRepo.findOne(param.categoryId);
+      const category = await this.sellerCategoryRepo.findOneOrFail({
+        relations: ['category', 'products'],
+        where: { 
+          category: param.categoryId,
+          seller: seller.id, 
+          status: In(['paid', 'not_paid']) }
+      });
       product.category = category
     }
     if (param.discount) {
@@ -249,7 +314,7 @@ export class ShopService {
     if (param.images) {
       product.images = param.images
     }
-    if (param.available) {
+    if (param.available !== undefined) {
       product.available = param.available
     }
     product.updated_at = new Date()
@@ -261,9 +326,7 @@ export class ShopService {
     const seller = await this.sellerRepo
       .createQueryBuilder()
       .where('userId = :userId', { userId: userId })
-      .andWhere('is_blocked IS FALSE')
-      .andWhere('is_active IS TRUE')
-      .andWhere('has_paid IS TRUE').getOne();
+      .andWhere('is_active IS TRUE').getOne();
     const product = await this.productRepo
       .createQueryBuilder()
       .where('sellerId = :sellerId', { sellerId: seller.id })
@@ -273,6 +336,7 @@ export class ShopService {
       throw new BadRequestException(new ResponseBody(null,
          "user is not authorized to delete product or product doesn't exist with id [" + id + "]"))
     }
+    product.available = false
     product.deleted_at = new Date()
     await this.productRepo.save(product)
     return new ResponseBody("product with id [" + id + "] deleted");
@@ -300,14 +364,15 @@ export class ShopService {
         categoryIds.push("'" + paramCategories[index] + "'")
       }
       let categoryQuery = "(" + categoryIds.join(',') + ")"
-      queryBuilder = queryBuilder.andWhere("products.categoryId IN " + categoryQuery);
+      queryBuilder = queryBuilder.andWhere("sellerCategory.categoryId IN " + categoryQuery);
     }
     queryBuilder = queryBuilder
       .orderBy('products.created_at', 'DESC')
       .addOrderBy('products.name', 'ASC')
       .offset(skippedItems)
       .limit(query.limit)
-      .innerJoin('products.category', 'categories')
+      .innerJoin('products.category', 'sellerCategory')
+      .innerJoin('sellerCategory.category', 'category')
       .select(
         `products.id AS id,
         products.name AS name,
@@ -317,8 +382,8 @@ export class ShopService {
         products.available AS available`,
       )
       .addSelect([
-        'categories.name AS category_name',
-        'categories.id AS category_id',
+        'category.name AS category_name',
+        'category.id AS category_id',
       ]);
     let products: any[] = await queryBuilder.execute();
     products = products.map(p => ({
