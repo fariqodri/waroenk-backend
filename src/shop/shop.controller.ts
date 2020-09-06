@@ -103,7 +103,7 @@ export class ShopController {
 
   @UsePipes(ValidationPipe)
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
-  @Roles('seller')
+  @Roles('all')
   @Post('bank')
   @HttpCode(201)
   async createBank(@Body() param: SellerBankParam, @Req() request: Request) {
@@ -112,7 +112,7 @@ export class ShopController {
   }
 
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
-  @Roles('seller')
+  @Roles('all')
   @Delete('bank/:id')
   @HttpCode(200)
   async deleteBank(@Param('id') id: string, @Req() request: Request) {
