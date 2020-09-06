@@ -291,7 +291,7 @@ describe('Discussion (e2e)', () => {
 
   it('should return list of discussions of product-2', async () => {
     return request(app.getHttpServer())
-      .get(`/discussion/product/${product2.id}`)
+      .get(`/discussion/product/${product2.id}?search=discuss`)
       .expect(200)
       .then(resp => {
         const body = resp.body;

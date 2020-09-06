@@ -2,7 +2,7 @@ import { Controller, Req, HttpCode, Body, Post, UsePipes, UseGuards, Get, Param,
 import { Request } from 'express';
 import { ValidationPipe } from '../../utils/validation.pipe';
 import { DiscussionService } from '../services/discussion.service';
-import { DiscussionPostParam } from '../dto/discussion.dto';
+import { DiscussionPostParam, ListDiscussionParam } from '../dto/discussion.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolePermissionGuard } from '../../auth/guards/role.permission.guard';
 
@@ -20,7 +20,7 @@ export class DiscussionController {
   }
 
   @Get('product/:productId')
-  getDiscussions(@Param('productId') productId: string, @Query('parent') parentId?: string) {
-    return this.service.getDiscussion(productId, parentId)
+  getDiscussions(@Param('productId') productId: string, @Query() param: ListDiscussionParam) {
+    return this.service.getDiscussion(productId, param)
   }
 }
