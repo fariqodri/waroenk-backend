@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ResponseBody } from '../../utils/response';
 import { DiscussionRepository } from '../repositories/discussion.repository';
-import { DiscussionPostParam, DiscussionResponse } from '../dto/discussion.dto';
+import { DiscussionPostParam, DiscussionResponse, ListDiscussionParam } from '../dto/discussion.dto';
 import { DiscussionEntity } from '../entities/discussion.entity';
 import { UserRepository } from '../../users/repositories/users.repository';
 import { nanoid } from 'nanoid';
@@ -72,7 +72,7 @@ export class DiscussionService {
     return new ResponseBody(response)
   }
 
-  async getDiscussion(productId: string, parentId?: string): Promise<ResponseBody<any>> {
+  async getDiscussion(productId: string, param: ListDiscussionParam): Promise<ResponseBody<any>> {
     let query = this.discussionRepo
       .createQueryBuilder('d')
       .innerJoin('d.user', 'user')
@@ -92,8 +92,11 @@ export class DiscussionService {
       ])
       .where('d.productId = :productId', { productId })
       .andWhere('d.deleted_at IS NULL')
-    if (parentId && parentId !== "") {
-      query = query.andWhere('d.parentId = :parentId', { parentId })
+    if (param.parent && param.parent !== "") {
+      query = query.andWhere('d.parentId = :parentId', { parentId: param.parent })
+    }
+    if (param.search && param.search !== "") {
+      query = query.andWhere('LOWER(d.description) LIKE :search', { search: `%${param.search}%` })
     }
     let discussions = await query.execute()
 

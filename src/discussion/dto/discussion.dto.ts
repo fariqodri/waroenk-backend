@@ -24,3 +24,8 @@ export class DiscussionResponse {
   created_at: Date
   isSellerProduct: boolean
 }
+
+export class ListDiscussionParam {
+  parent?: string
+  search?: string
+}
