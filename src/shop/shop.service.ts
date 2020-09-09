@@ -405,7 +405,7 @@ export class ShopService {
       relations: ['user', 'items', 'seller'],
       where: {
         seller: seller.id,
-        status: Like(param.status)
+        status: Like(param.status == ''? '%%': param.status)
       },
       order: { created_at: 'DESC' },
       skip: skippedItems,

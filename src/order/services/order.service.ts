@@ -61,7 +61,7 @@ export class OrderService {
       relations: ['user', 'items', 'seller'],
       where: {
         user: userId,
-        status: Like(param.status)
+        status: Like(param.status == ''? '%%': param.status)
       },
       order: { created_at: 'DESC' },
       skip: skippedItems,
