@@ -201,4 +201,49 @@ describe('Post E2E', () => {
         result: null
       })
   })
+
+  it('should get post detail', async () => {
+    await getRepository(PostEntity).insert({
+      id: 'post-1',
+      title: 'title 1',
+      content: 'hello',
+      image: 'image-url',
+      seller: seller,
+      created_at: new Date(2020, 9)
+    })
+    await request(app.getHttpServer())
+      .get('/posts/post-1')
+      .expect(200)
+      .then(res => {
+        const body = res.body;
+        const { message, result } = body;
+        const { id, title, content, image, created_at} = result;
+        expect(message).toEqual('ok');
+        expect(id).toEqual('post-1');
+        expect(title).toEqual('title 1');
+        expect(content).toEqual('hello');
+        expect(image).toEqual('image-url');
+        expect(created_at).toBeDefined();
+      });
+  })
+
+  it('should delete post', async () => {
+    await getRepository(PostEntity).insert({
+      id: 'post-1',
+      title: 'title 1',
+      content: 'hello',
+      image: 'image-url',
+      seller: seller,
+      created_at: new Date(2020, 9)
+    })
+    await request(app.getHttpServer())
+      .delete('/posts/post-1')
+      .expect(201)
+      .expect({
+        message: 'post deleted',
+        result: null
+      })
+    const post = await getRepository(PostEntity).findOne('post-1')
+    expect(post.deleted_at = null)
+  })
 })

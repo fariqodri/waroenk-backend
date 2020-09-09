@@ -23,4 +23,7 @@ export class PostEntity {
 
   @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updated_at: Date
+
+  @Column({ nullable: true })
+  deleted_at: Date
 }
