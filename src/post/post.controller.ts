@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, UsePipes, Body, Req, Get, Query, Param, Delete } from "@nestjs/common";
+import { Controller, Post, UseGuards, UsePipes, Body, Req, Get, Query, Param, Delete, HttpCode } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolePermissionGuard } from "../auth/guards/role.permission.guard";
 import { ValidationPipe } from "../utils/validation.pipe";
@@ -34,5 +34,19 @@ export class PostController {
       sort
     }, sellerId)
     return new ResponseListWithCountBody(result, 'ok', parseInt(page.toString()), parseInt(limit.toString()), total)
+  }
+
+  @Get(':id')
+  async getPost(@Param('id') id: string) {
+    return this.service.getPost(id)
+  }
+  
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('seller')
+  @Delete(':id')
+  @HttpCode(201)
+  async deletePost(@Param('id') id: string, @Req() req: Request) {
+    const user: { userId } = req.user as { userId }
+    return this.service.deletePost(id, user.userId)
   }
 }

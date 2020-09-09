@@ -45,6 +45,7 @@ export class PostService {
     const skippedItems = (page - 1) * limit;
     const query = this.postRepo.createQueryBuilder('post')
       .where('post.sellerId = :sellerId', { sellerId: seller.id })
+      .andWhere('post.deleted_at IS NULL')
       .offset(skippedItems)
       .limit(limit)
       .orderBy('created_at', sort === 'latest' ? 'DESC' : 'ASC')
@@ -57,5 +58,33 @@ export class PostService {
     const [result, total] = await query.getManyAndCount()
     
     return { result, total }
+  }
+
+  async getPost(id: string): Promise<ResponseBody<any>> {
+    const post = await this.postRepo.findOneOrFail(id, {
+      relations: ['seller']
+    })
+    return new ResponseBody(post)
+  }
+
+  async deletePost(id: string, userId: string): Promise<ResponseBody<any>> {
+    let seller: SellerAttribute
+    try {
+      seller = await this.shopProvider.getShopByUserId(userId)
+    } catch {
+      throw new NotFoundException(new ResponseBody(null, 'seller not found'))
+    }
+    if (seller.tier < MINIMUM_SELLER_TIER_FOR_POSTING) {
+      throw new NotAcceptableException(new ResponseBody(null, "your tier is below the required tier for deleting posts"))
+    }
+    let post = await this.postRepo.findOneOrFail(id, {
+      relations: ['seller'],
+      where: {
+        seller: seller.id
+      }
+    })
+    post.deleted_at = new Date()
+    await this.postRepo.save(post)
+    return new ResponseBody(null, 'post deleted')
   }
 }
