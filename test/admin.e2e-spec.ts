@@ -82,7 +82,7 @@ describe('Admin e2e', () => {
       id: 'seller-1',
       description: 'lalala1',
       shop_name: 'Toko Sayur a',
-      shop_address: 'Jakarta',
+      shop_address: 'jln a, tj barat, jagakarsa, Jakarta Selatan, DKI Jakarta',
       birth_date: '1999-09-21',
       birth_place: 'Jakarta',
       gender: 'Male',
@@ -98,7 +98,7 @@ describe('Admin e2e', () => {
       id: 'seller-2',
       description: 'lalala2',
       shop_name: 'Toko Sayur b',
-      shop_address: 'Jakarta',
+      shop_address: 'jln a, tj barat, jagakarsa, Jakarta Selatan, DKI Jakarta',
       birth_date: '1999-09-21',
       birth_place: 'Jakarta',
       gender: 'Male',
@@ -114,7 +114,7 @@ describe('Admin e2e', () => {
       id: 'seller-3',
       description: 'lalala3',
       shop_name: 'Toko Sayur c',
-      shop_address: 'Jakarta',
+      shop_address: 'jln a, tj barat, jagakarsa, Jakarta Selatan, DKI Jakarta',
       birth_date: '1999-09-21',
       birth_place: 'Jakarta',
       gender: 'Male',
@@ -130,7 +130,7 @@ describe('Admin e2e', () => {
       id: 'seller-4',
       description: 'lalala4',
       shop_name: 'Toko Sayur d',
-      shop_address: 'Jakarta',
+      shop_address: 'jln a, tj barat, serpong, Jakarta Barat, DKI Jakarta',
       birth_date: '1999-09-21',
       birth_place: 'Jakarta',
       gender: 'Male',
@@ -744,4 +744,16 @@ describe('Admin e2e', () => {
       expect(sellerCategory.activation_date).toBeNull()
       expect(sellerCategory.expiry_date).toBeNull()
     })
-  })
+
+    it('should list most seller province', async () => {
+      const resp = await request(app.getHttpServer())
+        .get('/admin/location-seller')
+        .expect(200)
+      const { message, result } = resp.body
+      expect(message).toEqual('ok')
+      expect(result).toEqual([
+        { city: 'Jakarta Selatan, DKI Jakarta', many: 3 },
+        { city: 'Jakarta Barat, DKI Jakarta', many: 1 }
+      ])
+    })
+})
