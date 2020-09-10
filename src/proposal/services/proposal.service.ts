@@ -44,9 +44,11 @@ export class ProposalService {
     queryBuilder = queryBuilder
       .offset(skippedItems)
       .limit(param.limit)
+      .orderBy('created_at', 'DESC')
       .select(
         `id AS id,
-        type AS type`
+        type AS type,
+        created_at AS created_at`
       )
     let proposals = await queryBuilder.execute()
     return new ResponseListBody(proposals, 'ok', Number(param.page), proposals.length)

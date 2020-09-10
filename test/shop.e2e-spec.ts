@@ -193,7 +193,9 @@ describe('Shop E2E', () => {
       bank: 'Bank BCA',
       number: '0123123012',
       owner: 'Bung Tomo',
-      is_active: true
+      is_active: true,
+      created_at: new Date(),
+      updated_at: null
     }
     const bank2: SellerBank = {
       id: 'bank-2',
@@ -201,7 +203,9 @@ describe('Shop E2E', () => {
       bank: 'Bank BNI',
       number: '012333012',
       owner: 'Bung Tomori',
-      is_active: true
+      is_active: true,
+      created_at: new Date(),
+      updated_at: null
     }
     const bank3: SellerBank = {
       id: 'bank-3',
@@ -209,7 +213,9 @@ describe('Shop E2E', () => {
       bank: 'Bank BTPN',
       number: '0123123011',
       owner: 'Bung Tomoyo',
-      is_active: false
+      is_active: false,
+      created_at: new Date(),
+      updated_at: null
     }
     await getRepository(SellerBank).insert([bank1, bank2, bank3])
   })
@@ -318,6 +324,25 @@ describe('Shop E2E', () => {
     expect(result.bank).toEqual(body)
     const banks = await getRepository(SellerBank).count({ is_active: true })
     expect(banks).toEqual(3)
+  })
+
+  it('edit bank', async () => {
+    const body = { 
+      bank: 'KEB HANA',
+      number: '12345789',
+      owner: 'Pak Aisiteru'
+    }
+    const resp = await request(app.getHttpServer())
+      .put('/shop/bank/bank-2')
+      .send(body)
+      .expect(201)
+    const { message, result } = resp.body
+    expect(message).toEqual('bank edited')
+    expect(result).toEqual(null)
+    const bank = await getRepository(SellerBank).findOne('bank-2')
+    expect(bank.bank).toEqual(body.bank)
+    expect(bank.number).toEqual(body.number)
+    expect(bank.owner).toEqual(body.owner)
   })
 
   it('delete bank', async () => {

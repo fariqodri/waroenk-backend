@@ -2,7 +2,7 @@ import { Controller, UseGuards, Get, Query, Req, Delete, HttpCode, Body, Post, P
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolePermissionGuard } from '../auth/guards/role.permission.guard';
 import { Roles } from '../utils/decorators';
-import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam, SellerBankParam } from './shop.dto';
+import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam, SellerBankParam, EditSellerBankParam } from './shop.dto';
 import { ShopService } from './shop.service';
 import { Request } from 'express';
 import { ValidationPipe } from '../utils/validation.pipe';
@@ -109,6 +109,15 @@ export class ShopController {
   async createBank(@Body() param: SellerBankParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.createBank(user.userId, param);
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('all')
+  @Put('bank/:id')
+  @HttpCode(201)
+  async editBank(@Body() param: EditSellerBankParam, @Param('id') id: string, @Req() request: Request) {
+    const user: { userId } = request.user as { userId }
+    return this.service.editBank(user.userId, id, param);
   }
 
   @UseGuards(JwtAuthGuard, RolePermissionGuard)

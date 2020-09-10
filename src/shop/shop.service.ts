@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException, Param } from '@nestjs/common';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
-import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam, SellerBankParam } from './shop.dto';
+import { ShopProductQuery, ProductCreateParam, ProductEditParam, ShopPostParam, SellerBankParam, EditSellerBankParam } from './shop.dto';
 import { ResponseBody, ResponseListBody } from '../utils/response';
 import { SellerAttributeRepository } from '../users/repositories/seller.repository';
 import { UserRepository } from '../users/repositories/users.repository';
@@ -39,7 +39,9 @@ export class ShopService {
       bank: param.bank,
       number: param.number,
       owner: param.owner,
-      is_active: true
+      is_active: true,
+      created_at: new Date(),
+      updated_at: null
     }
     await this.sellerBankRepo.insert(newBank)
     const response = {
@@ -48,6 +50,29 @@ export class ShopService {
       bank: param
     }
     return new ResponseBody(response)
+  }
+
+  async editBank(userId: string, id: string, param: EditSellerBankParam): Promise<ResponseBody<any>> {
+    const seller = await this.sellerRepo.findOneOrFail({
+      relations: ['user'],
+      where: { user: userId }
+    });
+    let editedBank = await this.sellerBankRepo.findOneOrFail(id, {
+      relations: ['seller'],
+      where: { seller: seller.id, is_active: true}
+    })
+    if (param.bank) {
+      editedBank.bank = param.bank
+    }
+    if (param.number) {
+      editedBank.number = param.number
+    }
+    if (param.owner) {
+      editedBank.owner = param.owner
+    }
+    editedBank.updated_at = new Date()
+    await this.sellerBankRepo.save(editedBank)
+    return new ResponseBody(null, 'bank edited')
   }
 
   async deleteBank(userId: string, id: string): Promise<ResponseBody<any>> {
