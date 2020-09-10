@@ -150,4 +150,11 @@ export class AdminController {
   async deleteAgenda(@Param() id: string) {
     return this.service.deleteAgenda(id)
   }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Get('location-seller')
+  async mostSeller() {
+    return this.service.mostSeller()
+  }
 }

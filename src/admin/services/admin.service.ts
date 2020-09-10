@@ -335,4 +335,20 @@ export class AdminService {
     await this.sellerRepo.save(seller)
     return new ResponseBody(null, 'seller has been updated')
   }
+
+  async mostSeller(): Promise<ResponseBody<any>> {
+    const sub_district = `substr(d.shop_address, instr(d.shop_address, ',')+1)`
+    const district = `substr(${sub_district}, instr(${sub_district}, ',')+1)`
+    const city = `substr(${district}, instr(${district}, ',')+1)`
+    let response = await this.sellerRepo
+      .createQueryBuilder('d')
+      .select(`
+         trim(${city}) AS city,
+         COUNT(*) AS many
+      `)
+      .orderBy('many', 'DESC')
+      .groupBy('city')
+      .limit(5).execute()
+    return new ResponseBody(response)
+  }
 }
