@@ -19,6 +19,12 @@ export class SellerBankParam {
   owner: string
 }
 
+export class EditSellerBankParam {
+  bank?: string
+  number?: string
+  owner?: string
+}
+
 export class ProductCreateParam {
   @jf.string().required()
   categoryId: string

@@ -55,14 +55,14 @@ describe('Proposals (e2e)', () => {
     id: 'pr-1',
     user: user1,
     type: 'modal',
-    created_at: new Date(),
+    created_at: new Date(1000),
     is_active: true
   }
   const proposal2: ProposalEntity = {
     id: 'pr-2',
     user: user1,
     type: 'ekspor',
-    created_at: new Date(),
+    created_at: new Date(999),
     is_active: true
   }
   const data1: ProposalData = {
@@ -133,7 +133,18 @@ describe('Proposals (e2e)', () => {
       .expect(200)
       .expect({
         message: 'ok',
-        result: [{ id: 'pr-1', type: 'modal' }, { id: 'pr-2', type: 'ekspor' }],
+        result: [
+          {
+            id: 'pr-1',
+            type: 'modal',
+            created_at: '1970-01-01 00:00:01.000'
+          },
+          {
+            id: 'pr-2',
+            type: 'ekspor',
+            created_at: '1970-01-01 00:00:00.999'
+          }
+        ],
         page: 1,
         limit: 2
       });
@@ -145,7 +156,13 @@ describe('Proposals (e2e)', () => {
       .expect(200)
       .expect({
         message: 'ok',
-        result: [{ id: 'pr-1', type: 'modal' }],
+        result: [
+          {
+            id: 'pr-1',
+            type: 'modal',
+            created_at: '1970-01-01 00:00:01.000'
+          }
+        ],
         page: 1,
         limit: 1
       });
