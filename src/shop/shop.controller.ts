@@ -115,7 +115,7 @@ export class ShopController {
   @Roles('all')
   @Put('bank/:id')
   @HttpCode(201)
-  async editBank(@Body() param: EditSellerBankParam, @Param('id') id: string, @Req() request: Request) {
+  async editBank(@Param('id') id: string, @Body() param: EditSellerBankParam, @Req() request: Request) {
     const user: { userId } = request.user as { userId }
     return this.service.editBank(user.userId, id, param);
   }
