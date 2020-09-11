@@ -21,7 +21,7 @@ export class SellerBank {
   @Column({ default: true })
   is_active: boolean
 
-  @Column()
+  @Column({ nullable: true })
   created_at: Date
 
   @Column({ nullable: true })
