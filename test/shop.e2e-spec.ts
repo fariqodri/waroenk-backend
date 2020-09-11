@@ -358,11 +358,20 @@ describe('Shop E2E', () => {
 
   it('list bank', async () => {
     const resp = await request(app.getHttpServer())
-      .get('/shop/bank/seller-1')
+      .get('/shop/bank/list/seller-1')
       .expect(200)
     const { message, result } = resp.body
     expect(message).toEqual('ok')
     expect(result.length).toEqual(2)
+  })
+
+  it('get bank detail', async () => {
+    const resp = await request(app.getHttpServer())
+      .get('/shop/bank/bank-2')
+      .expect(200)
+    const { message, result } = resp.body
+    expect(message).toEqual('ok')
+    expect(result.id).toEqual('bank-2')
   })
 
   it('get shop', () => {

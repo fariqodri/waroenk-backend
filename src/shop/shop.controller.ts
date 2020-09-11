@@ -129,10 +129,13 @@ export class ShopController {
     return this.service.deleteBank(user.userId, id);
   }
 
-  @UseGuards(JwtAuthGuard, RolePermissionGuard)
-  @Roles('all')
-  @Get('bank/:id')
+  @Get('bank/list/:id')
   async listBank(@Param('id') id: string) {
     return this.service.listBank(id);
+  }
+
+  @Get('bank/:id')
+  async detailBank(@Param('id') id: string) {
+    return this.service.detailBank(id);
   }
 }
