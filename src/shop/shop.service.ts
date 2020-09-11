@@ -98,6 +98,11 @@ export class ShopService {
     return new ResponseBody(banks)
   }
 
+  async detailBank(id: string): Promise<ResponseBody<any>> {
+    const bank = await this.sellerBankRepo.findOneOrFail(id)
+    return new ResponseBody(bank)
+  }
+
   async getShop(id: string): Promise<ResponseBody<any>> {
     const seller = await this.sellerRepo.findOneOrFail(id);
     if (seller === undefined) {
