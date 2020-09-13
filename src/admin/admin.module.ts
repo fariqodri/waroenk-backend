@@ -11,6 +11,8 @@ import { DiscussionRepository } from '../discussion/repositories/discussion.repo
 import { AgendaRepository } from '../agenda/repositories/agenda.repository';
 import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
+import { NotificationService } from './services/notification.service';
+import { ChatModule } from '../chat/chat.module';
 
 @Module({
   imports: [
@@ -24,9 +26,10 @@ import { CategoryRepository } from '../products/repositories/category.repository
       SellerCategoryRepository,
       CategoryRepository
     ]),
-    UsersModule
+    UsersModule,
+    ChatModule
   ],
   controllers: [AdminController],
-  providers: [AdminService]
+  providers: [AdminService, NotificationService]
 })
 export class AdminModule {}

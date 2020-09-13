@@ -12,6 +12,7 @@ import { RoomService } from './service/room.service';
 @Module({
   controllers: [ChatController],
   imports: [UsersModule, OrderModule, TypeOrmModule.forFeature([ChatRoomRepository, ChatRepository]), ShopModule],
+  exports: [ChatService],
   providers: [ChatService, RoomService]
 })
 export class ChatModule {}

@@ -2,7 +2,6 @@ import {
   Injectable,
   ConflictException,
   BadRequestException,
-  NotFoundException,
 } from '@nestjs/common';
 import { nanoid } from 'nanoid';
 import admin from 'firebase-admin';
@@ -17,7 +16,6 @@ import { ChatEntity } from '../entities/chat.entity';
 import { ResponseBody } from '../../utils/response';
 import * as serviceAccount from '../service_account.json';
 import { FIREBASE_DATABASE_URL } from '../../constants';
-import { ShopService } from '../../shop/shop.service';
 import { Connection } from 'typeorm';
 import { ChatRoomEntity } from '../entities/chat-room.entity';
 import { SellerAttribute } from '../../users/entities/seller.entity';
@@ -178,14 +176,17 @@ export class ChatService {
       default:
         break;
     }
+    await this.sendNotificationToDevice(deviceToken, chatData, notificationBody,
+      senderRole === 'seller' ? seller.shop_name : sender.full_name)
+  }
+
+  async sendNotificationToDevice(deviceToken: string, chatData: any, notificationBody: string, role: string) {
     await this.firebaseApp.messaging().sendToDevice(
       deviceToken,
       {
         data: chatData,
         notification: {
-          title: `Pesan dari ${
-            senderRole === 'seller' ? seller.shop_name : sender.full_name
-          }`,
+          title: `Pesan dari ${role}`,
           body: notificationBody,
           clickAction: 'FLUTTER_NOTIFICATION_CLICK',
         },
