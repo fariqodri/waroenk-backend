@@ -18,6 +18,7 @@ import { AgendaEntity } from "../../agenda/entities/agenda.entity"
 import { SellerCategoryRepository } from "../../products/repositories/seller-category.repository"
 import { SellerCategory } from "../../products/entities/seller-category.entity"
 import { CategoryRepository } from "../../products/repositories/category.repository"
+import { NotificationService } from "./notification.service"
 
 export const BetweenDate = (date1: Date, date2: Date) => 
   Between(format(date1, 'yyyy-MM-dd HH:mm:SS'), format(date2, 'yyyy-MM-dd HH:mm:SS'))
@@ -33,7 +34,8 @@ export class AdminService {
     private discussionRepo: DiscussionRepository,
     private agendaRepo: AgendaRepository,
     private sellerCategoryRepo: SellerCategoryRepository,
-    private categoryRepo: CategoryRepository
+    private categoryRepo: CategoryRepository,
+    private notificationService: NotificationService
   ) {}
 
   async deleteAgenda(id: string): Promise<ResponseBody<any>> {
@@ -240,6 +242,8 @@ export class AdminService {
     if (param.status == 'blocked') {
       sellerCategory.activation_date = null
       sellerCategory.expiry_date = null
+      await this.notificationService.sendTextNotification(sellerCategory,
+        `kategori ${sellerCategory.category.name} anda telah diblokir`)
     } else {
       if ((sellerCategory.status == 'paid') || (sellerCategory.status == 'proposed')) {
         sellerCategory.activation_date = new Date()

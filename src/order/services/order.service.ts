@@ -14,6 +14,9 @@ import { OrderItemRepository } from '../repositories/order-item.repository';
 import { Cron } from '@nestjs/schedule';
 import { LessThan, Like } from 'typeorm';
 import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
+import { format } from 'date-fns'
+
+export const LessThanDate = (date: Date) => LessThan(format(date, 'yyyy-MM-dd HH:mm:SS'))
 
 @Injectable()
 export class OrderService {
@@ -34,7 +37,7 @@ export class OrderService {
     let newOrders = await this.orderRepo.find({
       where: {
         status: 'new',
-        created_at: LessThan(last7Days)
+        created_at: LessThanDate(last7Days)
       }
     })
     for (var order of newOrders) {
@@ -45,7 +48,7 @@ export class OrderService {
     let onDeliveryOrders = await this.orderRepo.find({
       where: {
         status: 'on_delivery',
-        updated_at: LessThan(last5Days)
+        updated_at: LessThanDate(last5Days)
       }
     })
     for (var order of onDeliveryOrders) {

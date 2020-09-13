@@ -3,8 +3,6 @@ import { AgendaRepository } from '../repositories/agenda.repository';
 import { AgendaQuery } from '../dto/agenda.dto';
 import { ResponseBody, ResponseListBody } from '../../utils/response';
 import { UserRepository } from '../../users/repositories/users.repository';
-import { AgendaEntity } from '../entities/agenda.entity';
-import { nanoid } from 'nanoid';
 
 @Injectable()
 export class AgendaService {
