@@ -6,7 +6,6 @@ import {
 import { nanoid } from 'nanoid';
 import admin from 'firebase-admin';
 
-import { OrderService } from '../../order/services/order.service';
 import { ChatDto } from '../chat.dto';
 import { UsersService } from '../../users/services/users.service';
 import { ChatRoomRepository } from '../repositories/chat-room.repository';
@@ -21,13 +20,14 @@ import { ChatRoomEntity } from '../entities/chat-room.entity';
 import { SellerAttribute } from '../../users/entities/seller.entity';
 import { UserEntity } from '../../users/entities/users.entity';
 import { ShopProvider } from '../../shop/shop.provider';
+import { OrderProvider } from '../../order/providers/order.provider';
 
 @Injectable()
 export class ChatService {
   private readonly firebaseApp: admin.app.App;
 
   constructor(
-    private readonly orderService: OrderService,
+    private readonly orderProvider: OrderProvider,
     private readonly userService: UsersService,
     private readonly chatRoomRepo: ChatRoomRepository,
     private readonly chatRepo: ChatRepository,
@@ -52,7 +52,9 @@ export class ChatService {
 
     let order: OrderEntity = null;
     if (order_id) {
-      order = await this.orderService.findOrderById(order_id);
+      order = await this.orderProvider.findOrderById(order_id, {
+        select: ['id', 'fare', 'status']
+      });
     }
     const chat_id = nanoid(11);
     const baseChat: Partial<ChatEntity> = {

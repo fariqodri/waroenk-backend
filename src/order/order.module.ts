@@ -10,10 +10,11 @@ import { ProductRepository } from '../products/repositories/product.repository';
 import { OrderController } from './controllers/order.controller';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SellerAttributeRepository } from '../users/repositories/seller.repository';
+import { OrderProvider } from './providers/order.provider';
 
 @Module({
   controllers: [CartController, OrderController],
-  providers: [OrderService],
+  providers: [OrderService, OrderProvider],
   imports: [ScheduleModule.forRoot(), 
     TypeOrmModule.forFeature([
     CartRepository, 
@@ -24,6 +25,6 @@ import { SellerAttributeRepository } from '../users/repositories/seller.reposito
     ProductRepository,
     SellerAttributeRepository
   ])],
-  exports: [TypeOrmModule.forFeature([CartRepository, OrderRepository, OrderItemRepository]), OrderService]
+  exports: [TypeOrmModule.forFeature([CartRepository, OrderRepository, OrderItemRepository]), OrderProvider]
 })
 export class OrderModule {}
