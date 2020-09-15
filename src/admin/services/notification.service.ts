@@ -24,6 +24,8 @@ export class NotificationService {
     let today = new Date()
     let startToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0)
     let endToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999)
+    let start6DayAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6, 0)
+    let end6DayAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6, 23, 59, 59, 999)
     let sellerCategories = await this.sellerCategoryRepo.find({
       where: {
         expiry_date: BetweenDate(startToday, endToday)
@@ -31,7 +33,16 @@ export class NotificationService {
     })
     for (var sellerCategory of sellerCategories) {
       await this.sendTextNotification(sellerCategory,
-        `kategori ${sellerCategory.category.name} anda sudah memasuki masa tenggang`)
+        `Kategori ${sellerCategory.category.name} anda sudah memasuki masa tenggang`)
+    }
+    let sellerCategories6DayAgo = await this.sellerCategoryRepo.find({
+      where: {
+        expiry_date: BetweenDate(start6DayAgo, end6DayAgo)
+      }
+    })
+    for (var sellerCategory of sellerCategories6DayAgo) {
+      await this.sendTextNotification(sellerCategory,
+        `Masa tenggang kategori ${sellerCategory.category.name} anda sudah hampir berakhir`)
     }
   }
 
