@@ -139,7 +139,7 @@ export class MiscService {
       await this.sellerRepo.insert(newSeller)
       const categories = await this.categoryRepo.find()
       for (let category of categories) {
-        const newSellerCategory: SellerCategory = {
+        let newSellerCategory: SellerCategory = {
           id: nanoid(11),
           seller: newSeller,
           category: category,
