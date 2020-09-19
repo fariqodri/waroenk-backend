@@ -291,7 +291,7 @@ export class AdminService {
     response.forEach(function(p) {
       delete p.user
     })
-    return new ResponseListWithCountBody(seller, 'ok', param.page, seller.length, count)
+    return new ResponseListWithCountBody(response, 'ok', param.page, seller.length, count)
   }
 
   async listSellerByCategory(param: ListSellerQuery): Promise<ResponseBody<any>> {
