@@ -218,8 +218,18 @@ export class AdminService {
   }
 
   async createSellerCategory(sellerId:string, param: EditSellerCategoryParam): Promise<ResponseBody<any>> {
+    let sellerCategory = await this.sellerCategoryRepo.findOne({
+      relations: ['seller', 'category'],
+      where: {
+        seller: sellerId, category: param.category
+      }
+    })
+    if (sellerCategory !== undefined) {
+      return new ResponseBody(null, 'seller category exist')
+    }
     const seller = await this.sellerRepo.findOneOrFail(sellerId)
     const category = await this.categoryRepo.findOneOrFail(param.category)
+    let seer
     let newSellerCategory: SellerCategory = {
       id: nanoid(11),
       seller: seller,
