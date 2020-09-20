@@ -245,7 +245,7 @@ export class AdminService {
       await this.notificationService.sendTextNotification(sellerCategory,
         `kategori ${sellerCategory.category.name} anda telah diblokir`)
     } else {
-      if ((sellerCategory.status == 'paid') || (sellerCategory.status == 'proposed')) {
+      if (sellerCategory.status != 'not_paid') {
         sellerCategory.activation_date = new Date()
       }
       sellerCategory.expiry_date = param.expiry_date? new Date(param.expiry_date): null
