@@ -204,6 +204,7 @@ export class AdminService {
     const response = {
       id: seller.id,
       email: seller.user.email,
+      phone: seller.user.phone,
       gender: seller.gender,
       birth_place: seller.birth_place,
       birth_date: seller.birth_date,
@@ -229,7 +230,6 @@ export class AdminService {
     }
     const seller = await this.sellerRepo.findOneOrFail(sellerId)
     const category = await this.categoryRepo.findOneOrFail(param.category)
-    let seer
     let newSellerCategory: SellerCategory = {
       id: nanoid(11),
       seller: seller,
@@ -296,7 +296,8 @@ export class AdminService {
     })
     let response = seller.map(p => ({
       ...p,
-      userId: p.user.id
+      userId: p.user.id,
+      phone: p.user.phone
     }))
     response.forEach(function(p) {
       delete p.user
@@ -320,7 +321,8 @@ export class AdminService {
       .skip(skippedItems).take(param.limit).getMany()
     let response = categories.map(p => ({
       ...p,
-      userId: p.seller.user.id
+      userId: p.seller.user.id,
+      phone: p.seller.user.phone
     }))
     response.forEach(function(p) {
       delete p.seller.user
