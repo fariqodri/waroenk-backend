@@ -237,16 +237,13 @@ export class ShopService {
     })
     let eligibleCategories = []
     for (let category of sellerCategories) {
-      const productCount = await this.productRepo.count({
-        relations: ['category'],
-        where: {
-          deleted_at: null,
-          category: {
-            category: category.category.id,
-            seller: seller.id,
-          }
-        }
-      })
+      const productCount = await this.productRepo
+      .createQueryBuilder('products')
+      .andWhere('products.deleted_at IS NULL')
+      .andWhere('seller_category.sellerId = :sellerId', { sellerId: seller.id })
+      .andWhere('seller_category.categoryId = :categoryId', { categoryId: category.category.id })
+      .innerJoin('products.category', 'seller_category')
+      .innerJoin('seller_category.category', 'category').getCount()
       if (productCount < 5) {
         eligibleCategories.push({
           id: category.category.id,
@@ -270,16 +267,14 @@ export class ShopService {
       relations: ['category', 'products'],
       where: { category: param.categoryId, seller: seller.id }
     });
-    const productCount = await this.productRepo.count({
-      relations: ['category'],
-      where: {
-        deleted_at: null,
-        category: {
-          category: category.category.id,
-          seller: seller.id,
-        }
-      }
-    })
+    const productCount = await this.productRepo
+      .createQueryBuilder('products')
+      .andWhere('products.deleted_at IS NULL')
+      .andWhere('seller_category.sellerId = :sellerId', { sellerId: seller.id })
+      .andWhere('seller_category.categoryId = :categoryId', { categoryId: category.category.id })
+      .innerJoin('products.category', 'seller_category')
+      .innerJoin('seller_category.category', 'category').getCount()
+      
     if (productCount >= 5) {
       throw new BadRequestException(new ResponseBody(null,
         `category of ${category.category.id} of user ${userId} is full `))
