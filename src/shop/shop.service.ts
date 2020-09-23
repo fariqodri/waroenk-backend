@@ -274,6 +274,7 @@ export class ShopService {
       .andWhere('seller_category.categoryId = :categoryId', { categoryId: category.category.id })
       .innerJoin('products.category', 'seller_category')
       .innerJoin('seller_category.category', 'category').getCount()
+      
     if (productCount >= 5) {
       throw new BadRequestException(new ResponseBody(null,
         `category of ${category.category.id} of user ${userId} is full `))
