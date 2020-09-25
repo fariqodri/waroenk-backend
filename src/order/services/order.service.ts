@@ -201,7 +201,9 @@ export class OrderService {
     })
     let orders = []
     for (let [sellerId, carts] of sellerMap) {
-      const seller = await this.sellerRepo.findOne(sellerId)
+      const seller = await this.sellerRepo.findOne(sellerId, {
+        relations: ['user']
+      })
       let newOrder: OrderEntity = {
         id: nanoid(11),
         user: user,
@@ -234,8 +236,13 @@ export class OrderService {
       }
       orders.push(newOrder)
     }
+    orders = orders.map(p => ({
+      ...p,
+      sellerUserId: p.seller.user.id
+    }));
     orders.forEach(function(p) {
       delete p.user
+      delete p.seller.user
     })
     for (let cart of carts) {
       cart.quantity = 0
