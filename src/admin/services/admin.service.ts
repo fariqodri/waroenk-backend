@@ -88,7 +88,6 @@ export class AdminService {
       updated_at: null,
       is_active: true
     }
-    console.log(newAgenda.created_at.toString())
     await this.agendaRepo.insert(newAgenda)
     return new ResponseBody(newAgenda, 'new agenda created')
   }
