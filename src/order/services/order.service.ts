@@ -224,7 +224,6 @@ export class OrderService {
         updated_at: null,
         items: []
       }
-      console.log(newOrder.created_at.toString())
       await this.orderRepo.insert(newOrder)
       let newInsertedOrder: OrderEntity = await this.orderRepo.findOne(newOrder.id)
       for (let i in carts) {

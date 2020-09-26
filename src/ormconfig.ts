@@ -16,6 +16,7 @@ const config: ConnectionOptions = {
   cli: {
     migrationsDir: 'src/migrations',
   },
+  timezone: 'Asia/Jakarta',
 }
 
 module.exports = config
