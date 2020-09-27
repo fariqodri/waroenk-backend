@@ -28,4 +28,5 @@ export class DiscussionResponse {
 export class ListDiscussionParam {
   parent?: string
   search?: string
+  sort_by?: string
 }
