@@ -98,6 +98,10 @@ export class DiscussionService {
     if (param.search && param.search !== "") {
       query = query.andWhere('LOWER(d.description) LIKE :search', { search: `%${param.search}%` })
     }
+    if (param.sort_by && param.sort_by !== "") {
+      query = query.orderBy(d.created_at,
+        param.sort_by == "newest"? "DESC": "ASC")
+    }
     let discussions = await query.execute()
 
     discussions = discussions.map(p => ({
