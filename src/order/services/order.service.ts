@@ -72,6 +72,8 @@ export class OrderService {
     })
     const response = orders.map(p => ({
       ...p,
+      buyerId: p.user.id,
+      buyerName: p.user.full_name,
       sellerId: p.seller.id,
       shop_name: p.seller.shop_name,
       shop_address: p.seller.shop_address,
