@@ -104,10 +104,14 @@ export class OrderService {
       const price = item.product.price_per_quantity
       subtotal += (price * (1 - discount)) * item.quantity
     }
+    const seller = await this.sellerRepo.findOne(order.seller.id, {
+      relations: ['user']
+    })
     let response = {
       id: order.id,
       userId: order.user.id,
-      sellerId: order.seller.id,
+      sellerId: seller.id,
+      sellerUserId: seller.user.id,
       shop_name: order.seller.shop_name,
       shop_address: order.seller.shop_address,
       items: order.items,
