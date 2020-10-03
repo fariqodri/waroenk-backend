@@ -199,7 +199,13 @@ export class AdminService {
 
   async getSeller(sellerId: string): Promise<ResponseBody<any>> {
     const seller = await this.sellerRepo.findOneOrFail(sellerId, {
-      relations: ['user', 'categories']
+      relations: ['user']
+    })
+    const categories = await this.sellerCategoryRepo.find({
+      where: {
+        seller: seller.id
+      },
+      order: { status: "DESC" }
     })
     const response = {
       id: seller.id,
@@ -213,7 +219,7 @@ export class AdminService {
       description: seller.description,
       tier: seller.tier,
       is_active: seller.is_active,
-      registered_category: seller.categories
+      registered_category: categories
     }
     return new ResponseBody(response)
   }
