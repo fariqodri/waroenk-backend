@@ -31,13 +31,13 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       defaults: {
         from:'"no-reply" <mail@bukawaroenk.co.id>',
       },
-      // template: {
-      //   dir: process.cwd() + '/templates/',
-      //   adapter: new HandlebarsAdapter(),
-      //   options: {
-      //     strict: true,
-      //   },
-      // },
+      template: {
+        dir: process.cwd() + '/templates/',
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
     })
   ],
   providers: [AuthService, JwtStrategy],
