@@ -5,14 +5,35 @@ import { ResponseBody } from '../../utils/response';
 import { RedisService } from '../../redis/redis.service';
 import { UserEntity } from '../../users/entities/users.entity';
 import * as bcrypt from 'bcrypt'
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private redisService: RedisService
+    private redisService: RedisService,
+    private readonly mailerService: MailerService
   ) {}
+
+  async sendMail(param: string) {
+    this
+      .mailerService
+      .sendMail({
+        to: 'kemask69@gmail.com',
+        from: 'mail@bukawaroenk.co.id',
+        subject: 'Testing Nest MailerModule ✔',
+        text: 'welcome',
+        html: `<b>${param}</b>`,
+      })
+      .then((success) => {
+        console.log(success)
+      })
+      .catch((err) => {
+        console.log(err)
+      });
+    return new ResponseBody(null)
+  }
 
   async login(email: string, password: string) {
     let user: UserEntity

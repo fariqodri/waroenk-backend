@@ -6,6 +6,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { AuthController } from './controllers/auth.controller';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Global()
 @Module({
@@ -15,7 +17,28 @@ import { AuthController } from './controllers/auth.controller';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '7d' },
     }),
-    UsersModule
+    UsersModule,
+    MailerModule.forRoot({
+      transport: {
+        host: 'mail.bukawaroenk.co.id',
+        port: 2096,
+        secure: false,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      },
+      defaults: {
+        from:'"no-reply" <mail@bukawaroenk.co.id>',
+      },
+      template: {
+        dir: process.cwd() + '/templates/',
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
+    })
   ],
   providers: [AuthService, JwtStrategy],
   exports: [AuthService],
