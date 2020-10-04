@@ -28,11 +28,12 @@ export class AuthService {
       })
       .then((success) => {
         console.log(success)
+        return new ResponseBody(success)
       })
       .catch((err) => {
         console.log(err)
+        return new ResponseBody(err)
       });
-    return new ResponseBody(null)
   }
 
   async login(email: string, password: string) {
