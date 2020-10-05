@@ -21,7 +21,7 @@ export class AuthService {
       .mailerService
       .sendMail({
         to: 'kemask69@gmail.com',
-        from: 'mail@bukawaroenk.co.id',
+        from: 'admin@bukawaroenk.co.id',
         subject: 'Testing Nest MailerModule ✔',
         text: 'welcome',
         html: `<b>${param}</b>`,
