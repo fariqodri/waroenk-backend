@@ -1,10 +1,10 @@
-import { Controller, UseGuards, Get, Query, Req, HttpCode, Body, Post, UsePipes, Param } from '@nestjs/common';
+import { Controller, UseGuards, Get, Query, Req, HttpCode, Body, Post, UsePipes, Param, Put } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolePermissionGuard } from '../../auth/guards/role.permission.guard';
 import { Roles } from '../../utils/decorators';
 import { Request } from 'express';
 import { ProposalService } from '../services/proposal.service';
-import { ProposalQuery, CreateProposalParam } from '../dto/proposal.dto';
+import { ProposalQuery, CreateProposalParam, EditProposalParam } from '../dto/proposal.dto';
 import { ValidationPipe } from '../../utils/validation.pipe';
 
 @Controller('proposal')
@@ -37,6 +37,14 @@ export class ProposalController {
   @Get(':id')
   async detailProposal(@Param('id') id: string) {
     return this.service.detailProposal(id);
+  }
+
+  @UsePipes(ValidationPipe)
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Put(':id')
+  async editProposal(@Body() param: EditProposalParam, @Param('id') id: string) {
+    return this.service.editProposal(param, id);
   }
 
   @UsePipes(ValidationPipe)
