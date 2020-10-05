@@ -9,7 +9,7 @@ export class FaqEntity {
   @Column()
   title: string
 
-  @Column()
+  @Column("longtext")
   description: string
 
   @CreateDateColumn({ name: 'created_at' })

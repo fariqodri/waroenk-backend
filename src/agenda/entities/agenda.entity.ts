@@ -13,7 +13,7 @@ export class AgendaEntity {
   @Column()
   title: string
 
-  @Column()
+  @Column("longtext")
   description: string
 
   @Column()
