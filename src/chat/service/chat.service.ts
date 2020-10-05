@@ -21,6 +21,7 @@ import { SellerAttribute } from '../../users/entities/seller.entity';
 import { UserEntity } from '../../users/entities/users.entity';
 import { ShopProvider } from '../../shop/shop.provider';
 import { OrderProvider } from '../../order/providers/order.provider';
+import { OrderItem } from '../../order/entities/order-item.entity';
 
 @Injectable()
 export class ChatService {
@@ -51,10 +52,12 @@ export class ChatService {
     const { chat_room_id, date, time, text, order_id } = body;
 
     let order: OrderEntity = null;
+    let productsCount = 0;
     if (order_id) {
       order = await this.orderProvider.findOrderById(order_id, {
         select: ['id', 'fare', 'status']
       });
+      productsCount = await this.orderProvider.countProductsOfOrder(order_id)
     }
     const chat_id = nanoid(11);
     const baseChat: Partial<ChatEntity> = {
@@ -78,6 +81,7 @@ export class ChatService {
       order,
       room,
       receiverDeviceToken,
+      productsCount
     );
     const { room: room_1, sender: sender_1, receiver: receiver_1, created_at, ...rest } = chat
     return rest;
@@ -123,11 +127,36 @@ export class ChatService {
         'chat.type',
         'chat.image_url',
       ])
-      .getMany();
-    return res.map(r => ({
-      ...r,
-      sent_by_me: r.sender.id === userId,
-    }));
+      .addSelect(qb => qb.from(OrderItem, 'item').where('item.orderId = order.id').select('COUNT(1)'), 'order_title')
+      .execute();
+    const result = res.map(r => ({
+      id: r.chat_id,
+      date: r.chat_date,
+      time: r.chat_time,
+      text: r.chat_text,
+      read_by_receiver: r.chat_read_by_receiver,
+      type: r.chat_type,
+      image_url: r.chat_image_url,
+      room: {
+        id: r.room_id
+      },
+      sender: {
+        id: r.sender_id,
+        full_name: r.sender_full_name
+      },
+      receiver: {
+        id: r.receiver_id,
+        full_name: r.receiver_full_name
+      },
+      order: r.order_id === null ? null : {
+        id: r.order_id,
+        status: r.order_status,
+        fare: r.order_fare,
+        title: `${r.order_title} Produk`
+      },
+      sent_by_me: r.sender_id === userId
+    }))
+    return result
   }
 
   private async sendNotification(
@@ -139,6 +168,7 @@ export class ChatService {
     order: OrderEntity,
     room: ChatRoomEntity,
     deviceToken: string,
+    productsCount?: number
   ) {
     if (deviceToken === undefined) {
       return;
@@ -150,6 +180,7 @@ export class ChatService {
       date: chat.date,
       time: chat.time,
       type: chat.type,
+      title: `${productsCount} Produk`
     };
     switch (requestBody.type) {
       case 'text':
