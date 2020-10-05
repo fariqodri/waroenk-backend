@@ -14,3 +14,8 @@ export class CreateProposalParam {
   @jf.string().required()
   type: string
 }
+
+export class EditProposalParam {
+  @jf.array().required()
+  data: any[]
+}

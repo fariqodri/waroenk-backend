@@ -3,7 +3,7 @@ import { ResponseBody, ResponseListBody } from '../../utils/response';
 import { ProposalRepository } from '../repositories/proposal.repository';
 import { ProposalDataRepository } from '../repositories/proposal-data.repository';
 import { ProposalItemRepository } from '../repositories/proposal-item.repository';
-import { ProposalQuery, CreateProposalParam } from '../dto/proposal.dto';
+import { ProposalQuery, CreateProposalParam, EditProposalParam } from '../dto/proposal.dto';
 import { ProposalData } from '../entities/proposal-data.entity';
 import { ProposalEntity } from '../entities/proposal.entity';
 import { nanoid } from 'nanoid';
@@ -68,6 +68,25 @@ export class ProposalService {
       delete p.is_active
     })
     return new ResponseListBody(proposalData, 'ok', 1, proposalData.length)
+  }
+
+  async editProposal(param: EditProposalParam, id: string): Promise<ResponseBody<any>> {
+    let proposalData = await this.proposalDataRepo.find({
+      relations: ['proposal'],
+      where: {
+        is_active: true,
+        proposal: id
+      }
+    })
+    param.data.forEach(async function(pair) {
+      for (let proposal of proposalData) {
+        if (proposal.key == pair[0]) {
+          proposal.value = pair[1]
+          await this.proposalDataRepo.save(proposal)
+        }
+      }
+    });
+    return new ResponseBody(null)
   }
 
   async saveProposal(param: CreateProposalParam, userId: string): Promise<ResponseBody<any>> {
