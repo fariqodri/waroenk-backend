@@ -134,7 +134,7 @@ export class ChatService {
       date: r.chat_date,
       time: r.chat_time,
       text: r.chat_text,
-      read_by_receiver: r.chat_read_by_receiver,
+      read_by_receiver: Boolean(r.chat_read_by_receiver),
       type: r.chat_type,
       image_url: r.chat_image_url,
       room: {
