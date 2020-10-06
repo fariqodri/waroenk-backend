@@ -77,10 +77,7 @@ export class RoomService {
     if (role === 'seller') {
       switch (chatsWith) {
         case 'buyer':
-          query = query.where('buyer.role = :role AND seller.id = :id', {
-            role: 'buyer',
-            id: userId,
-          });
+          query = query.where('seller.id = :id', { id: userId });
           break;
         case 'seller':
           query = query.where('buyer.id = :id', { id: userId });
