@@ -186,9 +186,18 @@ export class AdminService {
     const proposalCount = await this.proposalRepo.count({ where: query })
     let response = []
     for (let proposal of proposals) {
+      let proposalDatas = []
+      for(let proposalData of proposal.data) {
+        proposalDatas.push({
+          id: proposalData.id,
+          key: proposalData.key,
+          value: proposalData.value,
+          is_active: proposalData.is_active
+        })
+      }
       response.push({
         id: proposal.id,
-        data: proposal.data,
+        data: proposalDatas,
         type: proposal.type,
         userId: proposal.user.id,
         userName: proposal.user.full_name
