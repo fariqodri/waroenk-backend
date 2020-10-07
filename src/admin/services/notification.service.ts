@@ -7,6 +7,7 @@ import { SellerCategoryRepository } from "../../products/repositories/seller-cat
 import { SellerCategory } from "../../products/entities/seller-category.entity"
 import { SellerAttributeRepository } from "../../users/repositories/seller.repository"
 import { ChatService } from "../../chat/service/chat.service"
+import { ChatProvider } from "../../chat/providers/chat.provider"
 
 export const BetweenDate = (date1: Date, date2: Date) => 
   Between(format(date1, 'yyyy-MM-dd HH:mm:SS'), format(date2, 'yyyy-MM-dd HH:mm:SS'))
@@ -16,7 +17,7 @@ export class NotificationService {
   constructor(
     private sellerCategoryRepo: SellerCategoryRepository,
     private sellerRepo: SellerAttributeRepository,
-    private chatService: ChatService
+    private chatProvider: ChatProvider
   ) {}
 
   @Cron('0 0 10 * * *', { name: 'expiry_date_notification' })
@@ -60,6 +61,6 @@ export class NotificationService {
       type: 'text',
       text: notificationBody
     };
-    this.chatService.sendNotificationToDevice(deviceToken, chatData, notificationBody, 'sistem')
+    this.chatProvider.sendToDevice(deviceToken, chatData, notificationBody, 'sistem')
   }
 }
