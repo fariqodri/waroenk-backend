@@ -8,11 +8,12 @@ import { ChatRoomRepository } from './repositories/chat-room.repository';
 import { ChatRepository } from './repositories/chat.repository';
 import { ShopModule } from '../shop/shop.module';
 import { RoomService } from './service/room.service';
+import { ChatProvider } from './providers/chat.provider';
 
 @Module({
   controllers: [ChatController],
   imports: [UsersModule, OrderModule, TypeOrmModule.forFeature([ChatRoomRepository, ChatRepository]), ShopModule],
-  exports: [ChatService],
-  providers: [ChatService, RoomService]
+  exports: [ChatService, ChatProvider],
+  providers: [ChatService, RoomService, ChatProvider]
 })
 export class ChatModule {}
