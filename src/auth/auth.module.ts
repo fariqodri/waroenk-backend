@@ -20,7 +20,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
     UsersModule,
     MailerModule.forRoot({
       transport: {
-        host: 'mail.bukawaroenk.co.id',
+        host: 'srv80.niagahoster.com',
         port: 465,
         secure: true,
         auth: {
