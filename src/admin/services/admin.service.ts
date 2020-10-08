@@ -200,6 +200,8 @@ export class AdminService {
         data: proposalDatas,
         type: proposal.type,
         userId: proposal.user.id,
+        userPhone: proposal.user.phone,
+        userEmail: proposal.user.email,
         userName: proposal.user.full_name
       })
     }
