@@ -6,8 +6,6 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { AuthController } from './controllers/auth.controller';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Global()
 @Module({
@@ -18,27 +16,6 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       signOptions: { expiresIn: '7d' },
     }),
     UsersModule,
-    MailerModule.forRoot({
-      transport: {
-        host: 'srv80.niagahoster.com',
-        port: 465,
-        secure: true,
-        auth: {
-          user: "admin@bukawaroenk.co.id",
-          pass: "210271Admin",
-        },
-      },
-      defaults: {
-        from:'"no-reply" <mail@bukawaroenk.co.id>',
-      },
-      template: {
-        dir: process.cwd() + '/templates/',
-        adapter: new HandlebarsAdapter(),
-        options: {
-          strict: true,
-        },
-      },
-    })
   ],
   providers: [AuthService, JwtStrategy],
   exports: [AuthService],

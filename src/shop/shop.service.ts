@@ -11,7 +11,7 @@ import { nanoid } from 'nanoid';
 import { OrderQueryParam } from '../order/dto/order.dto';
 import { Like, In } from 'typeorm';
 import { OrderRepository } from '../order/repositories/order.repository';
-import { SellerBankRepository } from '../users/repositories/selle-bank.repository';
+import { SellerBankRepository } from '../users/repositories/seller-bank.repository';
 import { SellerBank } from '../users/entities/seller-bank.entity';
 import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
 import { SellerCategory } from '../products/entities/seller-category.entity';

@@ -1,6 +1,6 @@
 import { Controller, Post, Body, UsePipes, UseGuards, Get, Req, Put, HttpCode } from '@nestjs/common';
 import { ValidationPipe } from '../../utils/validation.pipe';
-import { RegisterDto, editProfileParam, ShippingAddressDto } from '../dto/users.dto';
+import { RegisterDto, editProfileParam, ShippingAddressDto, RequestOtpParam, ResetPasswordParam } from '../dto/users.dto';
 import { UserEntity } from '../entities/users.entity';
 import { ResponseBody } from '../../utils/response';
 import { UsersService } from '../services/users.service';
@@ -52,5 +52,17 @@ export class UsersController {
     const session: { userId: string } = req.user as { userId: string }
     const response = await this.userService.getShippingAddress(session.userId)
     return new ResponseBody(response)
+  }
+
+  @UsePipes(ValidationPipe)
+  @Post('request-otp')
+  async requestOtp(@Body() param: RequestOtpParam) {
+    return this.userService.requestOtp(param)
+  }
+
+  @UsePipes(ValidationPipe)
+  @Post('reset-password')
+  async resetPassword(@Body() param: ResetPasswordParam) {
+    return this.userService.resetPassword(param)
   }
 }

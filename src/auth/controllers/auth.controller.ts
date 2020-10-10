@@ -30,9 +30,4 @@ export class AuthController {
     const session: { userId: string, expiredAt: number, issuedAt: number } = req.user as { userId: string, expiredAt: number, issuedAt: number }
     return this.authService.logout(token, session.expiredAt, session.issuedAt)
   }
-
-  @Get("mail")
-  sendMail() {
-    return this.authService.sendMail('test')
-  }
 }
