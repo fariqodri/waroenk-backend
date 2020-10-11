@@ -49,6 +49,7 @@ export class UsersService {
       );
     }
     user.password = await bcrypt.hash(param.password, SALT_ROUNDS);
+    await this.userRepo.save(user);
     await this.userRecoveryRepo.delete(userRecovery)
     return new ResponseBody(null, 'password berhasil direset, silahkan login kembali')
   }
