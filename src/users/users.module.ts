@@ -11,6 +11,7 @@ import { UsersProvider } from './providers/users.provider';
 import { SellerBankRepository } from './repositories/seller-bank.repository';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { UserRecoveryRepository } from './repositories/user-recovery.repository';
 
 @Module({
   providers: [UsersService, UsersProvider],
@@ -18,7 +19,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
   controllers: [UsersController],
   imports: [PermissionModule,
     MiscModule,
-    TypeOrmModule.forFeature([UserRepository, SellerAttributeRepository, ShippingAddressRepository]),
+    TypeOrmModule.forFeature([UserRepository, SellerAttributeRepository, ShippingAddressRepository, UserRecoveryRepository]),
     MailerModule.forRoot({
       transport: {
         host: 'srv80.niagahoster.com',
