@@ -66,25 +66,28 @@ export class UsersService {
     }
     await this.userRecoveryRepo.insert(newOtp)
     let emailContent = `Halo ${user.full_name}!
+    <br>
     Kami telah menerima permintaan pengaturan ulang password untuk akun Waroenk UMKM anda.
-    <br>
+    <br><br>
     Silahkan klik link berikut untuk merubah password anda:
-    <br>
+    <br><br>
     <a>${param.email}/${newOtp.otp}</a>
-    <br>
+    <br><br>
     Mohon untuk tidak membagikan link tersebut ke orang lain. Link tersebut hanya dapat digunakan satu kali.
+    <br>
     Jika anda tidak melakukan permintaan ini, anda bisa mengabaikan email ini.
-    <br>
+    <br><br>
     ============================================================ 
-    <br>
+    <br><br>
     Hi ${user.full_name}!
+    <br>
     We received a request to reset your password for your Waroenk UMKM account.
-    <br>
+    <br><br>
     Simply click on the link to set a new password: 
+    <br><br>
     <a>${param.email}/${newOtp.otp}</a>
+    <br><br>
     Keep this link privately, don't give it to anyone. This link only valid for one-time password reset.
-    <br>
-    Click the link above to reset your password.
     <br>
     If you didn't ask to reset your password, don't worry! Your account is still safe and you can delete this email.`
     await this.sendMail(user.email, emailContent)
