@@ -6,7 +6,7 @@ import { UsersModule } from '../users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderRepository } from '../order/repositories/order.repository';
 import { ShopProvider } from './shop.provider';
-import { SellerBankRepository } from '../users/repositories/selle-bank.repository';
+import { SellerBankRepository } from '../users/repositories/seller-bank.repository';
 import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
 
 @Module({

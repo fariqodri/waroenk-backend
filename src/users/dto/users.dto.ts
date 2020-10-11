@@ -40,6 +40,25 @@ export class editProfileParam {
   confirm_password: string
 }
 
+export class RequestOtpParam {
+  @jf.string().required()
+  email: string
+}
+
+export class ResetPasswordParam {
+  @jf.string().required()
+  email: string
+
+  @jf.string().required()
+  otp: string
+
+  @jf.string().required().min(8)
+  password: string
+
+  @jf.string().required().min(8)
+  confirm_password: string
+}
+
 export class ShippingAddressDto {
   @jf.string().optional()
   receiver_name: string;

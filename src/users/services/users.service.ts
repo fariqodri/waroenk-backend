@@ -1,3 +1,4 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import {
   BadRequestException,
   Injectable,
@@ -14,11 +15,15 @@ import { ResponseBody } from '../../utils/response';
 import {
   editProfileParam,
   RegisterDto,
+  RequestOtpParam,
+  ResetPasswordParam,
   ShippingAddressDto,
 } from '../dto/users.dto';
+import { UserRecovery } from '../entities/user-recovery.entity';
 import { UserEntity } from '../entities/users.entity';
 import { SellerAttributeRepository } from '../repositories/seller.repository';
 import { ShippingAddressRepository } from '../repositories/shipping-address.repository';
+import { UserRecoveryRepository } from '../repositories/user-recovery.repository';
 import { UserRepository } from '../repositories/users.repository';
 
 @Injectable()
@@ -28,10 +33,61 @@ export class UsersService {
   constructor(
     private permissionService: PermissionService,
     private userRepo: UserRepository,
+    private userRecoveryRepo: UserRecoveryRepository,
     private sellerRepo: SellerAttributeRepository,
     private shippingRepo: ShippingAddressRepository,
     private miscService: MiscService,
-  ) {}
+    private readonly mailerService: MailerService
+  ) { }
+
+  async resetPassword(param: ResetPasswordParam) {
+    const user = await this.userRepo.findOneOrFail({ where: { email: param.email } })
+    const userRecovery = await this.userRecoveryRepo.findOneOrFail({ where: { user: user.id, otp: param.otp } })
+    if (param.password != param.confirm_password) {
+      throw new BadRequestException(
+        new ResponseBody(null, 'confirm password unequal with password'),
+      );
+    }
+    user.password = await bcrypt.hash(param.password, SALT_ROUNDS);
+    await this.userRecoveryRepo.delete(userRecovery)
+    return new ResponseBody(null, 'password berhasil direset, silahkan login kembali')
+  }
+
+  async requestOtp(param: RequestOtpParam) {
+    const user = await this.userRepo.findOneOrFail({ where: { email: param.email } })
+    const existingOtp = await this.userRecoveryRepo.findOne({ where: { user: user.id } })
+    if (existingOtp != undefined) {
+      await this.userRecoveryRepo.delete(existingOtp)
+    }
+    let newOtp: UserRecovery = {
+      user: user,
+      otp: nanoid(11)
+    }
+    await this.userRecoveryRepo.insert(newOtp)
+    let emailContent = `Silahkan klik link berikut untuk mengatur ulang password Anda: <a>${param.email}/${newOtp.otp}</a>`
+    await this.sendMail(user.email, emailContent)
+    return new ResponseBody(null, "OTP telah dikirimkan ke email")
+  }
+
+  async sendMail(email: string, param: string) {
+    this
+      .mailerService
+      .sendMail({
+        to: email,
+        from: 'admin@bukawaroenk.co.id',
+        subject: 'Testing Nest MailerModule ✔',
+        text: 'welcome',
+        html: param,
+      })
+      .then((success) => {
+        console.log(success)
+        return new ResponseBody(success)
+      })
+      .catch((err) => {
+        console.log(err)
+        return new ResponseBody(err)
+      });
+  }
 
   async editProfile(param: editProfileParam, userId: string): Promise<any> {
     const user = await this.userRepo.findOneOrFail(userId);
