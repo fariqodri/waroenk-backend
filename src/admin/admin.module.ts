@@ -13,6 +13,7 @@ import { SellerCategoryRepository } from '../products/repositories/seller-catego
 import { CategoryRepository } from '../products/repositories/category.repository';
 import { NotificationService } from './services/notification.service';
 import { ChatModule } from '../chat/chat.module';
+import { ProposalDataRepository } from '../proposal/repositories/proposal-data.repository';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ChatModule } from '../chat/chat.module';
       SellerAttributeRepository,
       OrderRepository,
       ProposalRepository,
+      ProposalDataRepository,
       DiscussionRepository,
       AgendaRepository,
       SellerCategoryRepository,

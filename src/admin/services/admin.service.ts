@@ -19,6 +19,7 @@ import { SellerCategoryRepository } from "../../products/repositories/seller-cat
 import { SellerCategory } from "../../products/entities/seller-category.entity"
 import { CategoryRepository } from "../../products/repositories/category.repository"
 import { NotificationService } from "./notification.service"
+import { ProposalDataRepository } from "../../proposal/repositories/proposal-data.repository"
 
 export const BetweenDate = (date1: Date, date2: Date) => 
   Between(format(date1, 'yyyy-MM-dd HH:mm:SS'), format(date2, 'yyyy-MM-dd HH:mm:SS'))
@@ -31,6 +32,7 @@ export class AdminService {
     private userProvider: UsersProvider,
     private orderRepo: OrderRepository,
     private proposalRepo: ProposalRepository,
+    private proposalDataRepo: ProposalDataRepository,
     private discussionRepo: DiscussionRepository,
     private agendaRepo: AgendaRepository,
     private sellerCategoryRepo: SellerCategoryRepository,
@@ -177,7 +179,7 @@ export class AdminService {
       query = Object.assign({}, query, { type: param.type })
     }
     const proposals = await this.proposalRepo.find({
-      relations: ['data', 'user'],
+      relations: ['user'],
       where: query,
       skip: skippedItems,
       take: param.limit,
@@ -187,9 +189,14 @@ export class AdminService {
     let response = []
     for (let proposal of proposals) {
       let proposalDatas = []
-      for(let proposalData of proposal.data) {
+      const dataOfProposal = await this.proposalDataRepo.find({
+        where: {
+          proposal: proposal.id
+        },
+        order: { key: 'ASC' }
+      })
+      for(let proposalData of dataOfProposal) {
         proposalDatas.push({
-          id: proposalData.id,
           key: proposalData.key,
           value: proposalData.value,
           is_active: proposalData.is_active
