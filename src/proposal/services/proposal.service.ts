@@ -59,7 +59,8 @@ export class ProposalService {
       relations: ['proposal'],
       where: {
         is_active: true,
-        proposal: id
+        proposal: id,
+        order: { key: 'ASC' }
       }
     })
     proposalData.forEach(function(p) {
