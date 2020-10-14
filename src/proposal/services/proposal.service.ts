@@ -79,14 +79,14 @@ export class ProposalService {
         proposal: id
       }
     })
-    param.data.forEach(async function(pair) {
+    for (let pair of param.data) {
       for (let proposal of proposalData) {
         if (proposal.key == pair[0]) {
           proposal.value = pair[1]
           await this.proposalDataRepo.save(proposal)
         }
       }
-    });
+    }
     return new ResponseBody(null)
   }
 
