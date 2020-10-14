@@ -176,8 +176,8 @@ describe('Proposals (e2e)', () => {
       .expect({
         message: 'ok',
         result: [
-          { id: 'data-1', key: 'nama', value: 'jojon' },
-          { id: 'data-2', key: 'alamat', value: 'nangor' }
+          { id: 'data-2', key: 'alamat', value: 'nangor' },
+          { id: 'data-1', key: 'nama', value: 'jojon' }
         ],
         page: 1,
         limit: 2
