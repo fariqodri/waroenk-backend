@@ -59,9 +59,9 @@ export class ProposalService {
       relations: ['proposal'],
       where: {
         is_active: true,
-        proposal: id,
-        order: { key: 'ASC' }
-      }
+        proposal: id
+      },
+      order: { key: 'ASC' }
     })
     proposalData.forEach(function(p) {
       delete p.created_at
