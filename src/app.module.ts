@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Controller, Get, Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
@@ -17,6 +17,14 @@ import { OrderModule } from './order/order.module';
 import { ChatModule } from './chat/chat.module';
 import { PostModule } from './post/post.module';
 import { AdminModule } from './admin/admin.module';
+
+@Controller('health')
+class HealthController {
+  @Get()
+  health() {
+    return 'alive'
+  }
+}
 
 @Module({
   imports: [
@@ -41,5 +49,6 @@ import { AdminModule } from './admin/admin.module';
     PostModule,
     AdminModule
   ],
+  controllers: [HealthController]
 })
 export class AppModule {}
