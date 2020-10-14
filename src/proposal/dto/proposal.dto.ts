@@ -16,6 +16,5 @@ export class CreateProposalParam {
 }
 
 export class EditProposalParam {
-  @jf.array().required()
   data: any[]
 }

@@ -39,7 +39,6 @@ export class ProposalController {
     return this.service.detailProposal(id);
   }
 
-  @UsePipes(ValidationPipe)
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('admin')
   @Put(':id')
