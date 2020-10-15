@@ -43,6 +43,9 @@ export class editProfileParam {
 export class RequestOtpParam {
   @jf.string().required()
   email: string
+
+  @jf.string().optional()
+  url: string
 }
 
 export class ResetPasswordParam {
