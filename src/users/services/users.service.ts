@@ -71,7 +71,7 @@ export class UsersService {
     <br><br>
     Silahkan klik link berikut untuk merubah password anda:
     <br><br>
-    <a>${param.email}/${newOtp.otp}</a>
+    <a>${param.url}/?email=${param.email}&otp=${newOtp.otp}</a>
     <br><br>
     Mohon untuk tidak membagikan link tersebut ke orang lain. Link tersebut hanya dapat digunakan satu kali.
     <br>
