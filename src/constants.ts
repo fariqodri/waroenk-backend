@@ -14,3 +14,7 @@ export const FIREBASE_DATABASE_URL = 'https://waroenk-umkm.firebaseio.com'
 export const MINIMUM_SELLER_TIER_FOR_POSTING = 2
 export const JWT_SECRET = process.env.JWT_SECRET
 export const IS_STAGING_OR_PRODUCTION = process.env.NODE_ENV === 'staging' || process.env.NODE_ENV === 'production'
+export const EMAIL_HOST = process.env.EMAIL_HOST
+export const EMAIL_PORT = process.env.EMAIL_PORT
+export const EMAIL_AUTH_USER = process.env.EMAIL_AUTH_USER
+export const EMAIL_AUTH_PASSWORD = process.env.EMAIL_AUTH_PASSWORD
