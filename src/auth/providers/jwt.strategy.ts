@@ -3,10 +3,6 @@ import * as fs from 'fs';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { jwtConstants } from '../constants';
-import {
-  IS_STAGING_OR_PRODUCTION,
-  JWT_RS256_PUBLIC_KEY_PATH,
-} from '../../constants';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,10 +10,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: true,
-      secretOrKey: IS_STAGING_OR_PRODUCTION
-        ? fs.readFileSync(JWT_RS256_PUBLIC_KEY_PATH)
-        : jwtConstants.secret,
-      algorithms: IS_STAGING_OR_PRODUCTION ? ['RS256'] : ['HS256'],
+      secretOrKey: jwtConstants.secret
     });
   }
 
