@@ -12,6 +12,7 @@ import { SellerBankRepository } from './repositories/seller-bank.repository';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { UserRecoveryRepository } from './repositories/user-recovery.repository';
+import { EMAIL_AUTH_PASSWORD, EMAIL_AUTH_USER, EMAIL_HOST, EMAIL_PORT } from '../constants';
 
 @Module({
   providers: [UsersService, UsersProvider],
@@ -22,12 +23,12 @@ import { UserRecoveryRepository } from './repositories/user-recovery.repository'
     TypeOrmModule.forFeature([UserRepository, SellerAttributeRepository, ShippingAddressRepository, UserRecoveryRepository]),
     MailerModule.forRoot({
       transport: {
-        host: 'srv80.niagahoster.com',
-        port: 465,
+        host: EMAIL_HOST,
+        port: EMAIL_PORT,
         secure: true,
         auth: {
-          user: "admin@bukawaroenk.co.id",
-          pass: "210271Admin",
+          user: EMAIL_AUTH_USER,
+          pass: EMAIL_AUTH_PASSWORD,
         },
       },
       defaults: {
