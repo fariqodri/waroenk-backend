@@ -12,3 +12,6 @@ export const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY
 export const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME
 export const FIREBASE_DATABASE_URL = 'https://waroenk-umkm.firebaseio.com'
 export const MINIMUM_SELLER_TIER_FOR_POSTING = 2
+export const JWT_RS256_PUBLIC_KEY_PATH = process.env.JWT_RS256_PUBLIC_KEY_PATH
+export const JWT_RS256_PRIVATE_KEY_PATH = process.env.JWT_RS256_PRIVATE_KEY_PATH
+export const IS_STAGING_OR_PRODUCTION = process.env.NODE_ENV === 'staging' || process.env.NODE_ENV === 'production'
