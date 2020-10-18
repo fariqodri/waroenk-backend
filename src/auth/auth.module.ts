@@ -1,5 +1,5 @@
 import { Module, Global } from '@nestjs/common';
-import fs from 'fs';
+import * as fs from 'fs';
 import { AuthService } from './services/auth.service';
 import { JwtStrategy } from './providers/jwt.strategy';
 import { UsersModule } from '../users/users.module';
