@@ -44,7 +44,7 @@ backend-docker-build-staging:
 
 deploy-gcp:
   image: google/cloud-sdk
-  stage: deploy
+  stage: deploy-staging
   only:
     refs:
       - master
