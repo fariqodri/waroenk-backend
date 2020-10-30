@@ -55,9 +55,14 @@ export class UsersService {
   }
 
   async requestOtp(param: RequestOtpParam) {
-    const user = await this.userRepo.findOneOrFail({ where: { email: param.email } })
+    const user = await this.userRepo.findOne({ where: { email: param.email } })
+    if (undefined == user) {
+      throw new BadRequestException(
+        new ResponseBody(null, `user with email ${ param.email } not found`),
+      );
+    }
     const existingOtp = await this.userRecoveryRepo.findOne({ where: { user: user.id } })
-    if (existingOtp != undefined) {
+    if (undefined != existingOtp) {
       await this.userRecoveryRepo.delete(existingOtp)
     }
     let newOtp: UserRecovery = {
@@ -68,6 +73,8 @@ export class UsersService {
     let emailContent = `Halo ${user.full_name}!
     <br>
     Kami telah menerima permintaan pengaturan ulang password untuk akun Waroenk UMKM anda.
+    <br><br>
+    Kode reset anda adalah: ${newOtp.otp} (salin kode ini)
     <br><br>
     Silahkan klik link berikut untuk merubah password anda:
     <br><br>
@@ -82,6 +89,8 @@ export class UsersService {
     Hi ${user.full_name}!
     <br>
     We received a request to reset your password for your Waroenk UMKM account.
+    <br><br>
+    Your reset code: ${newOtp.otp} (Copy this code)
     <br><br>
     Simply click on the link to set a new password: 
     <br><br>
