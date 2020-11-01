@@ -182,7 +182,6 @@ export class MiscService {
       }
       await this.productRepo.insert(newProduct)
     }
-    console.log(await this.productRepo.find())
     return new ResponseListBody(entities.list, 'ok', 1, entities.list.length)
   }
 
@@ -229,8 +228,7 @@ export class MiscService {
 
   async listFaqs(query: FaqQuery): Promise<ResponseListBody<any[]>> {
     const skippedItems = (query.page - 1) * query.limit;
-    let queryBuilder = await this.faqRepo
-      .createQueryBuilder('faq');
+    let queryBuilder = this.faqRepo.createQueryBuilder('faq');
     if (query.search !== undefined && query.search !== '') {
       queryBuilder = queryBuilder.andWhere('LOWER(faq.title) LIKE :title', {
         title: `%${query.search.toLowerCase()}%`,

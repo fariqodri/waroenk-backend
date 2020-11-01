@@ -11,3 +11,7 @@ export class LocationQuery {
   city?: string
   district?: string
 }
+
+export class SliderParam {
+  image: string
+}
