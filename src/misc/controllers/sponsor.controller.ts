@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common";
-import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
-import { RolePermissionGuard } from "src/auth/guards/role.permission.guard";
-import { Roles } from "src/utils/decorators";
+import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
+import { RolePermissionGuard } from "../../auth/guards/role.permission.guard";
+import { Roles } from "../../utils/decorators";
 import { SponsorService } from "../services/sponsor.service";
 import { SponsorParam } from "../dto/misc.dto";
 
