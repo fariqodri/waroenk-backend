@@ -5,7 +5,7 @@ import { Roles } from "src/utils/decorators";
 import { SliderService } from "../services/slider.service";
 import { SliderParam } from "../dto/misc.dto";
 
-@Controller('slider')
+@Controller('sliders')
 export class SliderController {
   constructor(private service: SliderService) {}
 
