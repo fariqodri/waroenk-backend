@@ -10,7 +10,7 @@ export class SponsorController {
   constructor(private service: SponsorService) {}
 
   @Get()
-  async getSponsors(@Body() type: string) {
+  async getSponsors(@Param() type: string) {
     return this.service.listSponsor(type)
   }
 
