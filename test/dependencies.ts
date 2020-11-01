@@ -20,6 +20,7 @@ import { PostEntity } from '../src/post/post.entity';
 import { SellerBank } from '../src/users/entities/seller-bank.entity';
 import { SellerCategory } from '../src/products/entities/seller-category.entity';
 import { UserRecovery } from '../src/users/entities/user-recovery.entity';
+import { SponsorEntity } from '../src/misc/entities/sponsor.entity';
 
 export const entities = [
   CategoryEntity,
@@ -42,7 +43,8 @@ export const entities = [
   PostEntity,
   SellerBank,
   SellerCategory,
-  UserRecovery
+  UserRecovery,
+  SponsorEntity
 ];
 
 export const fakeJwtAuthGuardFactory = (session: any) => ({
