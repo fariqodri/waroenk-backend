@@ -8,4 +8,5 @@ export class LocationEntity {
 
   @Column()
   nama: string
+  
 }
