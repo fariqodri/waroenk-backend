@@ -7,14 +7,14 @@ import { LocationRepository } from './repositories/location.repository';
 import { LocationController } from './controllers/location.controller';
 import { CsvModule } from 'nest-csv-parser';
 import { BulkUploadController } from './controllers/bulk-upload.controller';
-import { SliderController } from './controllers/slider.controller';
+import { SponsorController } from './controllers/sponsor.controller';
 import { UserRepository } from '../users/repositories/users.repository';
 import { SellerAttributeRepository } from '../users/repositories/seller.repository';
 import { ProductRepository } from '../products/repositories/product.repository';
 import { CategoryRepository } from '../products/repositories/category.repository';
 import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
-import { SliderRepository } from './repositories/slider.repository';
-import { SliderService } from './services/slider.service';
+import { SponsorRepository } from './repositories/sponsor.repository';
+import { SponsorService } from './services/sponsor.service';
 
 @Module({
   imports: [
@@ -27,11 +27,11 @@ import { SliderService } from './services/slider.service';
       ProductRepository,
       CategoryRepository,
       SellerCategoryRepository,
-      SliderRepository
+      SponsorRepository
     ]),
   ],
-  controllers: [FaqController, LocationController, BulkUploadController, SliderController],
-  providers: [MiscService, SliderService],
-  exports: [MiscService, SliderService]
+  controllers: [FaqController, LocationController, BulkUploadController, SponsorController],
+  providers: [MiscService, SponsorService],
+  exports: [MiscService, SponsorService]
 })
 export class MiscModule {}

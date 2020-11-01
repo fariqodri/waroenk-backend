@@ -12,6 +12,7 @@ export class LocationQuery {
   district?: string
 }
 
-export class SliderParam {
+export class SponsorParam {
   image: string
+  type: "slider" | "sponsor"
 }
