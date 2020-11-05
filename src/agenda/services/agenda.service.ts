@@ -55,7 +55,7 @@ export class AgendaService {
 
   async listAgenda(query: AgendaQuery): Promise<ResponseListBody<any[]>> {
     const skippedItems = (query.page - 1) * query.limit;
-    let queryBuilder = await this.agendaRepo
+    let queryBuilder = this.agendaRepo
       .createQueryBuilder('agendas')
       .where('agendas.is_active IS TRUE');
     if (query.title) {
@@ -64,9 +64,8 @@ export class AgendaService {
       });
     }
     if (query.location) {
-      queryBuilder = queryBuilder.andWhere('LOWER(agendas.location) LIKE :location', {
-        location: `%${query.location.toLowerCase()}%`,
-      });
+      queryBuilder = queryBuilder.andWhere('LOWER(agendas.location) IN (:locations)', 
+        { locations: query.location.toLowerCase() });
     }
     if (query.type) {
       queryBuilder = queryBuilder.andWhere('LOWER(agendas.type) LIKE :type', {
@@ -118,7 +117,7 @@ export class AgendaService {
 
   async listSavedAgenda(query: AgendaQuery, userId: string): Promise<ResponseListBody<any[]>> {
     const skippedItems = (query.page - 1) * query.limit;
-    let queryBuilder = await this.agendaRepo
+    let queryBuilder = this.agendaRepo
       .createQueryBuilder('agendas')
       .where('agendas.is_active IS TRUE')
       .andWhere('user.id = :userId', {
@@ -130,14 +129,8 @@ export class AgendaService {
       });
     }
     if (query.location) {
-      const paramLocations = query.location.toLowerCase().split(',')
-      let locations: string[] = []
-      for (var index in paramLocations) {
-        locations.push("'" + paramLocations[index] + "'")
-      }
-      let locationQuery = "(" + locations.join(',') + ")"
-      queryBuilder = queryBuilder
-        .andWhere("LOWER(agendas.location) IN " + locationQuery);
+      queryBuilder = queryBuilder.andWhere('LOWER(agendas.location) IN (:locations)', 
+        { locations: query.location.toLowerCase() });
     }
     if (query.type) {
       queryBuilder = queryBuilder.andWhere('LOWER(agendas.type) LIKE :type', {

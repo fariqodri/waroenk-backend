@@ -23,13 +23,8 @@ export class ProductsService {
       });
     }
     if (param.categories) {
-      const paramCategories = param.categories.split(',')
-      let categoryIds: string[] = []
-      for (var index in paramCategories) {
-        categoryIds.push("'" + paramCategories[index] + "'")
-      }
-      let categoryQuery = "(" + categoryIds.join(',') + ")"
-      queryBuilder = queryBuilder.andWhere("seller_category.categoryId IN " + categoryQuery);
+      queryBuilder = queryBuilder.andWhere('seller_category.categoryId IN (:categories)', 
+        { categories: param.categories });
     }
     if (param.price_from) {
       queryBuilder = queryBuilder.andWhere(
