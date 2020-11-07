@@ -21,7 +21,7 @@ export class AuthService {
       user = await this.usersService.findOne({ email });
       userPassword = await this.usersService.getUserPassword(user.id)
     } catch (err) {
-      throw new BadRequestException(new ResponseBody(null, 'invalid email'))
+      throw new BadRequestException(new ResponseBody(null, 'invalid email or password'))
     }
     const isPasswordValid = await bcrypt.compare(password, userPassword)
     if (isPasswordValid) {
@@ -30,7 +30,7 @@ export class AuthService {
         access_token: this.jwtService.sign(payload),
       });
     }
-    throw new BadRequestException(new ResponseBody(null, 'invalid password'))
+    throw new BadRequestException(new ResponseBody(null, 'invalid email or password'))
   }
 
   async logout(token: string, expiredAt: number, issuedAt: number): Promise<ResponseBody<null>> {
