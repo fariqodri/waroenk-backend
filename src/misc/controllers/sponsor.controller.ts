@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RolePermissionGuard } from "../../auth/guards/role.permission.guard";
 import { Roles } from "../../utils/decorators";
@@ -10,7 +10,7 @@ export class SponsorController {
   constructor(private service: SponsorService) {}
 
   @Get()
-  async getSponsors(@Param() type: string) {
+  async getSponsors(@Query() { type } ) {
     return this.service.listSponsor(type)
   }
 

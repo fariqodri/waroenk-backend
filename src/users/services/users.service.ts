@@ -70,7 +70,7 @@ export class UsersService {
       otp: nanoid(11)
     }
     await this.userRecoveryRepo.insert(newOtp)
-    let emailContent = `Halo ${user.full_name}!
+    const emailContent = `Halo ${user.full_name}!
     <br>
     Kami telah menerima permintaan pengaturan ulang password untuk akun Waroenk UMKM anda.
     <br><br>

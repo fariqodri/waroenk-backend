@@ -242,7 +242,9 @@ describe('GET Product and Categories (e2e)', () => {
       .expect(200)
       .expect({
         message: 'ok',
-        result: [sponsor]
+        result: [sponsor],
+        page: 0,
+        limit: 0
       });
   });
 });
