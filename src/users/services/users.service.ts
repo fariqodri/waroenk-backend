@@ -99,7 +99,11 @@ export class UsersService {
     Keep this link privately, don't give it to anyone. This link only valid for one-time password reset.
     <br>
     If you didn't ask to reset your password, don't worry! Your account is still safe and you can delete this email.`
-    await this.sendMail(user.email, emailContent)
+    await this.sendMail({
+      to: user.email,
+      subject: 'Reset Password Waroenk UMKM',
+      html: emailContent
+    })
     return new ResponseBody(null, "OTP telah dikirimkan ke email")
   }
 
