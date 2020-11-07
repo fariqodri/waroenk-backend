@@ -12,7 +12,7 @@ export class SponsorEntity {
   @Column()
   type: "slider" | "sponsor"
 
-  @Column()
+  @Column({ nullable: true })
   deleted_at: Date
 
 }

@@ -78,7 +78,7 @@ export class UsersService {
     <br><br>
     Silahkan klik link berikut untuk merubah password anda:
     <br><br>
-    <a>${param.url}/?email=${param.email}&otp=${newOtp.otp}</a>
+    <a>https://bukawaroenk.co.id/?email=${param.email}&otp=${newOtp.otp}</a>
     <br><br>
     Mohon untuk tidak membagikan link tersebut ke orang lain. Link tersebut hanya dapat digunakan satu kali.
     <br>
@@ -94,7 +94,7 @@ export class UsersService {
     <br><br>
     Simply click on the link to set a new password: 
     <br><br>
-    <a>${param.email}/${newOtp.otp}</a>
+    <a>https://bukawaroenk.co.id/?email=${param.email}&otp=${newOtp.otp}</a>
     <br><br>
     Keep this link privately, don't give it to anyone. This link only valid for one-time password reset.
     <br>
@@ -110,7 +110,7 @@ export class UsersService {
         to: email,
         from: 'admin@bukawaroenk.co.id',
         subject: subject,
-        text: 'welcome',
+        text: 'reset password',
         html: param,
       })
       .then((success) => {

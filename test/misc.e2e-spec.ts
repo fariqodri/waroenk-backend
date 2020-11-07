@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { SponsorEntity } from '../src/misc/entities/sponsor.entity';
 import * as request from 'supertest';
 import { getConnection, getRepository } from 'typeorm';
 import { FaqEntity } from '../src/misc/entities/faq.entity';
@@ -226,6 +227,22 @@ describe('GET Product and Categories (e2e)', () => {
         ],
         page: 1,
         limit: 2
+      });
+  });
+  it(`should list sponsors with filter`, async () => {
+    const sponsor: SponsorEntity = {
+      id: '1',
+      image: 'image.com',
+      type: 'sponsor',
+      deleted_at: null
+    }
+    await getRepository(SponsorEntity).insert(sponsor);
+    return request(app.getHttpServer())
+      .get('/sponsors?type=sponsor')
+      .expect(200)
+      .expect({
+        message: 'ok',
+        result: [sponsor]
       });
   });
 });
