@@ -120,7 +120,7 @@ describe('Login and Logout E2E Test', () => {
         password: 'password1234'
       })
       .expect({
-        message: 'invalid email',
+        message: 'invalid email or password',
         result: null
       })
   })
