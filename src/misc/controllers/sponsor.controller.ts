@@ -14,16 +14,16 @@ export class SponsorController {
     return this.service.listSponsor(type)
   }
 
-  @Post()
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('admin')
+  @Post()
   async createSponsors(@Body() param: SponsorParam) {
     return this.service.createSponsor(param)
   }
 
-  @Delete(':id')
   @UseGuards(JwtAuthGuard, RolePermissionGuard)
   @Roles('admin')
+  @Delete(':id')
   async deleteSponsor(@Param() id: string) {
     return this.service.deleteSponsor(id)
   }
