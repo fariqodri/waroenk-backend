@@ -48,6 +48,15 @@ export class UsersService {
         new ResponseBody(null, 'confirm password unequal with password'),
       );
     }
+    const isNewPasswordSameAsOldPassword = await bcrypt.compare(
+      param.password,
+      user.password,
+    );
+    if (isNewPasswordSameAsOldPassword) {
+      throw new BadRequestException(
+        new ResponseBody(null, 'new password cannot be the same as old password'),
+      );
+    }
     user.password = await bcrypt.hash(param.password, SALT_ROUNDS);
     await this.userRepo.save(user);
     await this.userRecoveryRepo.delete(userRecovery)
@@ -148,6 +157,11 @@ export class UsersService {
         user.password,
       );
       if (isPasswordValid) {
+        if (param.old_password == param.password) {
+          throw new BadRequestException(
+            new ResponseBody(null, 'new password cannot be the same as old password'),
+          );
+        }
         user.password = await bcrypt.hash(param.password, SALT_ROUNDS);
       } else {
         throw new BadRequestException(

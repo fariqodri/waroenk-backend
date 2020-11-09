@@ -80,9 +80,9 @@ describe('Users E2E', () => {
       full_name: 'fullo',
       email: 'fullo@example.com',
       phone: '081238192322',
-      old_password: 'password',
-      password: 'password2',
-      confirm_password: 'password2',
+      old_password: 'Password1',
+      password: 'Password2',
+      confirm_password: 'Password2',
     };
     getConnection()
       .getRepository(UserEntity)
@@ -91,7 +91,7 @@ describe('Users E2E', () => {
         full_name: 'full_name',
         email: 'full@example.com',
         phone: '081238192312',
-        password: await bcrypt.hash('password', SALT_ROUNDS),
+        password: await bcrypt.hash('Password1', SALT_ROUNDS),
         role: 'buyer',
       });
     return request(app.getHttpServer())
@@ -153,8 +153,8 @@ describe('Users E2E', () => {
       full_name: 'full_name',
       email: 'full@example.com',
       phone: '081238192312',
-      password: 'password',
-      confirm_password: 'password',
+      password: 'Password1',
+      confirm_password: 'Password1',
       role: 'buyer',
     };
     return request(app.getHttpServer())

@@ -8,8 +8,8 @@ describe('DTO Validation Test', () => {
       email: "full@example.com",
       phone: "08123211231",
       role: "buyer",
-      password: "test123test123",
-      confirm_password: "test123test123"
+      password: "Test123test123",
+      confirm_password: "Test123test123"
     }
     const { error } = validateAsClass(registerBody, RegisterDto)
     expect(error).toBeNull()
