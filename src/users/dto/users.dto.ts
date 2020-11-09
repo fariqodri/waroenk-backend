@@ -13,10 +13,10 @@ export class RegisterDto {
   @jf.string().regex(new RegExp(/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/)).min(7).required()
   phone: string
 
-  @jf.string().required().min(8)
+  @jf.string().required().regex(new RegExp(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)).min(8)
   password: string
 
-  @jf.string().required().min(8)
+  @jf.string().required().regex(new RegExp(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)).min(8)
   confirm_password: string
 }
 
@@ -33,10 +33,10 @@ export class editProfileParam {
   @jf.string().optional().min(8)
   old_password: string
   
-  @jf.string().optional().min(8)
+  @jf.string().optional().regex(new RegExp(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)).min(8)
   password: string
 
-  @jf.string().optional().min(8)
+  @jf.string().optional().regex(new RegExp(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)).min(8)
   confirm_password: string
 }
 
@@ -52,10 +52,10 @@ export class ResetPasswordParam {
   @jf.string().required()
   otp: string
 
-  @jf.string().required().min(8)
+  @jf.string().required().regex(new RegExp(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)).min(8)
   password: string
 
-  @jf.string().required().min(8)
+  @jf.string().required().regex(new RegExp(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/)).min(8)
   confirm_password: string
 }
 
