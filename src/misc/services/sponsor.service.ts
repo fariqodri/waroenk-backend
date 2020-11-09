@@ -9,33 +9,45 @@ import { SponsorRepository } from "../repositories/sponsor.repository";
 export class SponsorService {
   constructor(
     private sponsorRepo: SponsorRepository,
-  ) {}
+  ) { }
 
   async createSponsor(param: SponsorParam): Promise<ResponseBody<SponsorEntity>> {
-    let newSponsor: SponsorEntity = {
+    const images = param.image.split(',');
+    const newSponsors = []
+    for (const image of images) {
+      const newSponsor: SponsorEntity = {
         id: nanoid(11),
-        image: param.image,
+        image: image,
         type: param.type,
         deleted_at: null
+      }
+      newSponsors.push(newSponsor);
     }
-    await this.sponsorRepo.insert(newSponsor)
-    return new ResponseBody(newSponsor)
+    await this.sponsorRepo.insert(newSponsors);
+    return new ResponseBody(newSponsors)
   }
 
   async listSponsor(type: string): Promise<ResponseListBody<any>> {
-      let sponsors = await this.sponsorRepo.find({ 
-        where: {
-          deleted_at: null,
-          type: type 
-        }
-      })
-      return new ResponseListBody(sponsors)
+    const sponsors = await this.sponsorRepo.find({
+      where: {
+        deleted_at: null,
+        type: type
+      }
+    })
+    return new ResponseListBody(sponsors)
+  }
+
+  async editSponsor(id: string, param: SponsorParam): Promise<ResponseBody<any>> {
+    let sponsor = await this.sponsorRepo.findOneOrFail(id)
+    sponsor.image = param.image
+    await this.sponsorRepo.save(sponsor)
+    return new ResponseBody(null, "sponsor deleted")
   }
 
   async deleteSponsor(id: string): Promise<ResponseBody<any>> {
-      let sponsor = await this.sponsorRepo.findOneOrFail(id)
-      sponsor.deleted_at = new Date()
-      await this.sponsorRepo.save(sponsor)
-      return new ResponseBody(null, "sponsor deleted") 
+    let sponsor = await this.sponsorRepo.findOneOrFail(id)
+    sponsor.deleted_at = new Date()
+    await this.sponsorRepo.save(sponsor)
+    return new ResponseBody(null, "sponsor deleted")
   }
 }

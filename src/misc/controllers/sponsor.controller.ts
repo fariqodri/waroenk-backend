@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RolePermissionGuard } from "../../auth/guards/role.permission.guard";
 import { Roles } from "../../utils/decorators";
@@ -26,5 +26,12 @@ export class SponsorController {
   @Delete(':id')
   async deleteSponsor(@Param() id: string) {
     return this.service.deleteSponsor(id)
+  }
+
+  @UseGuards(JwtAuthGuard, RolePermissionGuard)
+  @Roles('admin')
+  @Put(':id')
+  async editSponsor(@Param() id: string, @Body() param: SponsorParam) {
+    return this.service.editSponsor(id, param)
   }
 }
