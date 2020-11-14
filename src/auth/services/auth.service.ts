@@ -14,7 +14,7 @@ export class AuthService {
     private redisService: RedisService
   ) {}
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string, client: string) {
     let user: UserEntity
     let userPassword: string
     try {
@@ -27,7 +27,7 @@ export class AuthService {
     if (isPasswordValid) {
       const payload = { sub: user.id, role: user.role };
       return new ResponseBody({
-        access_token: this.jwtService.sign(payload),
+        access_token: this.jwtService.sign(payload, client === 'web' ? { expiresIn: '7d' } : {}),
       });
     }
     throw new BadRequestException(new ResponseBody(null, 'invalid email or password'))
