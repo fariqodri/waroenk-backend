@@ -65,7 +65,8 @@ describe('Login and Logout E2E Test', () => {
         full_name: 'user 1',
         password: 'password1234',
         role: 'buyer',
-        phone: '0821321321'
+        phone: '0821321321',
+        is_active: true
       })
   })
 
