@@ -59,6 +59,14 @@ export class ResetPasswordParam {
   confirm_password: string
 }
 
+export class UserActivationParam {
+  @jf.string().required()
+  email: string
+
+  @jf.string().required()
+  code: string
+}
+
 export class ShippingAddressDto {
   @jf.string().optional()
   receiver_name: string;

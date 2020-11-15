@@ -18,13 +18,16 @@ import {
   RequestOtpParam,
   ResetPasswordParam,
   ShippingAddressDto,
+  UserActivationParam,
 } from '../dto/users.dto';
 import { UserRecovery } from '../entities/user-recovery.entity';
 import { UserEntity } from '../entities/users.entity';
 import { SellerAttributeRepository } from '../repositories/seller.repository';
 import { ShippingAddressRepository } from '../repositories/shipping-address.repository';
 import { UserRecoveryRepository } from '../repositories/user-recovery.repository';
+import { UserConfirmationRepository } from '../repositories/user-confirmation.repository';
 import { UserRepository } from '../repositories/users.repository';
+import { UserConfirmation } from '../entities/user-confirmation.entity';
 
 @Injectable()
 export class UsersService {
@@ -34,11 +37,21 @@ export class UsersService {
     private permissionService: PermissionService,
     private userRepo: UserRepository,
     private userRecoveryRepo: UserRecoveryRepository,
+    private userConfirmationRepo: UserConfirmationRepository,
     private sellerRepo: SellerAttributeRepository,
     private shippingRepo: ShippingAddressRepository,
     private miscService: MiscService,
     private readonly mailerService: MailerService
   ) { }
+
+  async activateUser(param: UserActivationParam) {
+    const user = await this.userRepo.findOneOrFail({ where: { email: param.email } });
+    const userConfirmation = await this.userConfirmationRepo.findOneOrFail({ where: { user: user.id, code: param.code } });
+    user.is_active = true;
+    await this.userRepo.save(user);
+    await this.userConfirmationRepo.delete(userConfirmation)
+    return new ResponseBody(null, 'user berhasil diaktifkan')
+  }
 
   async resetPassword(param: ResetPasswordParam) {
     const user = await this.userRepo.findOneOrFail({ where: { email: param.email } })
@@ -74,7 +87,7 @@ export class UsersService {
     if (undefined != existingOtp) {
       await this.userRecoveryRepo.delete(existingOtp)
     }
-    let newOtp: UserRecovery = {
+    const newOtp: UserRecovery = {
       user: user,
       otp: nanoid(11)
     }
@@ -184,7 +197,7 @@ export class UsersService {
       const seller = await this.sellerRepo.findOne({
         where: { user: user.id },
       });
-      let response = {
+      const response = {
         id: user.id,
         full_name: user.full_name,
         email: user.email,
@@ -218,10 +231,18 @@ export class UsersService {
         role: 'buyer',
         created_at: new Date(),
         updated_at: null,
-        is_active: true,
+        is_active: false,
       };
       await this.userRepo.insert(user);
       await this.permissionService.addMemberToRole(user.id, BUYER_ROLE_ID);
+      const newConfirmationCode: UserConfirmation = {
+        user: user,
+        code: nanoid(11)
+      }
+      await this.userConfirmationRepo.insert(newConfirmationCode);
+      //email content tanya ilmi
+      const emailContent = `${user.email}/${newConfirmationCode}`;
+      await this.sendMail(user.email, 'Konfirmasi Akun Waroenk UMKM', emailContent)
       return plainToClass(UserEntity, user);
     } catch (err) {
       const errMessage: string = err.message;

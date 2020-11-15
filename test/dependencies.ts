@@ -21,6 +21,7 @@ import { SellerBank } from '../src/users/entities/seller-bank.entity';
 import { SellerCategory } from '../src/products/entities/seller-category.entity';
 import { UserRecovery } from '../src/users/entities/user-recovery.entity';
 import { SponsorEntity } from '../src/misc/entities/sponsor.entity';
+import { UserConfirmation } from '../src/users/entities/user-confirmation.entity';
 
 export const entities = [
   CategoryEntity,
@@ -44,7 +45,8 @@ export const entities = [
   SellerBank,
   SellerCategory,
   UserRecovery,
-  SponsorEntity
+  SponsorEntity,
+  UserConfirmation
 ];
 
 export const fakeJwtAuthGuardFactory = (session: any) => ({
