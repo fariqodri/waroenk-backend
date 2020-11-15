@@ -13,6 +13,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { UserRecoveryRepository } from './repositories/user-recovery.repository';
 import { EMAIL_AUTH_PASSWORD, EMAIL_AUTH_USER, EMAIL_HOST, EMAIL_PORT } from '../constants';
+import { UserConfirmationRepository } from './repositories/user-confirmation.repository';
 
 @Module({
   providers: [UsersService, UsersProvider],
@@ -20,7 +21,13 @@ import { EMAIL_AUTH_PASSWORD, EMAIL_AUTH_USER, EMAIL_HOST, EMAIL_PORT } from '..
   controllers: [UsersController],
   imports: [PermissionModule,
     MiscModule,
-    TypeOrmModule.forFeature([UserRepository, SellerAttributeRepository, ShippingAddressRepository, UserRecoveryRepository]),
+    TypeOrmModule.forFeature([
+      UserRepository,
+      SellerAttributeRepository,
+      ShippingAddressRepository,
+      UserRecoveryRepository,
+      UserConfirmationRepository
+    ]),
     MailerModule.forRoot({
       transport: {
         host: EMAIL_HOST,

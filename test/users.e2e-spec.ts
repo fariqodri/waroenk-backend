@@ -120,7 +120,6 @@ describe('Users E2E', () => {
     return (
       request(app.getHttpServer())
         .get('/users')
-        // .set('Authorization', 'fake_token')
         .expect(200)
         .then(res => {
           const body = res.body;
@@ -142,7 +141,7 @@ describe('Users E2E', () => {
           expect(phone).toEqual('081238192312');
           expect(role).toEqual('buyer');
           expect(created_at).toBeDefined();
-          expect(is_active).toBeTruthy();
+          expect(is_active).toBeFalsy();
           expect(sellerId).toBeNull();
         })
     );

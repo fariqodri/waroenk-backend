@@ -1,6 +1,6 @@
 import { Controller, Post, Body, UsePipes, UseGuards, Get, Req, Put, HttpCode } from '@nestjs/common';
 import { ValidationPipe } from '../../utils/validation.pipe';
-import { RegisterDto, editProfileParam, ShippingAddressDto, RequestOtpParam, ResetPasswordParam } from '../dto/users.dto';
+import { RegisterDto, editProfileParam, ShippingAddressDto, RequestOtpParam, ResetPasswordParam, UserActivationParam } from '../dto/users.dto';
 import { UserEntity } from '../entities/users.entity';
 import { ResponseBody } from '../../utils/response';
 import { UsersService } from '../services/users.service';
@@ -64,5 +64,11 @@ export class UsersController {
   @Post('reset-password')
   async resetPassword(@Body() param: ResetPasswordParam) {
     return this.userService.resetPassword(param)
+  }
+
+  @UsePipes(ValidationPipe)
+  @Post('activation')
+  async activateUser(@Body() param: UserActivationParam) {
+    return this.userService.activateUser(param);
   }
 }
