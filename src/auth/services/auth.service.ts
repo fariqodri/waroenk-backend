@@ -23,6 +23,9 @@ export class AuthService {
     } catch (err) {
       throw new BadRequestException(new ResponseBody(null, 'invalid email or password'))
     }
+    if (!user.is_active) {
+      throw new BadRequestException(new ResponseBody(null, 'user is not active yet'))
+    }
     const isPasswordValid = await bcrypt.compare(password, userPassword)
     if (isPasswordValid) {
       const payload = { sub: user.id, role: user.role };
