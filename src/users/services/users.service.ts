@@ -240,9 +240,20 @@ export class UsersService {
         code: nanoid(11)
       }
       await this.userConfirmationRepo.insert(newConfirmationCode);
-      //email content tanya ilmi
-      const emailContent = `${user.email}/${newConfirmationCode}`;
-      await this.sendMail(user.email, 'Konfirmasi Akun Waroenk UMKM', emailContent)
+      
+      const emailContent = `Halo ${user.full_name},
+      <br><br>
+      Silahkan klik link berikut untuk aktivasi akun Waroenk UMKM anda agar dapat login dan melanjutkan transaksi anda:
+      <br><br>
+      <a>https://bukawaroenk.co.id/#/confirmation-success?email=${user.email}&code=${newConfirmationCode}</a>
+      <br><br>
+      ============================================================
+      Hi ${user.full_name},
+      <br><br>
+      Please click the link below to activate your Waroenk UMKM account so you can log in and continue your transaction:
+      <br><br>
+      <a>https://bukawaroenk.co.id/#/confirmation-success?email=${user.email}&code=${newConfirmationCode}</a>`;
+      await this.sendMail(user.email, 'Aktivasi Akun Waroenk UMKM', emailContent)
       return plainToClass(UserEntity, user);
     } catch (err) {
       const errMessage: string = err.message;
