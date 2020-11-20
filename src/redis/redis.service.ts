@@ -17,15 +17,26 @@ export class RedisService {
     })
   }
 
-  async set(key: string, value: any, expirationTime: number = 60): Promise<void> {
+  async set(key: string, value: any, expirationTime?: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.redisClient.set(key, JSON.stringify(value), 'EX', expirationTime, (err, _) => {
-        if (err) {
-          reject(err)
-          return
-        }
-        resolve()
-      })
+      if (expirationTime === undefined) {
+        this.redisClient.set(key, JSON.stringify(value), (err, _) => {
+          if (err) {
+            reject(err)
+            return
+          }
+          resolve()
+        })  
+      } else {
+        this.redisClient.set(key, JSON.stringify(value), 'EX', expirationTime, (err, _) => {
+          if (err) {
+            reject(err)
+            return
+          }
+          resolve()
+        })
+      }
+      
     })
   }
 }
