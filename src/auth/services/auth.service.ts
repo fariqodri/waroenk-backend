@@ -38,7 +38,12 @@ export class AuthService {
 
   async logout(token: string, expiredAt: number, issuedAt: number): Promise<ResponseBody<null>> {
     try {
-      await this.redisService.set(token, 1, expiredAt - issuedAt)
+      const duration = expiredAt - issuedAt
+      if (isNaN(duration)) {
+        await this.redisService.set(token, 1)
+      } else {
+        await this.redisService.set(token, 1, duration)
+      }
       return new ResponseBody(null)
     } catch (err) {
       throw err
