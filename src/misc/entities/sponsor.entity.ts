@@ -12,6 +12,9 @@ export class SponsorEntity {
   @Column()
   type: "slider" | "sponsor"
 
+  @Column({ default: 0 })
+  size: number
+
   @Column({ nullable: true })
   deleted_at: Date
 
