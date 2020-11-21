@@ -15,4 +15,5 @@ export class LocationQuery {
 export class SponsorParam {
   image: string
   type: "slider" | "sponsor"
+  size: number
 }

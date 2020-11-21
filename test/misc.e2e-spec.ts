@@ -234,6 +234,7 @@ describe('GET Product and Categories (e2e)', () => {
       id: '1',
       image: 'image.com',
       type: 'sponsor',
+      size: 0,
       deleted_at: null
     }
     await getRepository(SponsorEntity).insert(sponsor);
