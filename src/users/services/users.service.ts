@@ -101,7 +101,7 @@ export class UsersService {
     <br><br>
     Silahkan klik link berikut untuk merubah password anda:
     <br><br>
-    <a href="${link}">atur ulang password</a>
+    <a href="${link}">${link}</a>
     <br><br>
     Mohon untuk tidak membagikan link tersebut ke orang lain. Link tersebut hanya dapat digunakan satu kali.
     <br>
@@ -117,7 +117,7 @@ export class UsersService {
     <br><br>
     Simply click on the link to set a new password: 
     <br><br>
-    <a href="${link}">reset password</a>
+    <a href="${link}">${link}</a>
     <br><br>
     Keep this link privately, don't give it to anyone. This link only valid for one-time password reset.
     <br>
@@ -246,14 +246,14 @@ export class UsersService {
       <br><br>
       Silahkan klik link berikut untuk aktivasi akun Waroenk UMKM anda agar dapat login dan melanjutkan transaksi anda:
       <br><br>
-      <a href="${link}">aktivasi akun</a>
+      <a href="${link}">${link}</a>
       <br><br>
       ============================================================
       Hi ${user.full_name},
       <br><br>
       Please click the link below to activate your Waroenk UMKM account so you can log in and continue your transaction:
       <br><br>
-      <a href="${link}">activate account</a>`;
+      <a href="${link}">${link}</a>`;
       await this.sendMail(user.email, 'Aktivasi Akun Waroenk UMKM', emailContent)
       return plainToClass(UserEntity, user);
     } catch (err) {
