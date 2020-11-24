@@ -91,7 +91,8 @@ export class UsersService {
       user: user,
       otp: nanoid(11)
     }
-    await this.userRecoveryRepo.insert(newOtp)
+    await this.userRecoveryRepo.insert(newOtp);
+    const link = `https://bukawaroenk.co.id/?email=${param.email}&otp=${newOtp.otp}`;
     const emailContent = `Halo ${user.full_name}!
     <br>
     Kami telah menerima permintaan pengaturan ulang password untuk akun Waroenk UMKM anda.
@@ -100,7 +101,7 @@ export class UsersService {
     <br><br>
     Silahkan klik link berikut untuk merubah password anda:
     <br><br>
-    <a>https://bukawaroenk.co.id/?email=${param.email}&otp=${newOtp.otp}</a>
+    <a href="${link}">atur ulang password</a>
     <br><br>
     Mohon untuk tidak membagikan link tersebut ke orang lain. Link tersebut hanya dapat digunakan satu kali.
     <br>
@@ -116,7 +117,7 @@ export class UsersService {
     <br><br>
     Simply click on the link to set a new password: 
     <br><br>
-    <a>https://bukawaroenk.co.id/?email=${param.email}&otp=${newOtp.otp}</a>
+    <a href="${link}">reset password</a>
     <br><br>
     Keep this link privately, don't give it to anyone. This link only valid for one-time password reset.
     <br>
@@ -240,19 +241,19 @@ export class UsersService {
         code: nanoid(11)
       }
       await this.userConfirmationRepo.insert(newConfirmationCode);
-      
+      const link = `https://bukawaroenk.co.id/#/confirmation-success?email=${user.email}&code=${newConfirmationCode.code}`;
       const emailContent = `Halo ${user.full_name},
       <br><br>
       Silahkan klik link berikut untuk aktivasi akun Waroenk UMKM anda agar dapat login dan melanjutkan transaksi anda:
       <br><br>
-      <a>https://bukawaroenk.co.id/#/confirmation-success?email=${user.email}&code=${newConfirmationCode.code}</a>
+      <a href="${link}">aktivasi akun</a>
       <br><br>
       ============================================================
       Hi ${user.full_name},
       <br><br>
       Please click the link below to activate your Waroenk UMKM account so you can log in and continue your transaction:
       <br><br>
-      <a>https://bukawaroenk.co.id/#/confirmation-success?email=${user.email}&code=${newConfirmationCode.code}</a>`;
+      <a href="${link}">activate account</a>`;
       await this.sendMail(user.email, 'Aktivasi Akun Waroenk UMKM', emailContent)
       return plainToClass(UserEntity, user);
     } catch (err) {
