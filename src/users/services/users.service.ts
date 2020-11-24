@@ -245,14 +245,14 @@ export class UsersService {
       <br><br>
       Silahkan klik link berikut untuk aktivasi akun Waroenk UMKM anda agar dapat login dan melanjutkan transaksi anda:
       <br><br>
-      <a>https://bukawaroenk.co.id/#/confirmation-success?email=${user.email}&code=${newConfirmationCode}</a>
+      <a>https://bukawaroenk.co.id/#/confirmation-success?email=${user.email}&code=${newConfirmationCode.code}</a>
       <br><br>
       ============================================================
       Hi ${user.full_name},
       <br><br>
       Please click the link below to activate your Waroenk UMKM account so you can log in and continue your transaction:
       <br><br>
-      <a>https://bukawaroenk.co.id/#/confirmation-success?email=${user.email}&code=${newConfirmationCode}</a>`;
+      <a>https://bukawaroenk.co.id/#/confirmation-success?email=${user.email}&code=${newConfirmationCode.code}</a>`;
       await this.sendMail(user.email, 'Aktivasi Akun Waroenk UMKM', emailContent)
       return plainToClass(UserEntity, user);
     } catch (err) {
