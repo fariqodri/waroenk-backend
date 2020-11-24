@@ -64,8 +64,8 @@ export class AgendaService {
       });
     }
     if (query.location) {
-      queryBuilder = queryBuilder.andWhere('LOWER(agendas.location) IN (:locations)', 
-        { locations: query.location.toLowerCase() });
+      queryBuilder = queryBuilder.andWhere('LOWER(agendas.location) IN (:...locations)', 
+        { locations: query.location.toLowerCase().split(',') });
     }
     if (query.type) {
       queryBuilder = queryBuilder.andWhere('LOWER(agendas.type) LIKE :type', {
@@ -129,8 +129,8 @@ export class AgendaService {
       });
     }
     if (query.location) {
-      queryBuilder = queryBuilder.andWhere('LOWER(agendas.location) IN (:locations)', 
-        { locations: query.location.toLowerCase() });
+      queryBuilder = queryBuilder.andWhere('LOWER(agendas.location) IN (:...locations)', 
+        { locations: query.location.toLowerCase().split(',') });
     }
     if (query.type) {
       queryBuilder = queryBuilder.andWhere('LOWER(agendas.type) LIKE :type', {
@@ -182,8 +182,8 @@ export class AgendaService {
   async detailAgenda(id: string, userId: string): Promise<ResponseBody<any>> {
     const agenda = await this.agendaRepo.findOneOrFail(id, { relations: ['users'] })
     const users = agenda.users
-    let isMyAgenda: boolean = false
-    for (var i in users) {
+    let isMyAgenda = false
+    for (const i in users) {
       if (users[i].id == userId) {
         isMyAgenda = true
         break
