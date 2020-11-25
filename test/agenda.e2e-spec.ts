@@ -78,7 +78,7 @@ describe('Agenda (e2e)', () => {
   
   it('Query agenda with results', () => {
     return request(app.getHttpServer())
-      .get('/agenda?title=training-1&location=jakarta&type=pelatihan')
+      .get('/agenda?title=training-1&location=jakarta,bandung&type=pelatihan')
       .expect(200)
       .expect({
         message: 'ok',

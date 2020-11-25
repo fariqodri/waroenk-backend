@@ -2,11 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ResponseBody, ResponseListBody } from '../../utils/response';
 import { ProductRepository } from '../repositories/product.repository';
 import { ProductQuery, ProductResponse } from '../dto/product.dto';
+import { CategoryRepository } from '../repositories/category.repository';
 
 @Injectable()
 export class ProductsService {
   constructor(
-    private productRepository: ProductRepository) {}
+    private productRepository: ProductRepository,
+    private categoryRepository: CategoryRepository
+  ) {}
 
   async findAll(param: ProductQuery): Promise<ResponseListBody<ProductResponse[]>> {
     let products: any[];
@@ -23,8 +26,8 @@ export class ProductsService {
       });
     }
     if (param.categories) {
-      queryBuilder = queryBuilder.andWhere('seller_category.categoryId IN (:categories)', 
-        { categories: param.categories });
+      queryBuilder = queryBuilder.andWhere('seller_category.categoryId IN (:...categories)', 
+        { categories: param.categories.split(',') });
     }
     if (param.price_from) {
       queryBuilder = queryBuilder.andWhere(
