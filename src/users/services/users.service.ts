@@ -92,7 +92,7 @@ export class UsersService {
       otp: nanoid(11)
     }
     await this.userRecoveryRepo.insert(newOtp);
-    const link = `https://bukawaroenk.co.id/?email=${param.email}&otp=${newOtp.otp}`;
+    const link = `https://bukawaroenk.co.id/#/reset-password?email=${param.email}&otp=${newOtp.otp}`;
     const emailContent = `Halo ${user.full_name}!
     <br>
     Kami telah menerima permintaan pengaturan ulang password untuk akun Waroenk UMKM anda.
