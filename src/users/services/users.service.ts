@@ -242,18 +242,19 @@ export class UsersService {
       }
       await this.userConfirmationRepo.insert(newConfirmationCode);
       const link = `https://bukawaroenk.co.id/#/confirmation-success?email=${user.email}&code=${newConfirmationCode.code}`;
+      const linkElvan = `http://localhost:8000/confirmation-success?email=${user.email}&code=${newConfirmationCode.code}`
       const emailContent = `Halo ${user.full_name},
       <br><br>
       Silahkan klik link berikut untuk aktivasi akun Waroenk UMKM anda agar dapat login dan melanjutkan transaksi anda:
       <br><br>
-      <a href="${link}">${link}</a>
+      <a href="${linkElvan}">${linkElvan}</a>
       <br><br>
       ============================================================
       Hi ${user.full_name},
       <br><br>
       Please click the link below to activate your Waroenk UMKM account so you can log in and continue your transaction:
       <br><br>
-      <a href="${link}">${link}</a>`;
+      <a href="${linkElvan}">${linkElvan}</a>`;
       await this.sendMail(user.email, 'Aktivasi Akun Waroenk UMKM', emailContent)
       return plainToClass(UserEntity, user);
     } catch (err) {
