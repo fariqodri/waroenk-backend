@@ -20,6 +20,9 @@ export class FileUploadController {
         return cb(new BadRequestException(new ResponseBody(null, 'file type not allowed')), false)
       }
       return cb(null, true)
+    },
+    limits: {
+      fieldSize: 20000 // 20 MB
     }
   }))
   uploadFile(@UploadedFile() file) {
