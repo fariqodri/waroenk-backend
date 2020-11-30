@@ -12,6 +12,7 @@ import { ShopProvider } from '../../shop/shop.provider';
 import { OrderProvider } from '../../order/providers/order.provider';
 import { OrderItem } from '../../order/entities/order-item.entity';
 import { ChatProvider } from '../providers/chat.provider';
+import { ProductEntity } from '../../products/entities/product.entity';
 
 @Injectable()
 export class ChatService {
@@ -141,8 +142,7 @@ export class ChatService {
         'order.id',
         'order.status',
         'order.fare',
-        'chat.date',
-        'chat.time',
+        'chat.timestampMillis',
         'chat.read_by_receiver',
         'chat.type',
         'chat.image_url',
@@ -155,11 +155,20 @@ export class ChatService {
             .select('COUNT(1)'),
         'order_title',
       )
+      .addSelect(
+        qb => {
+          return qb
+            .select('SUM(p.price_per_quantity * o.quantity)', 'price')
+            .from(OrderItem, 'o')
+            .leftJoin(ProductEntity, 'p', 'o.productId = p.id')
+            .groupBy('orderId')
+        },
+        'order_price'
+      )
       .execute();
     const result = res.map(r => ({
       id: r.chat_id,
-      date: r.chat_date,
-      time: r.chat_time,
+      timestampMillis: r.chat_timestampMillis,
       text: r.chat_text,
       read_by_receiver: Boolean(r.chat_read_by_receiver),
       type: r.chat_type,
@@ -181,7 +190,7 @@ export class ChatService {
           : {
               id: r.order_id,
               status: r.order_status,
-              fare: r.order_fare,
+              fare: r.order_fare + parseInt(r.order_price),
               title: `${r.order_title} Produk`,
             },
       sent_by_me: r.sender_id === userId,
