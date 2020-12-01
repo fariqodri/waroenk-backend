@@ -142,7 +142,6 @@ export class ChatService {
         'order.id',
         'order.status',
         'order.fare',
-        'chat.timestampMillis',
         'chat.read_by_receiver',
         'chat.type',
         'chat.image_url',
@@ -165,10 +164,15 @@ export class ChatService {
         },
         'order_price'
       )
+      .addSelect("FLOOR(UNIX_TIMESTAMP(chat.created_at) * 1000)", "chat_timestamp")
+      .addSelect("DATE_FORMAT(CONVERT_TZ(chat.created_at, '+00:00', '+07:00'), '%Y-%m-%d')", "chat_date")
+      .addSelect("DATE_FORMAT(CONVERT_TZ(chat.created_at, '+00:00', '+07:00'), '%H:%i:%s')", "chat_time")
       .execute();
     const result = res.map(r => ({
       id: r.chat_id,
-      timestampMillis: r.chat_timestampMillis,
+      date: r.chat_date,
+      time: r.chat_time,
+      timestampMillis: Number(r.chat_timestamp),
       text: r.chat_text,
       read_by_receiver: Boolean(r.chat_read_by_receiver),
       type: r.chat_type,
@@ -190,7 +194,7 @@ export class ChatService {
           : {
               id: r.order_id,
               status: r.order_status,
-              fare: r.order_fare + parseInt(r.order_price),
+              fare: r.order_fare + Number(r.order_price),
               title: `${r.order_title} Produk`,
             },
       sent_by_me: r.sender_id === userId,
