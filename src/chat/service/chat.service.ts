@@ -160,6 +160,7 @@ export class ChatService {
             .select('SUM(p.price_per_quantity * o.quantity)', 'price')
             .from(OrderItem, 'o')
             .leftJoin(ProductEntity, 'p', 'o.productId = p.id')
+            .where('o.orderId = chat.orderId')
             .groupBy('orderId')
         },
         'order_price'
