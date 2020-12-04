@@ -113,10 +113,10 @@ export class RoomService {
       const sellerUser = seller.user
       const resp = await this.chatRoomRepo.findOneOrFail({
         where: {
-          buyer: {
+          participant_one: {
             id: userId
           },
-          seller: {
+          participant_two: {
             id: sellerUser.id
           }
         },
@@ -125,6 +125,27 @@ export class RoomService {
       return resp
     } catch(err) {
       throw new NotFoundException(new ResponseBody(null, 'seller or chat room not found'))
+    }
+  }
+
+  async getChatRoomByParticipantId(userId: string, participantId: string): Promise<ChatRoomEntity> {
+    try {
+      const resp = await this.chatRoomRepo.findOneOrFail({
+        where: [
+          {
+            participant_one: { id: userId },
+            participant_two: { id: participantId }
+          },
+          {
+            participant_one: { id: participantId },
+            participant_two: { id: userId }
+          }
+        ],
+        select: ['id']
+      })
+      return resp
+    } catch (err) {
+      throw new NotFoundException(new ResponseBody(null, 'chat room not found'))
     }
   }
 }

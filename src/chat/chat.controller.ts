@@ -61,6 +61,14 @@ export class ChatController {
     return new ResponseBody(res)
   }
 
+  @Get('rooms/participant/:participantUserId')
+  @UseGuards(JwtAuthGuard)
+  async getRoomWithParticipant(@Req() request: Request, @Param('participantUserId') participantId: string) {
+    const { userId } = request.user as { userId: string }
+    const res = await this.roomService.getChatRoomByParticipantId(userId, participantId)
+    return new ResponseBody(res)
+  }
+
   @Get('rooms/:id')
   @UseGuards(JwtAuthGuard)
   async chatsInRoom(@Param('id') roomId: string, @Req() request: Request) {

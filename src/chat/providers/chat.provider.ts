@@ -59,12 +59,12 @@ export class ChatProvider {
     const room = await this.chatRoomRepo.findOne({
       where: [
         {
-          buyer: sender,
-          seller: receiver,
+          participant_one: sender,
+          participant_two: receiver,
         },
         {
-          buyer: receiver,
-          seller: sender,
+          participant_one: receiver,
+          participant_two: sender,
         },
       ],
     });
@@ -98,8 +98,8 @@ export class ChatProvider {
   ) {
     const room = this.chatRoomRepo.create({
       id: nanoid(11),
-      buyer: sender,
-      seller: receiver,
+      participant_one: sender,
+      participant_two: receiver,
     });
     const chat = this.chatRepo.create({
       ...baseChat,
