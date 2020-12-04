@@ -50,12 +50,6 @@ export class UserEntity {
   @OneToMany(type => OrderEntity, order => order.user)
   orders?: OrderEntity[]
 
-  @OneToMany(type => ChatRoomEntity, room => room.buyer)
-  chats_as_buyer?: ChatRoomEntity[]
-
-  @OneToMany(type => ChatRoomEntity, room => room.seller)
-  chats_as_seller?: ChatRoomEntity[]
-
   @ManyToMany(type => AgendaEntity, agenda => agenda.users, { eager: true })
   @JoinTable()
   savedAgendas?: AgendaEntity[]

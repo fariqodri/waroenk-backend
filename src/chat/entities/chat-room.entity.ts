@@ -3,16 +3,16 @@ import { UserEntity } from "../../users/entities/users.entity";
 import { ChatEntity } from "./chat.entity";
 
 @Entity({ name: 'chat_rooms' })
-@Unique(['buyer', 'seller'])
+@Unique(['participant_one', 'participant_two'])
 export class ChatRoomEntity {
   @PrimaryColumn()
   id: string
 
-  @ManyToOne(type => UserEntity, user => user.chats_as_buyer)
-  buyer: UserEntity
+  @ManyToOne(type => UserEntity)
+  participant_one: UserEntity
 
-  @ManyToOne(type => UserEntity, user => user.chats_as_seller)
-  seller: UserEntity
+  @ManyToOne(type => UserEntity)
+  participant_two: UserEntity
 
   @OneToMany(type => ChatEntity, chat => chat.room)
   chats?: ChatEntity[]
