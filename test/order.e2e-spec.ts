@@ -18,6 +18,7 @@ import { SellerAttribute } from "../src/users/entities/seller.entity";
 import { UserEntity } from "../src/users/entities/users.entity";
 import { entities } from "./dependencies";
 import { SellerCategory } from "../src/products/entities/seller-category.entity";
+import { LoggerModule } from "nestjs-pino";
 
 const fakeRedisClientProvider = {
   set: jest.fn().mockImplementation((key, value, mode, duration, cb) => cb(null, 'OK')),
@@ -321,7 +322,8 @@ describe('Order e2e test', () => {
         }),
         AuthModule,
         RedisModule.register({}),
-        JwtModule.register({})
+        JwtModule.register({}),
+        LoggerModule.forRoot()
       ]
     })
       .overrideGuard(JwtAuthGuard)

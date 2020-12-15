@@ -29,6 +29,6 @@ export class AuthController {
   logout(@Req() req: Request) {
     const [_, token] = req.headers.authorization.split(" ")
     const session: { userId: string, expiredAt: number, issuedAt: number } = req.user as { userId: string, expiredAt: number, issuedAt: number }
-    return this.authService.logout(token, session.expiredAt, session.issuedAt)
+    return this.authService.logout(token, session)
   }
 }

@@ -5,6 +5,7 @@ import { ProposalDataRepository } from '../repositories/proposal-data.repository
 import { ProposalItemRepository } from '../repositories/proposal-item.repository';
 import { ProposalController } from './proposal.controller';
 import { UserRepository } from '../../users/repositories/users.repository';
+import { LoggerModule } from 'nestjs-pino';
 
 jest.mock('../repositories/proposal.repository')
 jest.mock('../repositories/proposal-data.repository')
@@ -17,7 +18,8 @@ describe('Proposal Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProposalController],
-      providers: [ProposalService, ProposalRepository, ProposalDataRepository, ProposalItemRepository, UserRepository]
+      providers: [ProposalService, ProposalRepository, ProposalDataRepository, ProposalItemRepository, UserRepository],
+      imports: [LoggerModule.forRoot()]
     }).compile();
 
     controller = module.get<ProposalController>(ProposalController);

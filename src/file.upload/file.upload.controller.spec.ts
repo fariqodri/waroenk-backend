@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from 'nestjs-pino';
 import { FileUploadController } from './file.upload.controller';
 import { FileUploadService } from './file.upload.service';
 
@@ -8,7 +9,8 @@ describe('File.Upload Controller', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FileUploadController],
-      providers: [FileUploadService]
+      providers: [FileUploadService],
+      imports: [LoggerModule.forRoot()]
     }).compile();
 
     controller = module.get<FileUploadController>(FileUploadController);

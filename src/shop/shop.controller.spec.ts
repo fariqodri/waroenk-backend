@@ -8,6 +8,7 @@ import { CategoryRepository } from '../products/repositories/category.repository
 import { OrderRepository } from '../order/repositories/order.repository';
 import { SellerBankRepository } from '../users/repositories/seller-bank.repository';
 import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
+import { LoggerModule } from 'nestjs-pino';
 
 describe('Shop Controller', () => {
   let controller: ShopController;
@@ -24,7 +25,8 @@ describe('Shop Controller', () => {
         OrderRepository,
         SellerBankRepository,
         SellerCategoryRepository
-      ]
+      ],
+      imports: [LoggerModule.forRoot()]
     }).compile();
 
     controller = module.get<ShopController>(ShopController);

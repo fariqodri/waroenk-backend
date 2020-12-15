@@ -13,6 +13,7 @@ import { getRepository, getConnection } from 'typeorm';
 import { Test } from '@nestjs/testing';
 import { PostModule } from '../src/post/post.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LoggerModule } from 'nestjs-pino';
 
 describe('Post E2E', () => {
   let app: INestApplication
@@ -57,7 +58,8 @@ describe('Post E2E', () => {
         }),
         AuthModule,
         RedisModule.register({}),
-        ShopModule
+        ShopModule,
+        LoggerModule.forRoot()
       ],
     })
       .overrideGuard(JwtAuthGuard)

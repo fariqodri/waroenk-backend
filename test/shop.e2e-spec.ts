@@ -19,6 +19,7 @@ import { OrderEntity } from "../src/order/entities/order.entity";
 import { OrderItem } from "../src/order/entities/order-item.entity";
 import { SellerBank } from "../src/users/entities/seller-bank.entity";
 import { SellerCategory } from "../src/products/entities/seller-category.entity";
+import { LoggerModule } from "nestjs-pino";
 
 
 const fakeRedisClientProvider = {
@@ -133,7 +134,8 @@ describe('Shop E2E', () => {
         AuthModule,
         RedisModule.register({}),
         JwtModule.register({}),
-        ShopModule
+        ShopModule,
+        LoggerModule.forRoot()
       ]
     })
       .overrideGuard(JwtAuthGuard)

@@ -10,6 +10,7 @@ import { OptionalJwtAuthGuard } from '../src/auth/guards/optional-jwt-auth.guard
 import { RedisClientProvider } from '../src/redis/redis.client.provider';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { entities } from './dependencies';
+import { LoggerModule } from 'nestjs-pino'
 
 describe('Agenda (e2e)', () => {
   let app: INestApplication;
@@ -65,6 +66,7 @@ describe('Agenda (e2e)', () => {
           synchronize: true,
           entities: entities,
         }),
+        LoggerModule.forRoot()
       ],
     }).compile();
     app = moduleFixture.createNestApplication();
@@ -300,6 +302,7 @@ describe('Agenda with users (e2e)', () => {
           synchronize: true,
           entities: entities,
         }),
+        LoggerModule.forRoot()
       ],
     })
       .overrideGuard(JwtAuthGuard)
@@ -421,6 +424,7 @@ describe('Agenda with optional login (e2e)', () => {
           synchronize: true,
           entities: entities,
         }),
+        LoggerModule.forRoot()
       ],
     })
       .overrideProvider(RedisClientProvider)

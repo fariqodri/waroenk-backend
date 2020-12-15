@@ -13,6 +13,7 @@ import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { entities } from './dependencies';
 import { SellerCategory } from '../src/products/entities/seller-category.entity';
+import { LoggerModule } from 'nestjs-pino';
 
 const fakeRedisClientProvider = {
   set: jest
@@ -144,6 +145,7 @@ describe('Discussion (e2e)', () => {
           logging: ['error'],
           entities: entities,
         }),
+        LoggerModule.forRoot()
       ],
     })
       .overrideGuard(JwtAuthGuard)

@@ -7,6 +7,7 @@ import { ProductRepository } from '../../products/repositories/product.repositor
 import { OrderItemRepository } from '../repositories/order-item.repository';
 import { OrderController } from './order.controller';
 import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
+import { LoggerModule } from 'nestjs-pino';
 
 describe('Order Controller', () => {
   let controller: OrderController;
@@ -22,6 +23,7 @@ describe('Order Controller', () => {
         UserRepository, 
         ProductRepository,
         SellerAttributeRepository],
+      imports: [LoggerModule.forRoot()]
     }).compile();
 
     controller = module.get<OrderController>(OrderController);

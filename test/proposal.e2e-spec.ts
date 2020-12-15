@@ -1,6 +1,7 @@
 import { ExecutionContext, INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LoggerModule } from 'nestjs-pino';
 import * as request from 'supertest';
 import { getConnection, getRepository } from 'typeorm';
 import { JwtAuthGuard } from '../src/auth/guards/jwt-auth.guard';
@@ -93,6 +94,7 @@ describe('Proposals (e2e)', () => {
           synchronize: true,
           entities: entities,
         }),
+        LoggerModule.forRoot()
       ],
     })
       .overrideGuard(JwtAuthGuard)

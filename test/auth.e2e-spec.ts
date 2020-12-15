@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { LoggerModule } from 'nestjs-pino';
 import * as request from 'supertest';
 import { getConnection } from 'typeorm';
 import { AuthModule } from '../src/auth/auth.module';
@@ -44,7 +45,8 @@ describe('Login and Logout E2E Test', () => {
           dropSchema: true,
           synchronize: true,
           entities: entities
-        })
+        }),
+        LoggerModule.forRoot()
       ],
     })
       .overrideGuard(JwtAuthGuard)

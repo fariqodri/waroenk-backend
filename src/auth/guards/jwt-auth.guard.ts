@@ -2,11 +2,15 @@ import { Injectable, ExecutionContext, Inject, BadRequestException } from '@nest
 import { AuthGuard } from '@nestjs/passport';
 import { RedisService } from '../../redis/redis.service';
 import { ResponseBody } from '../../utils/response';
+import { PinoLogger, InjectPinoLogger } from "nestjs-pino"
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
 
-  constructor(@Inject('RedisService') private redisService: RedisService) {
+  constructor(
+    @Inject('RedisService') private redisService: RedisService,
+    @InjectPinoLogger(JwtAuthGuard.name) private logger: PinoLogger
+  ) {
     super()
   }
 
@@ -14,6 +18,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     try {
       await super.canActivate(context)
     } catch(err) {
+      this.logger.error(err)
       throw err
     }
     const request = context.switchToHttp().getRequest()
