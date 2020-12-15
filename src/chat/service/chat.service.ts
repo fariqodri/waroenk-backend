@@ -105,6 +105,7 @@ export class ChatService {
       room: {
         id: rest.room.id,
       },
+      chat_timestamp: Date.now()
     };
   }
 

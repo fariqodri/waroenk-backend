@@ -1,17 +1,17 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { ChatRoomRepository } from "../repositories/chat-room.repository";
-import { ChatEntity } from "../entities/chat.entity";
-import { ShopProvider } from "../../shop/shop.provider";
-import { ResponseBody } from "../../utils/response";
-import { ChatRepository } from "../repositories/chat.repository";
-import { ChatRoomEntity } from "../entities/chat-room.entity";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ChatRoomRepository } from '../repositories/chat-room.repository';
+import { ChatEntity } from '../entities/chat.entity';
+import { ShopProvider } from '../../shop/shop.provider';
+import { ResponseBody } from '../../utils/response';
+import { ChatRepository } from '../repositories/chat.repository';
+import { ChatRoomEntity } from '../entities/chat-room.entity';
 
 @Injectable()
 export class RoomService {
   constructor(
     private readonly chatRoomRepo: ChatRoomRepository,
     private readonly shopProvider: ShopProvider,
-    private readonly chatRepo: ChatRepository
+    private readonly chatRepo: ChatRepository,
   ) {}
 
   async getChatRoomsByUserId(
@@ -21,17 +21,17 @@ export class RoomService {
   ) {
     let query = this.chatRoomRepo
       .createQueryBuilder('room')
-      .innerJoin('room.buyer', 'buyer')
-      .innerJoin('room.seller', 'seller')
+      .innerJoin('room.participant_one', 'p1')
+      .innerJoin('room.participant_two', 'p2')
       .select([
         'room.id',
-        'buyer.id',
-        'buyer.role',
-        'buyer.full_name',
-        'seller.id',
-        'seller.role',
-        'seller.full_name',
-        'room.latest_chat_at'
+        'p1.id',
+        'p1.role',
+        'p1.full_name',
+        'p2.id',
+        'p2.role',
+        'p2.full_name',
+        'room.latest_chat_at',
       ])
       .addSelect(
         subQuery =>
@@ -46,7 +46,8 @@ export class RoomService {
       )
       .addSelect(subQuery => {
         return subQuery
-          .select(`
+          .select(
+            `
             CASE
               WHEN c.type = 'text' THEN 
                 CASE 
@@ -64,88 +65,91 @@ export class RoomService {
                   ELSE 'Anda mengirim sebuah detail order' 
                 END
             END AS last_chat
-          `)
-          .from(ChatEntity, 'c')
-          .where(
-            'c.roomId = room.id'
+          `,
           )
+          .from(ChatEntity, 'c')
+          .where('c.roomId = room.id')
           .innerJoin('c.receiver', 'r')
           .orderBy('c.created_at', 'DESC')
-          .limit(1)
+          .limit(1);
       }, 'last_chat')
       .orderBy('room.latest_chat_at', 'DESC');
-    if (role === 'seller') {
-      switch (chatsWith) {
-        case 'buyer':
-          query = query.where('seller.id = :id', { id: userId });
-          break;
-        case 'seller':
-          query = query.where('buyer.id = :id', { id: userId });
-          break;
-        default:
-          break;
-      }
-    } else if (role === 'buyer') {
-      query = query.where('buyer.id = :id', { id: userId });
-    }
-    const res = await query.getRawMany()
-    return res.map(v => ({
-      id: v.room_id,
-      buyer: {
-        id: v.buyer_id,
-        full_name: v.buyer_full_name,
-        role: v.buyer_role
-      },
-      seller: {
-        id: v.seller_id,
-        full_name: v.seller_full_name,
-        role: v.seller_role
-      },
-      last_chat: v.last_chat,
-      unread_chats: parseInt(v.unread_chats),
-      latest_chat_at: parseInt(v.room_latest_chat_at)
-    }))
+    const res = await query.getRawMany();
+    return res
+      .map(v => ({
+        id: v.room_id,
+        participant_one: {
+          id: v.p1_id,
+          full_name: v.p1_full_name,
+          role: v.p1_role,
+        },
+        participant_two: {
+          id: v.p2_id,
+          full_name: v.p2_full_name,
+          role: v.p2_role,
+        },
+        last_chat: v.last_chat,
+        unread_chats: parseInt(v.unread_chats),
+        latest_chat_at: parseInt(v.room_latest_chat_at),
+      }))
+      .filter(v => {
+        if (v.participant_one.id == userId) {
+          return v.participant_two.role == chatsWith;
+        } else if (v.participant_two.id == userId) {
+          return v.participant_one.role == chatsWith;
+        }
+      });
   }
 
-  async getChatRoomBySellerId(userId: string, sellerId: string): Promise<ChatRoomEntity> {
+  async getChatRoomBySellerId(
+    userId: string,
+    sellerId: string,
+  ): Promise<ChatRoomEntity> {
     try {
-      const seller = await this.shopProvider.getShopById(sellerId)
-      const sellerUser = seller.user
+      const seller = await this.shopProvider.getShopById(sellerId);
+      const sellerUser = seller.user;
       const resp = await this.chatRoomRepo.findOneOrFail({
         where: {
           participant_one: {
-            id: userId
+            id: userId,
           },
           participant_two: {
-            id: sellerUser.id
-          }
+            id: sellerUser.id,
+          },
         },
-        select: ['id']
-      })
-      return resp
-    } catch(err) {
-      throw new NotFoundException(new ResponseBody(null, 'seller or chat room not found'))
+        select: ['id'],
+      });
+      return resp;
+    } catch (err) {
+      throw new NotFoundException(
+        new ResponseBody(null, 'seller or chat room not found'),
+      );
     }
   }
 
-  async getChatRoomByParticipantId(userId: string, participantId: string): Promise<ChatRoomEntity> {
+  async getChatRoomByParticipantId(
+    userId: string,
+    participantId: string,
+  ): Promise<ChatRoomEntity> {
     try {
       const resp = await this.chatRoomRepo.findOneOrFail({
         where: [
           {
             participant_one: { id: userId },
-            participant_two: { id: participantId }
+            participant_two: { id: participantId },
           },
           {
             participant_one: { id: participantId },
-            participant_two: { id: userId }
-          }
+            participant_two: { id: userId },
+          },
         ],
-        select: ['id']
-      })
-      return resp
+        select: ['id'],
+      });
+      return resp;
     } catch (err) {
-      throw new NotFoundException(new ResponseBody(null, 'chat room not found'))
+      throw new NotFoundException(
+        new ResponseBody(null, 'chat room not found'),
+      );
     }
   }
 }
