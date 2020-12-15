@@ -93,6 +93,7 @@ export class RoomService {
         latest_chat_at: parseInt(v.room_latest_chat_at),
       }))
       .filter(v => {
+        if (chatsWith != 'buyer' && chatsWith != 'seller') return true
         if (v.participant_one.id == userId) {
           return v.participant_two.role == chatsWith;
         } else if (v.participant_two.id == userId) {
