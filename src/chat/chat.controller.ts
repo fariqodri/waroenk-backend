@@ -4,7 +4,7 @@ import { ValidationPipe } from '../utils/validation.pipe';
 import { RegisterDeviceDto, ChatDto } from './chat.dto';
 import { Request } from 'express';
 import { UsersService } from '../users/services/users.service';
-import { ResponseBody } from '../utils/response';
+import { ResponseBody, ResponseListBody } from '../utils/response';
 import { ChatService } from './service/chat.service';
 import { RoomService } from './service/room.service';
 
@@ -47,10 +47,10 @@ export class ChatController {
 
   @Get('rooms')
   @UseGuards(JwtAuthGuard)
-  async rooms(@Req() request: Request, @Query('with') chatsWith: 'seller' | 'buyer') {
+  async rooms(@Req() request: Request, @Query('with') chatsWith: 'seller' | 'buyer', @Query('page') page: number, @Query('limit') limit: number) {
     const { userId, role } = request.user as { userId: string, role: 'seller' | 'buyer' }
-    const res = await this.roomService.getChatRoomsByUserId(userId, role, chatsWith)
-    return new ResponseBody(res)
+    const res = await this.roomService.getChatRoomsByUserId(userId, role, chatsWith, page, limit)
+    return new ResponseListBody(res, 'ok', Number(page) || 1, Number(limit) || 10)
   }
 
   @Get('rooms/seller/:sellerId')
