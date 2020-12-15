@@ -5,6 +5,7 @@ import { ShopProvider } from '../../shop/shop.provider';
 import { ResponseBody } from '../../utils/response';
 import { ChatRepository } from '../repositories/chat.repository';
 import { ChatRoomEntity } from '../entities/chat-room.entity';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class RoomService {
@@ -12,17 +13,24 @@ export class RoomService {
     private readonly chatRoomRepo: ChatRoomRepository,
     private readonly shopProvider: ShopProvider,
     private readonly chatRepo: ChatRepository,
+    @InjectPinoLogger(RoomService.name) private logger: PinoLogger
   ) {}
 
   async getChatRoomsByUserId(
     userId: string,
     role: 'seller' | 'buyer',
     chatsWith: 'seller' | 'buyer',
+    page = 1,
+    limit = 10
   ) {
+    const skippedItems = (page - 1) * limit;
     let query = this.chatRoomRepo
       .createQueryBuilder('room')
+      .where('room.participantOneId = :userId OR room.participantTwoId = :userId', { userId })
       .innerJoin('room.participant_one', 'p1')
       .innerJoin('room.participant_two', 'p2')
+      .leftJoin('seller', 's1', 'p1.id = s1.userId')
+      .leftJoin('seller', 's2', 'p2.id = s2.userId')
       .select([
         'room.id',
         'p1.id',
@@ -32,6 +40,12 @@ export class RoomService {
         'p2.role',
         'p2.full_name',
         'room.latest_chat_at',
+        's1.shop_name',
+        's2.shop_name',
+        's1.id',
+        's2.id',
+        's1.image',
+        's2.image'
       ])
       .addSelect(
         subQuery =>
@@ -73,20 +87,28 @@ export class RoomService {
           .orderBy('c.created_at', 'DESC')
           .limit(1);
       }, 'last_chat')
-      .orderBy('room.latest_chat_at', 'DESC');
+      .orderBy('room.latest_chat_at', 'DESC')
+      .offset(skippedItems)
+      .limit(limit);
     const res = await query.getRawMany();
+    this.logger.info('Query: %o', query.getQueryAndParameters())
+    this.logger.info('Retrieved rooms: %o', res)
     return res
       .map(v => ({
         id: v.room_id,
         participant_one: {
           id: v.p1_id,
-          full_name: v.p1_full_name,
+          full_name: v.s1_shop_name || v.p1_full_name,
           role: v.p1_role,
+          seller_id: v.s1_id,
+          image: v.s1_image
         },
         participant_two: {
           id: v.p2_id,
-          full_name: v.p2_full_name,
+          full_name: v.s2_shop_name || v.p2_full_name,
           role: v.p2_role,
+          seller_id: v.s2_id,
+          image: v.s2_image
         },
         last_chat: v.last_chat,
         unread_chats: parseInt(v.unread_chats),
