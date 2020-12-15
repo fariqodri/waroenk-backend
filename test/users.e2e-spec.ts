@@ -22,6 +22,7 @@ import {
 } from './dependencies';
 import { LocationEntity } from '../src/misc/entities/location.entity';
 import { ShippingAddressEntity } from '../src/users/entities/shipping-address.entity';
+import { LoggerModule } from 'nestjs-pino';
 
 describe('Users E2E', () => {
   let app: INestApplication;
@@ -57,6 +58,7 @@ describe('Users E2E', () => {
         AuthModule,
         RedisModule.register({}),
         JwtModule.register({}),
+        LoggerModule.forRoot()
       ],
     })
       .overrideProvider(PermissionService)
@@ -238,6 +240,7 @@ describe("User's Shipping Address", () => {
         }),
         AuthModule,
         RedisModule.register({}),
+        LoggerModule.forRoot()
       ],
     })
       .overrideGuard(JwtAuthGuard)

@@ -13,6 +13,7 @@ import { OrderProvider } from '../../order/providers/order.provider';
 import { OrderItem } from '../../order/entities/order-item.entity';
 import { ChatProvider } from '../providers/chat.provider';
 import { ProductEntity } from '../../products/entities/product.entity';
+import { PinoLogger, InjectPinoLogger } from "nestjs-pino";
 
 @Injectable()
 export class ChatService {
@@ -22,15 +23,18 @@ export class ChatService {
     private readonly chatRepo: ChatRepository,
     private readonly shopProvider: ShopProvider,
     private readonly chatProvider: ChatProvider,
+    @InjectPinoLogger(ChatService.name) private logger: PinoLogger
   ) {}
 
   async chat(body: ChatDto, senderId: string, senderRole: 'seller' | 'buyer') {
     const sender = await this.userService.findUserById(senderId);
     const receiver = await this.userService.findUserById(body.receiver_user_id);
+    this.logger.info(`chat with sender %o and receiver %o`, sender, receiver)
     const seller =
       senderRole === 'seller'
         ? await this.shopProvider.getShopByUserId(sender.id)
         : await this.shopProvider.getShopByUserId(body.receiver_user_id);
+    this.logger.info(`chat with seller %o`, seller)
     const receiverDeviceToken = receiver.device_token;
     const { date, time, text, order_id } = body;
 
@@ -41,6 +45,7 @@ export class ChatService {
         select: ['id', 'fare', 'status'],
       });
       productsCount = await this.orderProvider.countProductsOfOrder(order_id);
+      this.logger.info(`chat with order %o and number of products ${productsCount}`, order)
     }
     const chat_id = nanoid(11);
     const baseChat: Partial<ChatEntity> = {
@@ -59,6 +64,7 @@ export class ChatService {
       sender,
       receiver,
     );
+    this.logger.info(`chat %o saved with room %o`, chat, room)
     const senderName =
       senderRole === 'seller' ? seller.shop_name : sender.full_name;
     let chatData: any, notificationBody: string;
@@ -93,6 +99,7 @@ export class ChatService {
         notificationBody = d3.notificationBody;
         break;
     }
+    this.logger.info(`chat data %o and notification "${notificationBody}" sent to device`, chatData)
     this.chatProvider.sendToDevice(
       receiverDeviceToken,
       chatData,

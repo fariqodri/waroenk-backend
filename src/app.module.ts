@@ -17,6 +17,7 @@ import { OrderModule } from './order/order.module';
 import { ChatModule } from './chat/chat.module';
 import { PostModule } from './post/post.module';
 import { AdminModule } from './admin/admin.module';
+import { LoggerModule } from 'nestjs-pino';
 
 @Controller('health')
 class HealthController {
@@ -47,7 +48,8 @@ class HealthController {
     }),
     ChatModule,
     PostModule,
-    AdminModule
+    AdminModule,
+    LoggerModule.forRoot()
   ],
   controllers: [HealthController]
 })

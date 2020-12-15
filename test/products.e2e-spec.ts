@@ -12,6 +12,7 @@ import { SellerAttribute } from '../src/users/entities/seller.entity';
 import { UserEntity } from '../src/users/entities/users.entity';
 import { entities } from './dependencies';
 import { SellerCategory } from '../src/products/entities/seller-category.entity';
+import { LoggerModule } from 'nestjs-pino';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
@@ -72,6 +73,7 @@ describe('GET Product and Categories (e2e)', () => {
           synchronize: true,
           entities: entities,
         }),
+        LoggerModule.forRoot()
       ],
     }).compile();
     app = moduleFixture.createNestApplication();

@@ -5,6 +5,7 @@ import { UserRepository } from '../../users/repositories/users.repository';
 import { ProductRepository } from '../../products/repositories/product.repository';
 import { DiscussionRepository } from '../repositories/discussion.repository';
 import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
+import { LoggerModule } from 'nestjs-pino';
 
 describe('Discussion Controller', () => {
   let controller: DiscussionController;
@@ -18,6 +19,7 @@ describe('Discussion Controller', () => {
         DiscussionRepository, 
         ProductRepository,
         SellerAttributeRepository],
+      imports: [LoggerModule.forRoot()]
     }).compile();
 
     controller = module.get<DiscussionController>(DiscussionController);

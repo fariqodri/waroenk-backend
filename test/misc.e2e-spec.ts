@@ -8,6 +8,7 @@ import { FaqEntity } from '../src/misc/entities/faq.entity';
 import { LocationEntity } from '../src/misc/entities/location.entity';
 import { MiscModule } from '../src/misc/misc.module';
 import { entities } from './dependencies';
+import { LoggerModule } from 'nestjs-pino';
 
 describe('GET Product and Categories (e2e)', () => {
   let app: INestApplication;
@@ -23,6 +24,7 @@ describe('GET Product and Categories (e2e)', () => {
           synchronize: true,
           entities: entities,
         }),
+        LoggerModule.forRoot()
       ],
     }).compile();
     app = moduleFixture.createNestApplication();

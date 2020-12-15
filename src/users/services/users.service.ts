@@ -28,6 +28,7 @@ import { UserRecoveryRepository } from '../repositories/user-recovery.repository
 import { UserConfirmationRepository } from '../repositories/user-confirmation.repository';
 import { UserRepository } from '../repositories/users.repository';
 import { UserConfirmation } from '../entities/user-confirmation.entity';
+import { PinoLogger, InjectPinoLogger } from "nestjs-pino";
 
 @Injectable()
 export class UsersService {
@@ -41,7 +42,8 @@ export class UsersService {
     private sellerRepo: SellerAttributeRepository,
     private shippingRepo: ShippingAddressRepository,
     private miscService: MiscService,
-    private readonly mailerService: MailerService
+    private readonly mailerService: MailerService,
+    @InjectPinoLogger(UsersService.name) private logger: PinoLogger
   ) { }
 
   async activateUser(param: UserActivationParam) {
@@ -137,11 +139,11 @@ export class UsersService {
         html: param,
       })
       .then((success) => {
-        console.log(success)
+        this.logger.info(`sendMail(${email}) %o`, success)
         return new ResponseBody(success)
       })
       .catch((err) => {
-        console.log(err)
+        this.logger.error(`sendMail(${email}) %o`, err)
         return new ResponseBody(err)
       });
   }

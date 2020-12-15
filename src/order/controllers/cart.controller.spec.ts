@@ -7,6 +7,7 @@ import { UserRepository } from '../../users/repositories/users.repository';
 import { ProductRepository } from '../../products/repositories/product.repository';
 import { OrderItemRepository } from '../repositories/order-item.repository';
 import { SellerAttributeRepository } from '../../users/repositories/seller.repository';
+import { LoggerModule } from 'nestjs-pino';
 
 
 describe('Cart Controller', () => {
@@ -23,6 +24,7 @@ describe('Cart Controller', () => {
         UserRepository, 
         ProductRepository,
         SellerAttributeRepository],
+      imports: [LoggerModule.forRoot()]
     }).compile();
 
     controller = module.get<CartController>(CartController);

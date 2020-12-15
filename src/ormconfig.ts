@@ -9,7 +9,7 @@ const config: ConnectionOptions = {
   database: process.env.DB_DATABASE,
   synchronize: false,
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
-  logging: 'all',
+  logging: process.env.NODE_ENV == 'production' || process.env.NODE_ENV == 'staging' ? ['error', 'warn'] : 'all',
   logger: "simple-console",
   migrationsRun: false,
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
