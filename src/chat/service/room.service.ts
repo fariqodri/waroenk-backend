@@ -94,33 +94,45 @@ export class RoomService {
     this.logger.info('Query: %o', query.getQueryAndParameters())
     this.logger.info('Retrieved rooms: %o', res)
     return res
-      .map(v => ({
-        id: v.room_id,
-        participant_one: {
+      .map(v => {
+        const res = {
+          id: v.room_id,
+          last_chat: v.last_chat,
+          unread_chats: parseInt(v.unread_chats),
+          latest_chat_at: parseInt(v.room_latest_chat_at),
+        }
+        const participantOne = {
           id: v.p1_id,
           full_name: v.s1_shop_name || v.p1_full_name,
           role: v.p1_role,
           seller_id: v.s1_id,
           image: v.s1_image
-        },
-        participant_two: {
+        }
+        const participantTwo = {
           id: v.p2_id,
           full_name: v.s2_shop_name || v.p2_full_name,
           role: v.p2_role,
           seller_id: v.s2_id,
           image: v.s2_image
-        },
-        last_chat: v.last_chat,
-        unread_chats: parseInt(v.unread_chats),
-        latest_chat_at: parseInt(v.room_latest_chat_at),
-      }))
+        }
+        if (v.p1_id == userId) {
+          return {
+            ...res,
+            self: participantOne,
+            other: participantTwo
+          }
+        }
+        if (v.p2_id == userId) {
+          return {
+            ...res,
+            self: participantTwo,
+            other: participantOne
+          }
+        }
+      })
       .filter(v => {
         if (chatsWith != 'buyer' && chatsWith != 'seller') return true
-        if (v.participant_one.id == userId) {
-          return v.participant_two.role == chatsWith;
-        } else if (v.participant_two.id == userId) {
-          return v.participant_one.role == chatsWith;
-        }
+        return v.other.role == chatsWith
       });
   }
 
