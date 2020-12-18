@@ -42,28 +42,36 @@ backend-docker-build-staging:
     - docker build . -t waroenkumkm/backend:$CI_COMMIT_SHORT_SHA
     - docker push waroenkumkm/backend:$CI_COMMIT_SHORT_SHA
 
-deploy-gcp:
-  image: google/cloud-sdk
-  stage: deploy-staging
+deploy-aws:
+  image: ubuntu:18.04
+  stage: deploy
   only:
     refs:
       - master
   before_script:
-    - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl
+    - apt-get update
+    - apt-get -y install curl
+    - apt-get install -y unzip
+    - apt-get -y install git
+    - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    - unzip awscliv2.zip
+    - ./aws/install
+    - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/kubectl
     - chmod +x ./kubectl
     - mv ./kubectl /usr/local/bin/kubectl
-    - gcloud auth activate-service-account --key-file="$GCP_SERVICE_ACCOUNT"
-    - gcloud config set project sound-abbey-292109
-    - gcloud config set container/cluster waroenk-staging
-    - gcloud config set compute/zone asia-southeast2-a
-    - gcloud container clusters get-credentials waroenk-staging --zone asia-southeast2-a
+    - curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
+    - chmod +x ./aws-iam-authenticator
+    - mv ./aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
     - export IMAGE_TAG=$CI_COMMIT_SHORT_SHA
   script:
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set default.region ap-southeast-1
+    - aws eks --region ap-southeast-1 update-kubeconfig --name waroenk
     - git clone https://$WAROENK_GITLAB_USERNAME:$WAROENK_GITLAB_PASSWORD@gitlab.com/waroenk-umkm/waroenk-infra.git kubernetes
-    - cd kubernetes/gcp-staging/backend
+    - cd staging/backend
     - sh ./env-staging.sh
     - kubectl apply -f backend-app.yaml
-
 
 ### PRODUCTION ###
 backend-docker-build-production:
