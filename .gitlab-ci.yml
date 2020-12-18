@@ -44,7 +44,7 @@ backend-docker-build-staging:
 
 deploy-aws:
   image: ubuntu:18.04
-  stage: deploy
+  stage: deploy-staging
   only:
     refs:
       - master
