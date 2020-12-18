@@ -69,7 +69,7 @@ deploy-aws:
     - aws configure set default.region ap-southeast-1
     - aws eks --region ap-southeast-1 update-kubeconfig --name waroenk
     - git clone https://$WAROENK_GITLAB_USERNAME:$WAROENK_GITLAB_PASSWORD@gitlab.com/waroenk-umkm/waroenk-infra.git kubernetes
-    - cd staging/backend
+    - cd kubernetes/staging/backend
     - sh ./env-staging.sh
     - kubectl apply -f backend-app.yaml
 
