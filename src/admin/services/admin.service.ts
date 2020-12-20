@@ -6,7 +6,7 @@ import { UserRepository } from "../../users/repositories/users.repository"
 import { SellerAttributeRepository } from "../../users/repositories/seller.repository"
 import { ResponseBody, ResponseListWithCountBody } from "../../utils/response"
 import { SellerAttribute } from "../../users/entities/seller.entity"
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam, CreateAgendaParam, EditAgendaParam, EditSellerCategoryParam } from "../dto/admin.dto"
+import { ListUsersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam, CreateAgendaParam, EditAgendaParam, EditSellerCategoryParam } from "../dto/admin.dto"
 import { UsersProvider } from "../../users/providers/users.provider"
 import { Like, Not, Between, In } from "typeorm"
 import { OrderRepository } from "../../order/repositories/order.repository"
@@ -168,8 +168,8 @@ export class AdminService {
     return new ResponseBody(response)
   }
 
-  async listBuyers(query: ListBuyersQuery) {
-    return this.userProvider.listBuyers(query)
+  async listBuyers(query: ListUsersQuery) {
+    return this.userProvider.listUsers(query)
   }
 
   async listProposal(param: ListProposalParam): Promise<ResponseBody<any>> {

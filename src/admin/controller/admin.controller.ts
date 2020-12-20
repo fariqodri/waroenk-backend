@@ -3,7 +3,7 @@ import { AdminService } from "../services/admin.service";
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RolePermissionGuard } from "../../auth/guards/role.permission.guard";
 import { Roles } from "../../utils/decorators";
-import { ListBuyersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam, CreateAgendaParam, EditSellerCategoryParam } from "../dto/admin.dto";
+import { ListUsersQuery, ListSellerQuery, EditSellerParam, CountOrderParam, ListProposalParam, ListDiscussionParam, CreateAgendaParam, EditSellerCategoryParam } from "../dto/admin.dto";
 import { ResponseListWithCountBody } from "../../utils/response";
 
 @Controller('admin')
@@ -20,7 +20,7 @@ export class AdminController {
     order = 'desc',
     active,
     name
-  }: ListBuyersQuery) {
+  }: ListUsersQuery) {
     const { total, result } = await this.service.listBuyers({
       page,
       limit,

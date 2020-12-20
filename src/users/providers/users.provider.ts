@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { UserRepository } from "../repositories/users.repository";
-import { ListBuyersQuery } from "../../admin/dto/admin.dto";
+import { ListUsersQuery } from "../../admin/dto/admin.dto";
 import { UserEntity } from "../entities/users.entity";
 
 @Injectable()
@@ -9,7 +9,7 @@ export class UsersProvider {
     private readonly userRepo: UserRepository
   ) {}
 
-  async listBuyers(query: ListBuyersQuery): Promise<{total: number, result: UserEntity[]}> {
+  async listUsers(query: ListUsersQuery): Promise<{total: number, result: UserEntity[]}> {
     const skippedItems = (query.page - 1) * query.limit;
     let order: 'ASC' | 'DESC';
     switch (query.order) {
@@ -25,7 +25,6 @@ export class UsersProvider {
     }
     let queryBuilder = this.userRepo
       .createQueryBuilder('user')
-      .where('user.role = :role', { role: 'buyer' })
       .orderBy(query.sort_by === 'created' ? 'user.created_at' : 'user.full_name', order)
       .select([
         'user.id',
