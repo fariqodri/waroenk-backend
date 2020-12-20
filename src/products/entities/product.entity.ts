@@ -31,7 +31,7 @@ export class ProductEntity {
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 0.00 })
   discount: number
 
-  @Column()
+  @Column({ length: 800 })
   description: string
 
   @Column('simple-array')

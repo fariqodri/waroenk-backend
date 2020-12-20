@@ -3,7 +3,7 @@ export class EditSellerParam {
   tier?: 1 | 2
 }
 
-export class ListBuyersQuery {
+export class ListUsersQuery {
   page: number;
   limit: number;
   sort_by: 'created' | 'name';
