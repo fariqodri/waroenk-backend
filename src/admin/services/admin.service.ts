@@ -143,11 +143,6 @@ export class AdminService {
   async countOrder(param: CountOrderParam): Promise<ResponseBody<any>> {
     const dateFrom = new Date(param.yearFrom, param.monthFrom-1, param.dayFrom, 0, 0, 0);
     const dateTo = new Date(param.yearTo, param.monthTo-1, param.dayTo, 23, 59, 59, 999);
-    // const orderCount = await this.orderRepo.count({
-    //   where: {
-    //     created_at: BetweenDate(dateFrom, dateTo)
-    //   }
-    // })
     const orderCount = await this.orderRepo.createQueryBuilder()
       .where(`created_at BETWEEN '${dateFrom.toISOString()}' AND '${dateTo.toISOString()}'`)
       .getCount();
