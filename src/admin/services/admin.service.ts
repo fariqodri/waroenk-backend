@@ -149,7 +149,7 @@ export class AdminService {
     //   }
     // })
     const orderCount = await this.orderRepo.createQueryBuilder()
-      .where(`created_at BETWEEN '${dateFrom.toISOString()} AND '${dateTo.toISOString()}'`,
+      .where(`created_at BETWEEN '${dateFrom.toISOString()} AND '${dateTo.toISOString()}'`)
       .getCount();
     return new ResponseBody({ count: orderCount });
   }
