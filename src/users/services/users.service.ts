@@ -133,7 +133,7 @@ export class UsersService {
       .mailerService
       .sendMail({
         to: email,
-        from: 'admin@bukawaroenk.co.id',
+        from: 'bukawaroenk@smakindo.co.id',
         subject: subject,
         text: 'reset password',
         html: param,
