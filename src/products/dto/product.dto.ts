@@ -9,6 +9,7 @@ export class ProductQuery {
   price_to?: number
   categories?: string
   sellerId?: string
+  sellerLocation?: string
 }
 
 export class ProductResponse {
