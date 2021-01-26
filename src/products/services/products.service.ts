@@ -59,6 +59,12 @@ export class ProductsService {
         { sellerId: param.sellerId },
       );
     }
+    if (param.sellerLocation) {
+      queryBuilder = queryBuilder.andWhere(
+        'seller.shop_address LIKE :location', 
+        { location: param.sellerLocation.trim() }
+      );
+    }
     queryBuilder = queryBuilder
       .offset(skippedItems)
       .limit(param.limit)
