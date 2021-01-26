@@ -62,7 +62,7 @@ export class ProductsService {
     if (param.sellerLocation) {
       queryBuilder = queryBuilder.andWhere(
         'seller.shop_address LIKE :location', 
-        { location: param.sellerLocation.trim() }
+        { location: `%${param.sellerLocation.trim()}%` }
       );
     }
     queryBuilder = queryBuilder
