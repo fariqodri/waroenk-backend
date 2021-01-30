@@ -2,13 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ResponseBody, ResponseListBody } from '../../utils/response';
 import { ProductRepository } from '../repositories/product.repository';
 import { ProductQuery, ProductResponse } from '../dto/product.dto';
-import { CategoryRepository } from '../repositories/category.repository';
+import { LocationRepository } from '../../misc/repositories/location.repository';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private productRepository: ProductRepository,
-    private categoryRepository: CategoryRepository
+    private locationRepository: LocationRepository
   ) {}
 
   async findAll(param: ProductQuery): Promise<ResponseListBody<ProductResponse[]>> {
@@ -60,9 +60,12 @@ export class ProductsService {
       );
     }
     if (param.sellerLocation) {
+      const locationName = await this.locationRepository.findOne({
+        where: { kode: param.sellerLocation }
+      })
       queryBuilder = queryBuilder.andWhere(
         'seller.shop_address LIKE :location', 
-        { location: `%${param.sellerLocation.trim()}%` }
+        { location: `%${locationName}%` }
       );
     }
     queryBuilder = queryBuilder
