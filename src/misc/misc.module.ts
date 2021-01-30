@@ -15,6 +15,10 @@ import { CategoryRepository } from '../products/repositories/category.repository
 import { SellerCategoryRepository } from '../products/repositories/seller-category.repository';
 import { SponsorRepository } from './repositories/sponsor.repository';
 import { SponsorService } from './services/sponsor.service';
+import { FileUploadModule } from '../file.upload/file.upload.module';
+import { SellerTermsConditionsController } from './controllers/terms-conditions.controller';
+import { SellerTermsConditionsRepository } from './repositories/terms-conditions.repository';
+import { SellerTermsConditionsService } from './services/terms-conditions.service';
 
 @Module({
   imports: [
@@ -27,11 +31,13 @@ import { SponsorService } from './services/sponsor.service';
       ProductRepository,
       CategoryRepository,
       SellerCategoryRepository,
-      SponsorRepository
+      SponsorRepository,
+      SellerTermsConditionsRepository
     ]),
+    FileUploadModule
   ],
-  controllers: [FaqController, LocationController, BulkUploadController, SponsorController],
-  providers: [MiscService, SponsorService],
+  controllers: [FaqController, LocationController, BulkUploadController, SponsorController, SellerTermsConditionsController],
+  providers: [MiscService, SponsorService, SellerTermsConditionsService],
   exports: [MiscService, SponsorService]
 })
 export class MiscModule {}
