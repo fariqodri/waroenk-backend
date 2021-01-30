@@ -8,13 +8,15 @@ import { CategoryRepository } from './repositories/category.repository';
 import { ProductRepository } from './repositories/product.repository';
 import { SellerCategoryRepository } from './repositories/seller-category.repository';
 import { UserRepository } from '../users/repositories/users.repository';
+import { LocationRepository } from '../misc/repositories/location.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
     CategoryRepository,
     ProductRepository,
     UserRepository,
-    SellerCategoryRepository
+    SellerCategoryRepository,
+    LocationRepository
   ])],
   controllers: [CategoriesController, ProductsController],
   providers: [CategoriesService, ProductsService],
