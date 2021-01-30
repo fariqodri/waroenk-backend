@@ -65,7 +65,7 @@ export class ProductsService {
       })
       queryBuilder = queryBuilder.andWhere(
         'seller.shop_address LIKE :location', 
-        { location: `%${locationName}%` }
+        { location: `%${locationName.nama}%` }
       );
     }
     queryBuilder = queryBuilder
