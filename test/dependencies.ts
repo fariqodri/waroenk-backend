@@ -22,6 +22,7 @@ import { SellerCategory } from '../src/products/entities/seller-category.entity'
 import { UserRecovery } from '../src/users/entities/user-recovery.entity';
 import { SponsorEntity } from '../src/misc/entities/sponsor.entity';
 import { UserConfirmation } from '../src/users/entities/user-confirmation.entity';
+import { SellerTermsConditionsEntity } from '../src/misc/entities/terms-conditions.entity';
 
 export const entities = [
   CategoryEntity,
@@ -46,7 +47,8 @@ export const entities = [
   SellerCategory,
   UserRecovery,
   SponsorEntity,
-  UserConfirmation
+  UserConfirmation,
+  SellerTermsConditionsEntity
 ];
 
 export const fakeJwtAuthGuardFactory = (session: any) => ({
