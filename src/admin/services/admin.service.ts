@@ -333,7 +333,8 @@ export class AdminService {
       home_address: ''
     }));
     for (const p of response) {
-      const shippingAddress: ShippingAddressEntity[] = await this.shippingRepo.find({
+      const shippingAddress = await this.shippingRepo.find({
+        relations: ['location'],
         where: {
           user: p.user.id
         }
