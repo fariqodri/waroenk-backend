@@ -332,8 +332,8 @@ export class AdminService {
       name: p.user.full_name,
       home_address: ''
     }));
-    response.forEach(function(p) {
-      const shippingAddress: ShippingAddressEntity[] = this.shippingRepo.find({
+    for (const p of response) {
+      const shippingAddress: ShippingAddressEntity[] = await this.shippingRepo.find({
         where: {
           user: p.user.id
         }
@@ -344,7 +344,7 @@ export class AdminService {
         p.home_address = `${street}, ${kelurahan}, ${kecamatan}, ${city}, ${post_code}`;
       }
       delete p.user;
-    });
+    };
     return new ResponseListWithCountBody(response, 'ok', param.page, seller.length, count);
   }
 
