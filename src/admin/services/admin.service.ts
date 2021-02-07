@@ -342,7 +342,7 @@ export class AdminService {
       if (shippingAddress.length != 0) {
         const homeAddress = shippingAddress[0];
         const { street, kelurahan, kecamatan, city, post_code } = homeAddress;
-        p.home_address = `${street}, ${kelurahan}, ${kecamatan}, ${city}, ${post_code}`;
+        p.home_address = `${street}, ${kelurahan.nama}, ${kecamatan.nama}, ${city.nama}, ${post_code}`;
       }
       delete p.user;
     };
