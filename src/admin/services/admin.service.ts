@@ -334,7 +334,7 @@ export class AdminService {
     }));
     for (const p of response) {
       const shippingAddress = await this.shippingRepo.find({
-        relations: ['location'],
+        relations: ['city', 'kecamatan', 'kelurahan'],
         where: {
           user: p.user.id
         }
