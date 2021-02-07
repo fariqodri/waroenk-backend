@@ -14,6 +14,7 @@ import { CategoryRepository } from '../products/repositories/category.repository
 import { NotificationService } from './services/notification.service';
 import { ChatModule } from '../chat/chat.module';
 import { ProposalDataRepository } from '../proposal/repositories/proposal-data.repository';
+import { ShippingAddressRepository } from '../users/repositories/shipping-address.repository';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ProposalDataRepository } from '../proposal/repositories/proposal-data.r
       DiscussionRepository,
       AgendaRepository,
       SellerCategoryRepository,
-      CategoryRepository
+      CategoryRepository,
+      ShippingAddressRepository
     ]),
     UsersModule,
     ChatModule

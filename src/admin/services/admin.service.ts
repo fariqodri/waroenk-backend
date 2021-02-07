@@ -29,6 +29,8 @@ import { SellerCategory } from "../../products/entities/seller-category.entity";
 import { CategoryRepository } from "../../products/repositories/category.repository";
 import { NotificationService } from "./notification.service";
 import { ProposalDataRepository } from "../../proposal/repositories/proposal-data.repository";
+import { ShippingAddressRepository } from "../../users/repositories/shipping-address.repository";
+import { ShippingAddressEntity } from "../../users/entities/shipping-address.entity";
 @Injectable()
 export class AdminService {
   constructor(
@@ -42,7 +44,8 @@ export class AdminService {
     private agendaRepo: AgendaRepository,
     private sellerCategoryRepo: SellerCategoryRepository,
     private categoryRepo: CategoryRepository,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private shippingRepo: ShippingAddressRepository
   ) {}
 
   async deleteAgenda(id: string): Promise<ResponseBody<any>> {
@@ -324,10 +327,23 @@ export class AdminService {
     const response = seller.map(p => ({
       ...p,
       userId: p.user.id,
-      phone: p.user.phone
+      phone: p.user.phone,
+      email: p.user.email,
+      name: p.user.full_name,
+      home_address: ''
     }));
     response.forEach(function(p) {
-      delete p.user
+      const shippingAddress: ShippingAddressEntity[] = this.shippingRepo.find({
+        where: {
+          user: p.user.id
+        }
+      });
+      if (shippingAddress.length != 0) {
+        const homeAddress = shippingAddress[0];
+        const { street, kelurahan, kecamatan, city, post_code } = homeAddress;
+        p.home_address = `${street}, ${kelurahan}, ${kecamatan}, ${city}, ${post_code}`;
+      }
+      delete p.user;
     });
     return new ResponseListWithCountBody(response, 'ok', param.page, seller.length, count);
   }
@@ -349,7 +365,9 @@ export class AdminService {
     const response = categories.map(p => ({
       ...p,
       userId: p.seller.user.id,
-      phone: p.seller.user.phone
+      phone: p.seller.user.phone,
+      email: p.seller.user.email,
+      name: p.seller.user.full_name
     }));
     response.forEach(function(p) {
       delete p.seller.user
