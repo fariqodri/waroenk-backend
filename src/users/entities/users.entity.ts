@@ -5,7 +5,6 @@ import { AgendaEntity } from "../../agenda/entities/agenda.entity";
 import { ProposalEntity } from "../../proposal/entities/proposal.entity";
 import { CartEntity } from "../../order/entities/cart.entity";
 import { OrderEntity } from "../../order/entities/order.entity";
-import { ChatRoomEntity } from "../../chat/entities/chat-room.entity";
 
 @Entity({ name: "users" })
 export class UserEntity {
