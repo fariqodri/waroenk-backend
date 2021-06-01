@@ -6,9 +6,7 @@ import * as rateLimit from 'express-rate-limit';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { 
-    cors: {
-      origin: [/bukawaroenk\.co\.id$/, /bukawaroenk\.com$/]
-    }
+    cors: true
   });
   app.use(helmet());
   app.use(
