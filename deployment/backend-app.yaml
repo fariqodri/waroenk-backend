@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "waroenk-backend-deployment"
+  namespace: production
+spec:
+  selector:
+    matchLabels:
+      app: "waroenk-backend"
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: "waroenk-backend"
+    spec:
+      initContainers:
+        - image: waroenkumkm/backend:0.5.0
+          imagePullPolicy: IfNotPresent
+          name: "waroenk-migration"
+          command:
+            - npm
+            - run
+            - migration:run:prod
+          envFrom:
+            - secretRef:
+                name: backend-secret
+          env:
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_DATABASE
+              value: waroenk
+      containers:
+        - image: waroenkumkm/backend:0.5.2
+          imagePullPolicy: IfNotPresent
+          name: "waroenk-backend"
+          envFrom:
+            - secretRef:
+                name: backend-secret
+          env:
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_DATABASE
+              value: waroenk
+            - name: REDIS_HOST
+              value: redis-master
+            - name: REDIS_PORT
+              value: "6379"
+            - name: PERMISSION_SYSTEM_BASE_URL
+              value: http://permission-service:4466
+            - name: NODE_ENV
+              value: production
+            - name: EMAIL_PORT
+              value: "465"
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              memory: "75Mi"
+              cpu: "75m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+
